@@ -1,0 +1,48 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}
+Add Brand
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-panel">
+  <div class="content-wrapper">
+      <div class="row">
+        
+          <div class="col-12 grid-margin">
+            <div class="card">
+              <div class="card-body">
+                  <h1 class="card-title text-center">Add Brand<a href="{% url 'brand' %}" class="float-right btn btn-warning">Back</a></h1>
+                  <div class="table-responsive mx-5">
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="w-75 mb-3">Product Name: {{form.brand_name}}</div>
+                        <div class="w-75 mb-3">slug: {{form.slug}}</div>
+                        <div class="w-75 mb-3">Product Image1: {{form.Brand_img}}</div>
+
+                        <button type="submit">Add Brand</button>
+                    </form>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document.getElementById("id_brand_name").onkeyup = function(){
+          console.log()
+          var x = document.getElementById("id_brand_name").value.toLowerCase().replaceAll(" ","-");
+          console.log(x);
+          document.getElementById("id_slug").value = x ;
+        }
+      
+       
+      </script>
+      
+
+{% endblock %}
+            

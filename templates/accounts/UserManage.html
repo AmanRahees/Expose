@@ -1,0 +1,83 @@
+{% extends 'Dashboard.html' %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+        
+        <div class="row">
+          
+            <div class="col-12 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Users ({{users.count}})</h4>
+                  <div class="table-responsive">
+
+                              <table class="table">
+                                <thead class="text-secondary">
+                                  <tr class=" text-center">
+                                        <td>Sl.No</td>
+                                        <td>Name</td>
+                                        <td>email</td>
+                                        <td>Phone</td>
+                                        <td>Status</td>
+                                        <td>Action</td>
+                                  </tr>
+                                </thead>
+                                <tbody class="text-light">
+                                  {% for i in users %}
+                                  <tr class=" text-center">
+                                      <th> {{ forloop.counter }}</th>
+                                      
+                                      <th>{{i.first_name}} {{i.last_name}}</th>
+                                      <th>{{i.email}}</th>
+                                      <th>{{i.phone_number}}</th>
+                                      <th> 
+                                          {% if i.is_active == True %}
+                                          <a href="{% url 'user_status' id=i.id status='false' %}" class="btn btn-outline-success py-2">Active</a>                             
+                                          {% else %}
+                                          <a href="{% url 'user_status' id=i.id status='true' %}" class="btn btn-outline-danger py-2">Suspended</a>
+                                          {% endif %}
+                                      </th>
+                                      <th>
+
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-outline-danger py-1 pr-1 pl-2 border border-none bg-none" data-toggle="modal" data-target="#exampleModal{{i.id}}">
+                                          <i class="fa-solid fa-trash"></i>
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                          <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                                                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                              </div>
+                                              <div class="modal-body">
+                                                Are you sure you want to delete Customer {{i.first_name}}?
+                                              </div>
+                                              <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'deleteUser' i.id %}" type="button" class="btn btn-danger">Delete</a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </th>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+    </div>
+</div>
+{% endblock %}

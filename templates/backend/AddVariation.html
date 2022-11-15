@@ -1,0 +1,53 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}
+Add Variation
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-panel">
+  <div class="content-wrapper">
+      <div class="row">
+        
+          <div class="col-12 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+
+                    <h1 class="card-title text-center">Add Variation<a href="{% url 'subproduct' %}" class="float-right btn btn-warning">Back</a></h1>
+                    <div class="table-responsive mx-5">
+
+                        {% for message in messages %}
+                                <div class="rounded mb-2 text-center w-75" style="color:red" role="alert">
+                                     {{message}}
+                                 </div>
+                        {% endfor %}
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% for message in messages %}
+                            <div class="rounded mb-2 text-center w-75" style="color:red" role="alert">
+                                {{message}}
+                            </div>
+                        {% endfor %}
+                        
+                        <div class="w-75 mb-3">Product Name: {{form.product_name}}</div>
+                        <div class="w-75 mb-3">Variation Category: {{form.variation_category}}</div>
+                        <div class="w-75 mb-3">Value: {{form.variation_value}}</div>
+                        <div class="w-75 mb-3">Enable: {{form.is_acitve}}</div>
+                       
+                        <button type="submit">Add Product</button>
+                    </form>
+          
+                  </div>
+
+
+                    </div>
+                </div>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

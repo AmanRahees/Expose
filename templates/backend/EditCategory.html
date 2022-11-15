@@ -1,0 +1,75 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}
+Edit Category
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-panel">
+  <div class="content-wrapper">
+      <div class="row">
+        
+          <div class="col-12 grid-margin">
+            <div class="card">
+              <div class="card-body">
+                  <h1 class="card-title text-center">Edit Category<a href="{% url 'category' %}" class="float-right btn btn-warning">Back</a></h1>
+                  <div class="table-responsive">
+
+
+
+                        <form method="post" action="{% url 'updatecategory' ctgy.id %}" enctype="multipart/form-data"">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label>Category Name :</label>
+                                <input id="title" class="mb-3 form-control" type="text" name="category_name" value="{{ctgy.category_name}}">
+                            </div>
+    
+                            <div class="mb-3">
+                                <label>Slug :</label>
+                                <input id="slugId" class="mb-3 form-control" type="text" name="slug" value="{{ctgy.slug}}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Description :</label>
+                                <input class="mb-3 form-control" type="text" name="description" value="{{ctgy.description}}">   
+                            </div>
+
+                            <div class="mb-3">
+                                <span class="mr-5">Image :</span>
+                                <a href="{{ ctgy.Category_img.url }}"><img src="{{ ctgy.Category_img.url }}" width="200" height="200"></a>
+                            </div>
+
+                            <button type="submit">Update</button>
+                        </form>
+
+
+
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    
+          <script>
+            document.getElementById("title").onkeyup = function(){
+              console.log()
+              var x = document.getElementById("title").value.toLowerCase().replaceAll(" ","-");
+              console.log(x);
+              document.getElementById("slugId").value = x ;
+            }
+          
+           
+          </script>
+          
+    
+    {% endblock %}
+    
+    
+    
+      
+
+
+  

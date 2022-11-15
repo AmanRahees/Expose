@@ -1,0 +1,142 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block title %}
+{{prdts.slug}}
+{% endblock %}
+
+{% block content %}
+
+<section class="bg0 p-t-23 p-b-140 mt-5">
+<div class="container">
+    <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+        <button class="how-pos3 hov3 trans-04 js-hide-modal1">
+            <img src="{% static 'images/icons/icon-close.png' %}" alt="CLOSE">
+        </button>
+
+        <div class="row">
+            <div class="col-md-6 col-lg-7 p-b-30">
+                <div class="p-l-25 p-r-30 p-lr-0-lg ml-5">
+                    <div class="wrap-slick3 flex-sb flex-w w-75">
+                        <div class="wrap-slick3-dots"></div>
+                        <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+                        <div class="slick3 gallery-lb">
+                            <div class="item-slick3" data-thumb="{{prdts.Product_img.url}}">
+                                <div class="wrap-pic-w-m pos-relative">
+                                    <!-- <img src="{{prdts.Product_img.url}}" id="image" class="zoom" data-magnify-src="{{prdts.Product_img.url}}" alt="IMG-PRODUCT"> -->
+                                    <div class="img-magnifier-container">
+                                        <img id="myimage" src="{{prdts.Product_img.url}}">
+                                      </div>
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.Product_img.url}}">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="item-slick3" data-thumb="{{prdts.Product_img2.url}}">
+                                <div class="wrap-pic-w pos-relative">
+                                    <img src="{{prdts.Product_img2.url}}" alt="IMG-PRODUCT">
+
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.Product_img2.url}}">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>
+                           
+                            <div class="item-slick3" data-thumb="{{prdts.Product_img3.url}}">
+                                <div class="wrap-pic-w pos-relative">
+                                    <img src="{{prdts.Product_img3.url}}" alt="IMG-PRODUCT">
+
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.Product_img3.url}}">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-5 p-b-30">
+                <div class="p-r-50 p-t-5 p-lr-0-lg">
+                    <h4 class="mtext-105 cl2 js-name-detail p-b-14">
+                        {{prdts.product_name}}{{prdts.variation_value}}
+                    </h4>
+
+                    <h2 class="text-success">
+                        ₹{{prdts.price}}
+                    </h2>
+
+                    <p class="stext-102 cl3 p-t-23">
+                       {{prdts.description}}
+                    </p>
+                    
+                    <!--  -->
+                <form action="{% url 'add_cart' prdts.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="p-t-33">
+                        <div class="flex-w flex-r-m p-b-10">
+                            <div class="size-203 flex-c-m respon6">
+                               Memory
+                            </div>
+
+                            <div class="size-204 respon6-next">
+                                <div class="rs1-select2  bg0">
+                                    <select class="form-control text-center w-75" name="memory" required>
+                                        <option value="" disabled selected>Choose Memory</option>
+                                        {% for i in prdts.variation_set.memorys %}
+                                        <option value="{{i.variation_value}}">{{i.variation_value}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-w flex-r-m p-b-10">
+                            <div class="size-203 flex-c-m respon6">
+                                Color
+                            </div>
+
+                            <div class="size-204 respon6-next">
+                                <div class="rs1-select2 bg0">
+                                    <select class="form-control w-75 text-center" name="color" required>
+                                        <option value="" disabled selected>Choose Color</option>
+                                        {% for i in prdts.variation_set.colors %}
+                                        <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="dropDownSelect2"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-w flex-r-m p-b-10">
+                            <div class="size-204 flex-w flex-m respon6-next">
+                                {% if prdts.stock >= 1 %}
+                                    
+                                        <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                            Add to cart
+                                        </button>
+                                    
+                                {% else %}
+                                <a href="#" class="btn btn-lg disabled size-101 text-danger"  aria-disabled="true">
+                                    Out of Stock
+                                </a>
+                                {% endif %}
+
+                                    </div>
+                                </div>	
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

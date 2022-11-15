@@ -1,0 +1,71 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}
+Edit Brand
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-panel">
+  <div class="content-wrapper">
+      <div class="row">
+        
+          <div class="col-12 grid-margin">
+            <div class="card">
+              <div class="card-body">
+                  <h1 class="card-title text-center">Edit Brand<a href="{% url 'brand' %}" class="float-right btn btn-warning">Back</a></h1>
+                  <div class="table-responsive mx-5">
+
+                        <form method="post" action="{% url 'updatebrand' brnd.id %}" enctype="multipart/form-data">
+                            
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label>Brand Name :</label>
+                                <input id="title" class="mb-3 form-control w-75" type="text" name="brand_name" value="{{brnd.brand_name}}">
+                            </div>
+    
+                            <div class="mb-3">
+                                <label>Slug :</label>
+                                <input id="slugId" class="mb-3 form-control w-75" type="text" name="slug" value="{{brnd.slug}}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <span class="mr-5">Image:</span>
+                                <a href="{{ brnd.Brand_img.url }}"><img src="{{ brnd.Brand_img.url }}" width="150" height="200"></a>
+                            </div>
+                            
+                            <button type="submit">Update</button>
+                        </form>
+
+
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    
+          <script>
+            document.getElementById("title").onkeyup = function(){
+              console.log()
+              var x = document.getElementById("title").value.toLowerCase().replaceAll(" ","-");
+              console.log(x);
+              document.getElementById("slugId").value = x ;
+            }
+          
+           
+          </script>
+          
+    
+    {% endblock %}
+    
+    
+    
+      
+
+
+
+
+
+  

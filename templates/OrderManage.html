@@ -1,0 +1,88 @@
+{% extends 'Dashboard.html' %}
+
+{% block title %}
+Orders
+{% endblock %}
+
+
+{% block content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+          
+            <div class="col-12 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Orders</h4>
+                  <div class="table-responsive">
+
+                              <table class="table">
+                                <thead class="text-secondary">
+                                  <tr class=" text-center">
+                                        <td>Id</td>
+                                        <td>Customer</td>
+                                        <td>Product</td>
+                                        <td>Quantity</td>
+                                        <td>Price</td>
+                                        <td>Payment</td>
+                                        <td>OrderDate</td>
+                                        <td>Status</td>
+                                        <td>action</td>
+                                  </tr>
+                                </thead>
+                                <tbody class="text-light">
+                                  {% for i in prdts %}
+                                  <tr class=" text-center">
+                                      <th> {{ forloop.counter }}</th>
+                                      
+                                      <th> <img class="w-10 rounded h-10" src="{{i.Product_img.url}}"/> &nbsp; {{i.product_name}}</th>
+                                      <th> ₹ {{i.regular_price}}</th>
+                                      <th> {{i.discount_price}} </th>
+                                      <th>{{i.product_category}}</th>
+                                      <th>{{i.product_brand}}</th>
+                                      <th> {{i.stock}} </th>
+                                      <th> 
+                                          {% if i.is_available == True %}
+                                          <a href="{% url 'enable_product' id=i.id status='false' %}" class="btn btn-outline-success py-2">Enabled</a>                             
+                                          {% else %}
+                                          <a href="{% url 'enable_product' id=i.id status='true' %}" class="btn btn-outline-danger py-2">Disabled</a>
+                                          {% endif %}
+                                      </th>
+                                      <th>
+                                        <a href="{% url 'editproduct' i.id %}" class="btn btn-outline-primary py-1 pr-1 pl-2 border border-none bg-none"><i class="fa-solid fa-pen"></i></a>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-outline-danger py-1 pr-1 pl-2 border border-none bg-none" data-toggle="modal" data-target="#exampleModal{{i.id}}">
+                                          <i class="fa-solid fa-trash"></i>
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                          <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                                                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                              </div>
+                                              <div class="modal-body">
+                                                Are you sure you want to delete this product?
+                                              </div>
+                                              <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'deleteproduct' i.id %}" type="button" class="btn btn-danger">Delete</a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </th>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+    </div>
+</div>
+{% endblock %}
