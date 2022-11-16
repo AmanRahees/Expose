@@ -88,7 +88,7 @@ def Userlogin(request):
                         messages.info(request, 'Your Account has been Suspended')
                         return redirect('login')
                     else:
-                        messages.info(request, 'Invalid Username or Password')
+                        messages.error(request, 'Invalid Username or Password')
                         return redirect('login')
         else:
             return render(request, 'accounts/login.html')
@@ -123,6 +123,30 @@ def otplogin(request):
                 return redirect('otplogin')
         else:
             return render(request, 'accounts/OtpLogin.html')
+
+@login_required(login_url='login')
+def ChangePassword(request):
+    if request.method == 'POST':
+        current_password =  request.POST['current_password']
+        password = request.POST['password']
+        password2 = request.POST['password2']
+
+        user = Account.objects.get(email__exact=request.user.email)
+
+        if password == password2:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(password)
+                user.save()
+                messages.success(request, 'Password updated Successfully')
+                return redirect('login')
+            else:
+                messages.error(request, 'Please Enter Valid Password')
+                return redirect('settings')
+        else:
+            messages.error(request, 'Password does not Match')
+            return redirect('settings')
+    return redirect('settings')
 
 
 @never_cache

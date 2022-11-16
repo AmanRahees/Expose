@@ -61,13 +61,15 @@ Cart
                                                 </a>
     
                                                 <input class="mtext-104 cl3 text-center num-product" type="number" name="num-product1" readonly value="{{i.quantity}}">
+
                                                 <form action="{% url 'add_cart' i.cart_product.id  %}" method="POST">
                                                   {% csrf_token %}
                                                   {% for item in i.variation.all %}
-                                                    <input type="hidden" name="{{ item.variation_category | lower }}" value="{{ item.variation_value | capfirst }}">
+                                                    <input type="hidden" name="{{item.variation_category}}" value="{{ item.variation_value}}">
                                                   {% endfor %}
-                                                  <button class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" type="submit"> <i class="fs-16 zmdi zmdi-plus"></i></button>
+                                                  <button type="submit" class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"> <i class="fs-16 zmdi zmdi-plus"></i></button>
                                                 </form>
+                                                
                                             </div>
                                         </td>
                                         <td class="column-5">₹{{ i.sub_total }}</td>

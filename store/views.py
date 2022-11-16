@@ -32,7 +32,7 @@ def store(request):
     ctgy = Category.objects.filter(is_active=True)
     prdts = Products.objects.filter(is_available = True, product_category__is_active=True)
     subprdts = Variation.objects.all()
-    paginator = Paginator(prdts, 5)
+    paginator = Paginator(prdts, 2)
     page = request.GET.get('page')
     paged_products = paginator.get_page(page)
     context = {
@@ -180,10 +180,13 @@ def add_cart(request, product_id):
         return redirect('cart') 
 
 def remove_cart(request, product_id, cart_item_id):
-    cart = Cart.objects.get(cart_id=_cart_id(request))
     prdts = Products.objects.get(id=product_id)
     try:
-        cart_item = CartItem.objects.get(cart_product=prdts, cart=cart, id=cart_item_id)
+        if request.user.is_authenticated:
+            cart_item = CartItem.objects.get(cart_product=prdts, user=request.user, id= cart_item_id)
+        else:
+            cart = Cart.objects.get(cart_id = _cart_id(request))
+            cart_item = CartItem.objects.get(cart_product=prdts, cart=cart, id=cart_item_id)
         if cart_item.quantity > 1:
             cart_item.quantity -= 1
             cart_item.save()
@@ -194,9 +197,8 @@ def remove_cart(request, product_id, cart_item_id):
     return redirect('cart')
 
 @never_cache
-def cart(request, total=0, quantity=0, cart_item=0):
+def cart(request, total=0, quantity=0, cart_item=None):
     try:
-        cart_items=0
         tax=0
         grand_total=0
         if request.user.is_authenticated:
@@ -221,9 +223,12 @@ def cart(request, total=0, quantity=0, cart_item=0):
     return render(request, 'store/cart.html', context)
 
 def delete_cart_item(request, product_id,cart_item_id):
-    cart = Cart.objects.get(cart_id=_cart_id(request))
     prdts = Products.objects.get(id=product_id)
-    cart_item = CartItem.objects.get(cart_product=prdts, cart=cart, id=cart_item_id)
+    if request.user.is_authenticated:
+        cart_item = CartItem.objects.get(cart_product=prdts, user=request.user, id=cart_item_id)
+    else:
+        cart = Cart.objects.get(cart_id=_cart_id(request))
+        cart_item = CartItem.objects.get(cart_product=prdts, cart=cart, id=cart_item_id)
     cart_item.delete()
     return redirect('cart')
 
@@ -243,3 +248,6 @@ def Search(request):
 @login_required(login_url='login')
 def demo(request):
     return render(request, 'store/checkout.html')
+
+def UserSettings(request):
+    return render(request, 'store/settings.html')

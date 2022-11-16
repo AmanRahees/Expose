@@ -106,7 +106,7 @@
 										<a class="nav-link dropdown-toggle text-capitalize cl2" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{user.first_name}}</a>
 										<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
 											<form>
-												<li><a class="dropdown-item log-drop" href="#">Settings</a></li>
+												<li><a class="dropdown-item log-drop" href="{% url 'settings' %}">Settings</a></li>
 												<li><a class="dropdown-item log-drop" href="{% url 'logout' %}">Logout</a></li>
 											</form>
 										</ul>

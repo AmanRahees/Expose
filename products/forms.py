@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import widgets
-from .models import Products, Variation, SubCategory
+from .models import *
 
 class AddProductForm(forms.ModelForm):
   class Meta:

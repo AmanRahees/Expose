@@ -20,6 +20,7 @@ class SubCategory(models.Model):
     def __str__(self):
         return self.subcategory_name
 
+
 class Products(models.Model):
     product_name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
