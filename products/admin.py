@@ -1,17 +1,25 @@
 from django.contrib import admin
-from .models import SubCategory, Products, Variation
+from .models import *
 
 # Register your models here.
+class ProductImageInline(admin.TabularInline):
+   model = ProductImage
+   extra = 1
+   
 
 class SubCategoryAdmin(admin.ModelAdmin):
    prepopulated_fields = {'slug':('subcategory_name',)}
 
-class ProductAdmin(admin.ModelAdmin):
+class ProductAttributeAdmin(admin.ModelAdmin):
    prepopulated_fields = {'slug':('product_name',)}
-   list_display = ('product_name','product_brand','product_category','modified_date','is_available')
 
-
+class ProductAdmin(admin.ModelAdmin):
+   model = Products
+   list_display = ('id' , 'product_name')
+   inlines = (ProductImageInline,)
+   
 
 admin.site.register(SubCategory,SubCategoryAdmin)
-admin.site.register(Products,ProductAdmin)
-admin.site.register(Variation)
+admin.site.register(ProductAttribute, ProductAttributeAdmin)
+admin.site.register(Products, ProductAdmin)
+admin.site.register(ProductImage)

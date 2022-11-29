@@ -20,3 +20,30 @@ class Category(models.Model):
 
     def __str__(self):
         return self.category_name
+
+
+class Ram(models.Model):
+    ram = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
+    is_acitve = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.ram
+
+
+class Color(models.Model):
+    color = models.CharField(max_length=200)
+    color_code  = models.CharField(max_length = 100, null=True, blank=True)
+    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True) 
+    is_acitve = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.color
+
+class Size(models.Model):
+    size = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
+    is_acitve = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.size

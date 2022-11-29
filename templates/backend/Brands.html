@@ -14,7 +14,7 @@ Brand
           <div class="col-12 grid-margin">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title text-warning">Brand ({{brnd.count}})<a href="{% url 'addbrand' %}" class="float-right btn btn-warning">Add +</a></h4>
+                <h4 class="card-title text-warning">Brand ({{brndcount}})<a href="{% url 'addbrand' %}" class="float-right btn btn-warning">Add +</a></h4>
                 <div class="table-responsive">
                   <table class="table">
                     <thead class="text-secondary">
@@ -31,7 +31,7 @@ Brand
                       <tr class=" text-center">
                           <th> {{ forloop.counter }}</th>
                           <th> 
-                              <img class="img-thumbnail w-25 rounded h-25 img-fluid" src="{{i.Brand_img.url}} " />
+                            <a href="{{ i.Brand_img.url }}"><img class="img-thumbnail rounded img-fluid w-25" height="60px" src="{{i.Brand_img.url}} " /></a>
                           </th>
                           <th> {{i.brand_name}}</th>
                           <th>
@@ -73,6 +73,51 @@ Brand
                     </tbody>
                   </table>
                 </div>
+              </div>
+              <div class="d-flex justify-content-center align-items-center">
+                {% if brnd.has_other_pages %}
+                  <ul class="pagination">
+                  {% if brnd.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{brnd.previous_page_number}}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                      <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                  {% else %}
+                    <li class="page-item">
+                      <a class="page-link disabled" href="#" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                      <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                  {% endif %}
+        
+                  {% for i in brnd.paginator.page_range %}
+                    {% if brnd.number == i %}
+                      <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+                    {% else %}
+                      <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                    {% endif %}
+                  {% endfor %}
+        
+                  {% if brnd.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{brnd.next_page_number}}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                      <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                  {% else %}
+                  <li class="page-item">
+                    <a class="page-link disabled" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                    </a>
+                  </li>
+                  {% endif %}
+                </ul>
+                {% endif %}
               </div>
             </div>
           </div>

@@ -1,0 +1,41 @@
+{% extends 'dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<div class="main-panel">
+  <div class="content-wrapper">
+      <div class="row">
+        
+          <div class="col-12 grid-margin">
+            <div class="card">
+              <div class="card-body">
+                  <h1 class="card-title text-center">Add Variation<a href="{% url 'variations' %}" class="float-right btn btn-warning">Back</a></h1>
+                  <div class="table-responsive mx-5">
+
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% for message in messages %}
+                                <div class="alert alert-danger rounded mb-2 text-center w-75">
+                                     {{message}}
+                                 </div>
+                        {% endfor %}
+                        
+                        {{form.as_p}}
+                       
+                        <button type="submit" class="btn btn-success">Add</button>
+                    </form>
+          
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
+
+{% endblock %}

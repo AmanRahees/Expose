@@ -3,12 +3,16 @@ from . import views
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
+    path('login/', views.AdminLogin, name='adminlogin'),
+    path('logoutAdmin/', views.logout_admin, name='logoutAdmin'),
 
     path('Users/', views.UserManagement, name='Users'),
     path('user_status/<int:id>/<str:status>/', views.user_status, name='user_status'),
     path('deleteUser/<int:id>', views.deleteUser, name='deleteUser'),
 
     path('Orders/', views.OrderManagement, name='Orders'),
+    path('Update_Order/<int:id>', views.Update_Order, name='Update_Order'),
+
 
     path('category/', views.categoryList, name='category' ),
     path('addcategory/',views.AddCategory, name='addcategory'),
@@ -31,21 +35,33 @@ urlpatterns = [
     path('deletebrand/<int:id>/', views.DeleteBrand, name='deletebrand'),
     path('enable_brand/<int:id>/<str:status>/', views.enable_brand, name='enable_brand'),
 
-    path('product/', views.productList, name='product'),
-    path('addproduct/', views.AddProduct, name='addproduct'),
-    path('editproduct/<int:id>/', views.EditProduct ,name='editproduct'),
-    path('updateproduct/<int:id>/', views.UpdateProduct ,name='updateproduct'),
+
+
+
+    path('product/', views.ProductAttributeList, name='product'),
+    path('addproduct/', views.AddProductAttribute, name='addproduct'),
+    path('editproduct/<int:id>/', views.EditProductAttribute ,name='editproduct'),
+    path('updateproduct/<int:id>/', views.UpdateProductAttribute ,name='updateproduct'),
     path('deleteproduct/<int:id>/', views.deleteProduct, name='deleteproduct'),
-    path('enable_product/<int:id>/<str:status>/', views.enable_product, name='enable_product'),
+    path('enable_product/<int:id>/<str:status>/', views.enable_productAttribute, name='enable_product'),
 
     path('subproduct/', views.SubProductList, name='subproduct'),
-    path('addsubproduct/', views.AddVariation, name='addsubproduct'),
+    path('addsubproduct/', views.AddSubProduct, name='addsubproduct'),
     path('editsubproduct/<int:id>/', views.EditSubProduct ,name='editsubproduct'),
     path('updatesubproduct/<int:id>/', views.UpdateSubProduct ,name='updatesubproduct'),
     path('enable_subproduct/<int:id>/<str:status>/', views.enable_subproduct, name='enable_subproduct'),
     path('deletesubproduct/<int:id>/', views.deleteSubProduct, name='deletesubproduct'),
 
+    path('variations/', views.VariationList, name='variations'),
+    path('addram', views.AddRam, name='addram'),
+    path('enable_ram/<int:id>/<str:status>', views.enable_ram, name='enable_ram'),
+    path('deleteram/<int:id>/', views.deleteRam, name='deleteram'),
 
-    path('login/', views.AdminLogin, name='adminlogin'),
-    path('logoutAdmin/', views.logout_admin, name='logoutAdmin'),
+    path('addcolor', views.AddColor, name='addcolor'),
+    path('enable_color/<int:id>/<str:status>', views.enable_color, name='enable_color'),
+    path('deletecolor/<int:id>/', views.deleteColor, name='deletecolor'),
+
+    path('addsize', views.AddSize, name='addsize'),
+    path('enable_size/<int:id>/<str:status>', views.enable_size, name='enable_size'),
+    path('deletesize/<int:id>/', views.deleteSize, name='deletesize'),
 ]

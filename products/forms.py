@@ -2,30 +2,34 @@ from django import forms
 from django.forms import widgets
 from .models import *
 
-class AddProductForm(forms.ModelForm):
+
+class AddProductAttributeForm(forms.ModelForm):
   class Meta:
-    model = Products
-    fields = ["product_name","slug","description","price","stock","Product_img","Product_img2","Product_img3","product_category","product_subcategory","product_brand","is_available"]
+    model = ProductAttribute
+    fields = ["product_name","slug","description","image","category_name","subcategory_name","brand_name","is_active"]
     widgets = {
-      'product_name': forms.TextInput(attrs={'class':'form-control'}),
-      'slug': forms.TextInput(attrs={'class':'form-control'}),
+      'product_name':forms.TextInput(attrs={'class':'text-light form-control'}),
+      'slug':forms.TextInput(attrs={'class':'text-light form-control'}),
       'description': forms.Textarea(attrs={'class':'form-control'}),
-      'price': forms.NumberInput(attrs={'class':'text-light form-control active'}),
-      'stock': forms.NumberInput(attrs={'class':'text-light form-control'}),
-      'Product_img': forms.ClearableFileInput(attrs={'class':'form-control'}),
-      'Product_img2': forms.ClearableFileInput(attrs={'class':'form-control'}),
-      'Product_img3': forms.ClearableFileInput(attrs={'class':'form-control'}),
-      'product_category': forms.Select(attrs={'class':'text-light form-control'}),
-      'product_subcategory': forms.Select(attrs={'class':'text-light form-control'}),
-      'product_brand': forms.Select(attrs={'class':'text-light form-control'}),
-      'is_available':forms.CheckboxInput()
+      'image': forms.FileInput(attrs={'class':'form-control'}),
+      'category_name':forms.Select(attrs={'class':'text-light form-control'}),
+      'subcategory_name':forms.Select(attrs={'class':'text-light form-control'}),
+      'brand_name':forms.Select(attrs={'class':'text-light form-control'}),
+      'is_acitve':forms.CheckboxInput()
     }
 
 
-class EditProductForm(forms.ModelForm):
-    class Meta:
-      model = Products
-      fields = ["product_name","slug","description","price","stock","Product_img","Product_img2","Product_img3"]
+class EditProductAttributeForm(forms.ModelForm):
+  class Meta:
+      model = ProductAttribute
+      fields = ["product_name","slug","description","image"]
+      widgets = {
+        'product_name':forms.TextInput(attrs={'class':'text-light form-control'}),
+        'slug':forms.TextInput(attrs={'class':'text-light form-control'}),
+        'description': forms.Textarea(attrs={'class':'form-control'}),
+        'image': forms.FileInput(attrs={'class':'form-control'}),
+      }
+
 
 class AddSubCategoryForm(forms.ModelForm):
   class Meta:
@@ -44,18 +48,22 @@ class EditSubCategoryForm(forms.ModelForm):
     fields = ["subcategory_name","slug"]
 
 
-class AddVariationForm(forms.ModelForm):
+class AddProductForm(forms.ModelForm):
   class Meta:
-    model = Variation
-    fields = ['product_name','variation_category','variation_value','is_acitve']
+    model = Products
+    fields = ["product_name","ram","size","color","price","stock","is_available"]
     widgets = {
-      'product_name': forms.Select(attrs={'class':'text-light form-control'}),
-      'variation_category': forms.Select(attrs={'class':'text-light form-control'}),
-      'variation_value': forms.TextInput(attrs={'class':'text-light form-control'}),
-      'is_acitve':forms.CheckboxInput()
+      'product_name': forms.Select(attrs={'class':'form-control text-light'}),
+      'ram': forms.Select(attrs={'class':'form-control text-light'}),
+      'size': forms.Select(attrs={'class':'form-control text-light'}),
+      'color': forms.Select(attrs={'class':'form-control text-light'}),
+      'price': forms.NumberInput(attrs={'class':'text-light form-control active'}),
+      'stock': forms.NumberInput(attrs={'class':'text-light form-control'}),
+      'is_available':forms.CheckboxInput()
     }
 
-class EditVariationForm(forms.ModelForm):
+
+class EditProductForm(forms.ModelForm):
     class Meta:
-      model = Variation
-      fields = ['variation_value']
+      model = Products
+      fields = ["price","stock"]

@@ -1,0 +1,92 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block title %}
+Addresses
+{% endblock %}
+
+{% block content %}
+
+<section class="p-t-23 p-b-140 mt-5">
+  <div class="container mt-3">
+    {% for message in messages %}
+        <div class="rounded mb-2 text-center mx-5" role="alert">
+              {{message}}
+        </div>
+    {% endfor %}
+		<div class="container">
+			<div class="bg-white rounded-lg d-block d-sm-flex border rounded">
+				
+				<nav bar class="profile-tab-nav border bg-dark p-2">
+					<div class="nav flex-column nav-pills">
+						<a class="nav-link" href="{% url 'settings' %}">
+							<i class="fa fa-user text-center"></i>
+							Profile
+						</a>
+						<a class="nav-link" href="{% url 'change_password' %}">
+							<i class="fa fa-key text-center mr-1"></i> 
+							Password
+						</a>
+						<a class="nav-link active" href="{% url 'addresses' %}">
+							<i class="fa fa-home text-center"></i>
+							Addresses
+						</a>
+						<a class="nav-link" href="{% url 'myorders' %}">
+							<i class="fa fa-tv text-center"></i> 
+							Orders
+						</a>
+						<a class="nav-link" href="{% url 'logout' %}" role="tab">
+							<!-- <i class="fa fa-bell text-center mr-1"></i>  -->
+							<i class="fa-solid fa-right-from-bracket"></i>
+							Logout
+						</a>
+					</div>
+				</nav>
+
+				{% block spage %}
+
+			
+
+                    <div class="py-5 ml-3 w-75">
+                        <div class="container">
+                            <div>
+                                <h3>Addresses</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card border-0">
+                                        {% for t in ads %}
+                                        <div class="row">
+                                            <div class="card-body border mb-2 text-dark col-md-12 ml-2">
+                                                <span>Address : {{forloop.counter}}</span> <br>
+                                                <div class="col-sm-12 col-md-12 col-xm-6">
+                                                    <a href="{% url 'deleteaddress' t.id %}" class="btn btn-outline-danger mx-2  float-right"> <i class="fa-solid fa-trash"></i> </a>
+                                                    <a href="{% url 'editaddress' t.id %}" class="btn btn-outline-dark float-right"> <i class="fa-solid fa-pen"></i> </a>
+                                                </div>
+                                                <span style="font-weight:bold ; font-size:16px ;"> {{t.name}} | {{t.mobile}} </span><br>
+                                                {{t.address}},
+                                                {{t.address_2}},<br>
+                                                {{t.city}}, 
+                                                 {{t.district}},
+                                                {{t.state}},  
+                                                {{t.pincode}}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="my-3">
+                                <a href="{% url 'addaddress' %}" class="btn btn-success">Add new address <i class="fa-solid fa-plus"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+  </div>
+</section>
+{% endblock %}

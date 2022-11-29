@@ -6,7 +6,7 @@ from accounts.models import Account
 from accounts.otp import *
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
-from store.models import  Cart, CartItem
+from store.models import  *
 from store.views import _cart_id
 
 
@@ -109,12 +109,11 @@ def otplogin(request):
                     if is_cart_item_exists:
                         cart_item = CartItem.objects.filter(cart=cart)
 
-
-                        for item in cart_item:
-                            item.user = user
-                            item.save()
+                    for item in cart_item:
+                        item.user = user
+                        item.save()
                 except:
-                    pass
+                      pass
                 request.session['phone_number'] = phone_number
                 send_otp(user.phone_number)
                 return redirect('verification')
@@ -124,6 +123,7 @@ def otplogin(request):
         else:
             return render(request, 'accounts/OtpLogin.html')
 
+@never_cache
 @login_required(login_url='login')
 def ChangePassword(request):
     if request.method == 'POST':
@@ -142,11 +142,11 @@ def ChangePassword(request):
                 return redirect('login')
             else:
                 messages.error(request, 'Please Enter Valid Password')
-                return redirect('settings')
+                return redirect('change_password')
         else:
             messages.error(request, 'Password does not Match')
-            return redirect('settings')
-    return redirect('settings')
+            return redirect('change_password')
+    return render(request, 'store/Changepswd.html')
 
 
 @never_cache

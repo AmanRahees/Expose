@@ -4,10 +4,14 @@ from django.contrib import messages
 from accounts.models import Account
 from category.models import Category
 from Brand.models import Brand
-from products.forms import AddProductForm, EditProductForm, AddVariationForm, EditVariationForm, AddSubCategoryForm, EditSubCategoryForm
-from category.forms import AddCategoryForm, EditCategoryForm
+from products.forms import *
+from category.forms import *
 from Brand.forms import AddBrandForm
-from products.models import Products, Variation, SubCategory
+from products.models import *
+from orders.models import *
+from orders.forms import OrderStatus
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 # Create your views here.
@@ -29,17 +33,17 @@ def AdminLogin(request):
                     return redirect('/admin_panel')
                 else:
                     messages.info(request, 'You have Permission')
-                    return render(request, 'adminLogin.html')
+                    return render(request, 'accounts/adminLogin.html')
             else:
                 messages.info(request, 'Invalid Username or Password')
-                return render(request, 'adminLogin.html')
+                return render(request, 'accounts/adminLogin.html')
         else:        
-            return render(request, 'adminLogin.html')
+            return render(request, 'accounts/adminLogin.html')
 
 
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def logout_admin(request):
     logout(request)
     return redirect('/admin_panel/login')
@@ -47,11 +51,13 @@ def logout_admin(request):
 #---------------------Dahsboard View--------------------#
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def dashboard(request):
     users = Account.objects.filter(is_superadmin = False)
+    orders = Order.objects.all().exclude(status='Completed')
     context={
-        'users':users
+        'users':users,
+        'orders':orders,
     }
     return render(request, 'Dashboard.html', context)
 
@@ -61,14 +67,21 @@ def dashboard(request):
 #----------------------UserManagement View------------------#
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def UserManagement(request):
     users = Account.objects.filter(is_superadmin = False)
+    usercount = users.count()
+    paginator = Paginator(users, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     context={
-        'users':users
+        'users':paged_products,
+        'usercount':usercount,
     }
     return render(request, 'accounts/UserManage.html', context)
 
+@never_cache
+@login_required(login_url='adminlogin')
 def user_status(request,id,status):
     users = Account.objects.get(id=id)
     if status == 'true':  
@@ -78,6 +91,8 @@ def user_status(request,id,status):
     users.save()
     return redirect('Users')
 
+@never_cache
+@login_required(login_url='adminlogin')
 def deleteUser(request,id):
     users = Account.objects.get(id=id)
     users.delete()
@@ -88,25 +103,49 @@ def deleteUser(request,id):
 #----------------------OrderManagement View------------------#
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def OrderManagement(request):
-    return render(request, 'OrderManage.html')
+    orders = Order.objects.all().order_by('-id')
+    ordercount = orders.count()
+    paginator = Paginator(orders, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    form = OrderStatus()
+    context = {
+        'orders':paged_products,
+        'ordercount':ordercount,
+        'form':form,
+    }
+    return render(request, 'OrderManage.html', context)
+
+def Update_Order(request, id):
+    if request.method == 'POST':
+        Ustatus = get_object_or_404(Order, id=id)
+        status = request.POST.get('status')
+        Ustatus.status = status
+        Ustatus.save()
+        return redirect('Orders')
 
 #----------------------OrderManagement End------------------#
 
 #---------------------Category View-----------------#
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def categoryList(request):
     ctgy = Category.objects.all().order_by('-id')
+    ctgycount = ctgy.count()
+    paginator = Paginator(ctgy, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     context = {
-        "ctgy":ctgy,
+        "ctgy":paged_products,
+        "ctgycount":ctgycount,
     }
     return render(request, 'backend/category.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def AddCategory(request):
     if request.method == "POST":
         form = AddCategoryForm(request.POST , request.FILES)
@@ -124,13 +163,13 @@ def AddCategory(request):
     return render(request, 'backend/AddCategory.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def EditCategory(request,id):
     ctgy = Category.objects.get(id=id)
     return render(request,'backend/EditCategory.html', {'ctgy':ctgy}) 
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def UpdateCategory(request,id):
     ctgy = Category.objects.get(id=id)
     form = EditCategoryForm(request.POST, instance = ctgy)
@@ -145,7 +184,7 @@ def UpdateCategory(request,id):
     return render(request, 'backend/EditCategory.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def enable_category(request,id,status):
     ctgy = Category.objects.get(id=id)
     if status == 'true':  
@@ -158,7 +197,7 @@ def enable_category(request,id,status):
     return redirect('category') 
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def DeleteCategory(request, id):
     ctgy = Category.objects.filter(id=id)
     ctgy.delete()
@@ -169,16 +208,21 @@ def DeleteCategory(request, id):
 #------------------SubCategory View------------------#
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def SubCategoryList(request):
     subctgy = SubCategory.objects.all().order_by('-id')
+    subctcnt = subctgy.count()
+    paginator = Paginator(subctgy, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     context = {
-        "subctgy" : subctgy
+        "subctgy" : paged_products,
+        "subctcnt":subctcnt
     }
     return render(request, 'backend/Subcategory.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def AddSubCategory(request):
     if request.method == "POST":
         form = AddSubCategoryForm(request.POST , request.FILES)
@@ -196,7 +240,7 @@ def AddSubCategory(request):
     return render(request, 'backend/AddSubCategory.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def EditSubCategory(request,id):
     subctgy = SubCategory.objects.get(id=id)
     context = {
@@ -205,7 +249,7 @@ def EditSubCategory(request,id):
     return render(request,'backend/EditSubCategory.html', context) 
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def UpdateSubCategory(request,id):
     subctgy = SubCategory.objects.get(id=id)
     form = EditSubCategoryForm(request.POST, instance = subctgy)
@@ -220,7 +264,7 @@ def UpdateSubCategory(request,id):
     return render(request, 'backend/EditSubCategory.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def enable_subcategory(request,id,status):
     subctgy = SubCategory.objects.get(id=id)
     if status == 'true':  
@@ -233,7 +277,7 @@ def enable_subcategory(request,id,status):
     return redirect('subcategory')
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def DeleteSubCategory(request, id):
     subctgy = SubCategory.objects.filter(id=id)
     subctgy.delete()
@@ -244,16 +288,21 @@ def DeleteSubCategory(request, id):
 #-----------------Brand View-------------------------#
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def brandList(request):
     brnd = Brand.objects.all().order_by('-id')
+    brndcount = brnd.count()
+    paginator = Paginator(brnd, 7)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     context = {
-        "brnd" : brnd
+        "brnd" : paged_products,
+        "brndcount":brndcount,
     }
     return render(request, 'backend/Brands.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def AddBrand(request):
     if request.method == "POST":
         form = AddBrandForm(request.POST , request.FILES)
@@ -267,7 +316,7 @@ def AddBrand(request):
     return render(request, 'backend/AddBrand.html', {'form': form})
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def EditBrand(request, id):  
     brnd = Brand.objects.get(id=id)  
     context={
@@ -276,7 +325,7 @@ def EditBrand(request, id):
     return render(request,'backend/EditBrand.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def UpdateBrand(request, id):
     brnd = Brand.objects.get(id=id)  
     form = AddBrandForm(request.POST, instance = brnd)
@@ -289,14 +338,14 @@ def UpdateBrand(request, id):
     return render(request, 'backend/EditBrand.html', context) 
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def DeleteBrand(request, id):
     brnd = Brand.objects.filter(id=id)
     brnd.delete()
     return redirect('brand')
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def enable_brand(request,id,status):
     brnd = Brand.objects.get(id=id)
     if status == 'true':  
@@ -308,24 +357,28 @@ def enable_brand(request,id,status):
 
 #------------------Brand End------------------------#
 
-#-------------------Product Views---------------#
+#-------------------ProductAttribute Views---------------#
+
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
-def productList(request):
-    prdts = Products.objects.all().order_by('-id')
-    subprdts = Variation.objects.all().order_by('-id')
+@login_required(login_url='adminlogin')
+def ProductAttributeList(request):
+    prdts = ProductAttribute.objects.all().order_by('-id')
+    itcount = prdts.count()
+    paginator = Paginator(prdts, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     context = {
-        "prdts": prdts,
-        "subprdts":subprdts
+        'prdts':paged_products,
+        'itcount':itcount
     }
-    return render(request, 'products.html', context)
+    return render(request, 'Product/products.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
-def AddProduct(request):
+@login_required(login_url='adminlogin')
+def AddProductAttribute(request):
     if request.method == "POST":
-        form = AddProductForm(request.POST , request.FILES)
+        form = AddProductAttributeForm(request.POST , request.FILES)
         if form.is_valid():
             form.save()
             return redirect('product')
@@ -333,122 +386,263 @@ def AddProduct(request):
             messages.info(request, 'Product already Added')
             return redirect('addproduct')
     else:
-        form = AddProductForm()
+        form = AddProductAttributeForm()
     context = {
         'form': form,
         }
-    return render(request, 'AddProduct.html', context)
+    return render(request, 'Product/AddProduct.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def deleteProduct(request, id):
-    prdts = Products.objects.filter(id=id)
+    prdts = ProductAttribute.objects.filter(id=id)
     prdts.delete()
     return redirect('product')
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
-def EditProduct(request, id):  
-    prdts = Products.objects.get(id=id)  
+@login_required(login_url='adminlogin')
+def EditProductAttribute(request, id):  
+    prdts = ProductAttribute.objects.get(id=id)  
     context = {
         'prdts':prdts
     }
-    return render(request,'EditProduct.html', context) 
+    return render(request,'Product/EditProduct.html', context) 
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
-def UpdateProduct(request, id):
-    prdts = Products.objects.get(id=id)  
-    form = EditProductForm(request.POST, instance = prdts)
+@login_required(login_url='adminlogin')
+def UpdateProductAttribute(request, id):
+    prdts = ProductAttribute.objects.get(id=id)  
+    form = EditProductAttributeForm(request.POST, instance = prdts)
     if form.is_valid():  
-        form.save()  
+        form.save()
         return redirect("product")  
     context = {
         'prdts': prdts
     }  
-    return render(request, 'EditProduct.html', context) 
+    return render(request, 'Product/EditProduct.html', context) 
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
-def enable_product(request,id,status):
-    prdts = Products.objects.get(id=id)
+@login_required(login_url='adminlogin')
+def enable_productAttribute(request,id,status):
+    prdts = ProductAttribute.objects.get(id=id)
     if status == 'true':  
-        prdts.is_available = True
+        prdts.is_active = True
     elif status == 'false':
-        prdts.is_available = False
+        prdts.is_active = False
     prdts.save()
     return redirect('product') 
 
-#---------------------Variation View-----------------#
+#---------------------SubProduct View-----------------#
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def SubProductList(request):
-    subprdts = Variation.objects.all().order_by('-id')
+    subprdts = Products.objects.all().order_by('-id')
+    paginator = Paginator(subprdts, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     context = {
-        "subprdts":subprdts
+        'subprdts':paged_products,
     }
-    return render(request, 'backend/Variation.html', context)
+    return render(request, 'Product/SubProduct.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
-def AddVariation(request):
+@login_required(login_url='adminlogin')
+def AddSubProduct(request):
     if request.method == "POST":
-        form = AddVariationForm(request.POST , request.FILES)
+        form = AddProductForm(request.POST , request.FILES)
         if form.is_valid():
             form.save()
             return redirect('subproduct')
         else:
-            messages.info(request, 'Already Added')
+            messages.info(request, 'Product already Added')
             return redirect('addsubproduct')
     else:
-        form = AddVariationForm()
+        form = AddProductForm()
     context = {
         'form': form,
         }
-    return render(request, 'backend/AddVariation.html', context)
+    return render(request, 'Product/AddSubProduct.html', context)
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def EditSubProduct(request, id):  
-    subprdts = Variation.objects.get(id=id)  
+    subprdts = Products.objects.get(id=id)  
     context = {
         'subprdts':subprdts
     }
-    return render(request,'backend/EditVariation.html', context) 
+    return render(request,'Product/EditSubProduct.html', context) 
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def UpdateSubProduct(request, id):
-    subprdts = Variation.objects.get(id=id)  
-    form = EditVariationForm(request.POST, instance = subprdts)
+    subprdts = Products.objects.get(id=id)
+    form = EditProductForm(request.POST, instance = subprdts)
     if form.is_valid():  
         form.save()  
-        return redirect("subproduct")  
+        return redirect("subproduct")
+    else:
+         print(form.errors.as_data()) 
     context = {
         'subprdts': subprdts
     }  
-    return render(request, 'backend/EditVariation.html', context)
+    return render(request, 'Product/EditSubProduct.html', context)
 
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def enable_subproduct(request,id,status):
-    subprdts = Variation.objects.get(id=id)
+    subprdts = Products.objects.get(id=id)
     if status == 'true':  
-        subprdts.is_acitve = True
+        subprdts.is_available = True
     elif status == 'false':
-        subprdts.is_acitve = False
+        subprdts.is_available = False
     subprdts.save()
-    return redirect('subproduct') 
+    return redirect('subproduct')
 
 @never_cache
-@login_required(login_url='/admin_panel/login')
+@login_required(login_url='adminlogin')
 def deleteSubProduct(request, id):
-    subprdts = Variation.objects.filter(id=id)
+    subprdts = Products.objects.filter(id=id)
     subprdts.delete()
     return redirect('subproduct')
 
-#---------------------Variation End-----------------#
+#---------------------SubPRoduct End-----------------#
+
+#--------------------Variation View------------------#
+
+@never_cache
+@login_required(login_url='adminlogin')
+def VariationList(request):
+    ram = Ram.objects.all().order_by('-id')
+    size = Size.objects.all().order_by('-id')
+    color = Color.objects.all().order_by('-id')
+    clrcnt = color.count()
+    paginator = Paginator(color, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    context = {
+        'ram':ram,
+        'size':size,
+        'color':paged_products,
+        'clrcnt':clrcnt
+    }
+    return render(request, 'Product/variations.html',context)
+
+@never_cache
+@login_required(login_url='adminlogin')
+def AddRam(request):
+    if request.method == "POST":
+        form = AddRamForm(request.POST , request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('variations')
+        else:
+            messages.info(request, 'Ram already Added')
+            return redirect('addram')
+    else:
+        form = AddRamForm()
+    context = {
+        'form': form,
+        }
+    return render(request, 'Product/AddVariation.html', context)
+
+
+@never_cache
+@login_required(login_url='adminlogin')
+def enable_ram(request,id,status):
+    ram = Ram.objects.get(id=id)
+    if status == 'true':  
+        ram.is_acitve = True
+    elif status == 'false':
+        ram.is_acitve = False
+    ram.save()
+    return redirect('variations')
+
+@never_cache
+@login_required(login_url='adminlogin')
+def deleteRam(request,id):
+    ram = Ram.objects.filter(id=id)
+    ram.delete()
+    return redirect('variations')
+
+
+@never_cache
+@login_required(login_url='adminlogin')
+def AddColor(request):
+    if request.method == "POST":
+        form = AddColorForm(request.POST , request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('variations')
+        else:
+            messages.info(request, 'Ram already Added')
+            return redirect('addcolor')
+    else:
+        form = AddColorForm()
+    context = {
+        'form': form,
+        }
+    return render(request, 'Product/AddVariation.html', context)
+
+@never_cache
+@login_required(login_url='adminlogin')
+def enable_color(request,id,status):
+    color = Color.objects.get(id=id)
+    if status == 'true':  
+        color.is_acitve = True
+    elif status == 'false':
+        color.is_acitve = False
+    color.save()
+    return redirect('variations')
+
+@never_cache
+@login_required(login_url='adminlogin')
+def deleteColor(request,id):
+    color = Color.objects.filter(id=id)
+    color.delete()
+    return redirect('variations')
+
+
+@never_cache
+@login_required(login_url='adminlogin')
+def AddSize(request):
+    if request.method == "POST":
+        form = AddSizeForm(request.POST , request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('variations')
+        else:
+            messages.info(request, 'Ram already Added')
+            return redirect('addsize')
+    else:
+        form = AddSizeForm()
+    context = {
+        'form': form,
+        }
+    return render(request, 'Product/AddVariation.html', context)
+
+@never_cache
+@login_required(login_url='adminlogin')
+def enable_size(request,id,status):
+    size = Size.objects.get(id=id)
+    if status == 'true':  
+        size.is_acitve = True
+    elif status == 'false':
+        size.is_acitve = False
+    size.save()
+    return redirect('variations')
+
+@never_cache
+@login_required(login_url='adminlogin')
+def deleteSize(request,id):
+    size = Size.objects.filter(id=id)
+    size.delete()
+    return redirect('variations')
+
+
+#--------------------Variation End-----------------#
+
+
 
 

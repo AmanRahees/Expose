@@ -13,24 +13,24 @@ Products
           <div class="col-12 grid-margin">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title text-warning">Category ({{ctgy.count}})<a href="{% url 'addcategory' %}" class="float-right btn btn-warning">Add +</a></h4>
+                <h4 class="card-title text-warning">Category ({{ctgycount}})<a href="{% url 'addcategory' %}" class="float-right btn btn-warning">Add +</a></h4>
                 <div class="table-responsive">
                   <table class="table">
-                    <thead class="text-light">
+                    <thead class="text-secondary">
                       <tr class="text-center">
-                                  <th>Id</th>
-                                  <th>Image</th>
-                                  <th>Category Name</th>
-                                  <th>Status</th>
-                                  <th> Action </th>
-                                </tr>
-                              </thead>
+                            <td>Sl.No</td>
+                            <td>Image</td>
+                            <td>Category</td>
+                            <td>Status</td>
+                            <td>Action</td>
+                         </tr>
+                          </thead>
                               <tbody class="text-light">
                                 {% for i in ctgy %}
                                 <tr class=" text-center">
                                     <th> {{ forloop.counter }}</th>
                                     <th> 
-                                        <img class="w-25 rounded h-25 img-fluid" src="{{i.Category_img.url}} " />
+                                      <a href="{{ i.Category_img.url }}"><img class="rounded" width="100px" src="{{i.Category_img.url}} " /></a>
                                     </th>
                                     <th> {{i.category_name}}</th>
                                     <th>
@@ -75,6 +75,52 @@ Products
                     </div>
                   </div>
                 </div>
+                  <div class="d-flex justify-content-center align-items-center">
+                    {% if ctgy.has_other_pages %}
+                      <ul class="pagination">
+                      {% if ctgy.has_previous %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ctgy.previous_page_number}}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                          <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                      {% else %}
+                        <li class="page-item">
+                          <a class="page-link disabled" href="#" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                          <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                      {% endif %}
+            
+                      {% for i in ctgy.paginator.page_range %}
+                        {% if ctgy.number == i %}
+                          <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+                        {% else %}
+                          <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                        {% endif %}
+                      {% endfor %}
+            
+                      {% if ctgy.has_next %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ctgy.next_page_number}}" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                          <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                      {% else %}
+                      <li class="page-item">
+                        <a class="page-link disabled" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                        </a>
+                      </li>
+                      {% endif %}
+                    </ul>
+                    {% endif %}
+                  </div>
+                
               </div>
         </div>
       </div>
