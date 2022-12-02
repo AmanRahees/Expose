@@ -111,10 +111,17 @@ def CancelOrder(request, id):
 
 def ReturnOrder(request, id):
     rorder = Order.objects.get(id=id)
-    if rorder.status == ("Completed"):
-        rorder.status = "Returned"
-        rorder.save()
+    returnform = Return()
+    if request.method == "POST":
+        returnform.Order = rorder
+        returnform.reason = request.POST['reason']
+        returnform.comment = request.POST['comment']
+        returnform.item_img = request.FILES.get('item_img') 
+        returnform.save()
+        if rorder.status == ("Completed"):
+            rorder.status = "Returned"
+            rorder.save()
     return redirect('myorders')
     
 def demo(request):
-    return render(request, 'Orders/checkout.html') 
+    return render(request, 'Orders/checkout.html')

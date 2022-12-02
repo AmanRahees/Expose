@@ -64,4 +64,18 @@ urlpatterns = [
     path('addsize', views.AddSize, name='addsize'),
     path('enable_size/<int:id>/<str:status>', views.enable_size, name='enable_size'),
     path('deletesize/<int:id>/', views.deleteSize, name='deletesize'),
+
+
+    path('OfferManage/', views.OfferManage, name='offer_manage'),
+    path('addbrand_offer', views.addBrandOffer, name='add_boffer'),
+    path('brndoff/<int:id>', views.deletebrandoffer, name='brndoff_del'),
+
+    path('product_offer/', views.ProductOffer, name='prdt_offer'),
+    path('addprdt_offer', views.addPrdtOffer, name='add_pdtoffer'),
+    path('pdtoff/<int:id>', views.deletePdtoffer, name='pdtoff_del'),
+
+    path('coupon/', views.CpnLIst, name='coupon'),
+    path('editcoupon/', views.EditCoupon, name='editcoupon'),
+    path('statuscpn/<int:id>/<str:status>/', views.StatusCoupon, name='statuscpn'),
+    path('deletecpn/<int:id>/', views.deleteCpn, name='deletecpn'),
 ]

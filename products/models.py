@@ -25,7 +25,8 @@ class ProductAttribute(models.Model):
     product_name = models.CharField(max_length=200, unique=True)
     slug = models.CharField(max_length=200, unique=True)
     description = models.CharField(max_length=1024, null=True)
-    image = models.ImageField(upload_to='photos/Category', max_length=256, null=True, blank=True)
+    product_offer = models.IntegerField(default=0)
+    image = models.ImageField(upload_to='photos/product', max_length=256, null=True, blank=True)
     category_name = models.ForeignKey(Category, on_delete=models.CASCADE)
     subcategory_name = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     brand_name  = models.ForeignKey(Brand, on_delete=models.CASCADE)
@@ -43,7 +44,7 @@ class Products(models.Model):
     ram = models.ForeignKey(Ram, on_delete=models.CASCADE, null=True, blank=True)
     size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True, blank=True)
     color = models.ForeignKey(Color, on_delete=models.CASCADE, null=True, blank=True)
-    price = models.IntegerField(default=0)
+    price = models.IntegerField(default=1)
     stock = models.IntegerField(default=1)
     is_available = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now=True)
@@ -58,7 +59,7 @@ class Products(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Products,related_name="productimg", on_delete=models.CASCADE)
-    images = models.ImageField(upload_to='photos/Category', max_length=256)
+    images = models.ImageField(upload_to='photos/product', max_length=256)
 
     def __unicode__(self):
         return self.product.product_name

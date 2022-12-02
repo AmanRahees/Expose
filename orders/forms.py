@@ -28,3 +28,4 @@ class OrderStatus(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['status']
+

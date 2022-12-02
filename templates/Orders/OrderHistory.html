@@ -91,8 +91,11 @@ My Orders
                                                 {% if i.status == "Order cancelled" or i.status == "Returned" %}
                 
                                                 {% elif i.status == "Completed" %}
-                                                <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
+                                                <!-- <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
                                                     data-target="#return{{i.id}}">
+                                                    Return
+                                                </button> -->
+                                                <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#exampleModal{{i.id}}" data-whatever="@fat">
                                                     Return
                                                 </button>
                                                 {% else %}
@@ -126,9 +129,46 @@ My Orders
                                                 </div>
                                             </div>
                 
+                                            <div class="modal fade" id="exampleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h5 class="modal-title" style="font-family: Poppins-Regular;" id="exampleModalLabel">Return</h5>
+                                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                      </button>
+                                                    </div>
+                                                    <form action="{% url 'returnorder' i.id %}" method="post" enctype="multipart/form-data">
+                                                        {% csrf_token %}
+                                                    <div class="modal-body" style="font-family: Poppins-Regular;">
+                                                        <div class="form-group">
+                                                          <label for="recipient-name" class="col-form-label h6">Reason:</label>
+                                                          <select class="form-control" name="reason" required>
+                                                            <option>Recieved wrong Item</option>
+                                                            <option>Damaged Product</option>
+                                                            <option>Don't like the color of the Product</option>
+                                                            <option>Quality of the product not as expected</option>
+                                                            <option>Product missing in the Packet</option>
+                                                          </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                          <label for="message-text" class="col-form-label h6">comment:</label>
+                                                          <textarea class="form-control" name="comment" id="message-text" required></textarea>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="message-text" class="col-form-label h6">Image:</label>
+                                                            <input type="file" class="form-control" name="item_img" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                      <button type="submit" class="btn btn-dark">Finish</button>
+                                                    </div>
+                                                    </form>
+                                                  </div>
+                                                </div>
+                                              </div>
                 
-                
-                                            <div class="modal fade" id="return{{i.id}}" tabindex="-1"
+                                            <!-- <div class="modal fade" id="return{{i.id}}" tabindex="-1"
                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
@@ -148,7 +188,7 @@ My Orders
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -213,3 +253,8 @@ My Orders
   </div>
 </section>
 {% endblock %}
+
+
+
+
+                  

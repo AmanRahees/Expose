@@ -6,13 +6,14 @@ from category.models import Category
 from Brand.models import Brand
 from products.forms import *
 from category.forms import *
-from Brand.forms import AddBrandForm
+from Brand.forms import *
 from products.models import *
 from orders.models import *
 from orders.forms import OrderStatus
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import never_cache
+import datetime
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
@@ -158,7 +159,7 @@ def AddCategory(request):
     else:
         form = AddCategoryForm()
     context={
-        "form":form
+        "form":form 
     }
     return render(request, 'backend/AddCategory.html', context)
 
@@ -644,5 +645,107 @@ def deleteSize(request,id):
 #--------------------Variation End-----------------#
 
 
+#---------------------Offer Management-------------#
+
+@never_cache
+@login_required(login_url='adminlogin')
+def OfferManage(request):
+    brndoff = Brand.objects.all().order_by('-brand_offer')
+    context = {
+        'brndoff':brndoff
+    }
+    return render(request, 'Product/OfferManage.html', context)
+
+def addBrandOffer(request):
+    if request.method == "POST":
+        brand_name = request.POST.get('brand_name')
+        brand_offer = request.POST.get('brand_offer')
+        brndoff = Brand.objects.get(brand_name = brand_name)
+        brndoff.brand_offer =  brand_offer
+        brndoff.save()
+    return redirect('offer_manage')
+
+def deletebrandoffer(request, id):
+    brndoff = Brand.objects.get(id=id)
+    brndoff.brand_offer = 0
+    brndoff.save()
+    messages.success(request, 'Deleted Brand offer Successfully')
+    return redirect('offer_manage')
+
+@never_cache
+@login_required(login_url='adminlogin')
+def ProductOffer(request):
+    pdtoff = ProductAttribute.objects.all().order_by('-product_offer')
+    context = {
+        'pdtoff':pdtoff
+    }
+    return render(request, 'Product/ProductOffer.html', context)
+
+def addPrdtOffer(request):
+    if request.method == "POST":
+        product_name = request.POST.get('product_name')
+        product_offer = request.POST.get('product_offer')
+        brndoff = ProductAttribute.objects.get(product_name = product_name)
+        brndoff.product_offer =  product_offer
+        brndoff.save()
+    return redirect('prdt_offer')
+
+def deletePdtoffer(request, id):
+    pdtoff = ProductAttribute.objects.get(id=id)
+    pdtoff.product_offer = 0
+    pdtoff.save()
+    messages.success(request, 'Product offer Deleted Successfully')
+    return redirect('prdt_offer')
+
+@never_cache
+@login_required(login_url='adminlogin')
+def CpnLIst(request):
+    cpn = Coupon.objects.all().order_by('valid_at')
+    if request.method == 'POST':
+        form = CouponForm(request.POST , request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('coupon')
+        else:
+            messages.info(request, 'Invalid Entry')
+            return redirect('coupon')
+    else:
+        form = CouponForm()
+    context={
+        'form':form,
+        'cpn':cpn,
+    }
+    return render(request, 'Product/Coupon.html', context)
+
+def EditCoupon(request):
+    if request.method == "POST":
+        code = request.POST.get('code')
+        offer_value = request.POST.get('offer_value')
+        valid_at = request.POST.get('valid_at')
+        cpnetz = Coupon.objects.get(code = code)
+        cpnetz.offer_value =  offer_value
+        cpnetz.valid_at =  valid_at
+        if int(cpnetz.offer_value) <= 20 and int(cpnetz.offer_value) >= 1:
+            cpnetz.save()
+        else:
+            messages.info(request, 'Offer must be 20% or below')
+    return redirect('coupon')
+
+def StatusCoupon(request,id,status):
+    cpn = Coupon.objects.get(id=id)
+    if status == 'true':  
+        cpn.active = True
+    elif status == 'false':
+        cpn.active = False
+    cpn.save()
+    return redirect('coupon')
+
+def deleteCpn(request,id):
+    cpn = Coupon.objects.filter(id=id)
+    cpn.delete()
+    return redirect('coupon')
+
+
+#---------------------Offer Management End-------------#
 
 

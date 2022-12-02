@@ -35,12 +35,18 @@ def home(request):
 def store(request):
     ctgy = Category.objects.filter(is_active=True)
     prdts = ProductAttribute.objects.filter(is_active = True,category_name__is_active=True)
+    clr = Products.objects.distinct().values('color__color','color__id','color__color_code')
+    ram = Products.objects.distinct().values('ram__ram','ram__id')
+    brand = Brand.objects.all()
     paginator = Paginator(prdts, 15)
     page = request.GET.get('page')
     paged_products = paginator.get_page(page)
     context = {
         "prdts": paged_products,
         "ctgy":ctgy,
+        "clr":clr,
+        "ram":ram,
+        "brand":brand
     }
     return render(request, 'store/shop.html', context)
 
@@ -48,13 +54,17 @@ def store(request):
 def by_category(request,category_slug):
     categories = Category.objects.get(slug=category_slug)
     prdts = ProductAttribute.objects.filter(category_name = categories, is_active = True)
+    clr = Products.objects.distinct().values('color__color','color__id','color__color_code')
+    ram = Products.objects.distinct().values('ram__ram','ram__id')
     paginator = Paginator(prdts, 15)
     page = request.GET.get('page')
     paged_products = paginator.get_page(page)
     productCount = prdts.count()
     context = {
         "prdts": paged_products,
-        "productCount": productCount
+        "productCount": productCount,
+        "clr":clr,
+        "ram":ram,
     }
     return render(request, 'store/shop.html', context)
 
@@ -132,6 +142,42 @@ def add_to_cart(request):
     print('add to cart success aayi mwonee')
     return JsonResponse({'single_product':'success'})
 
+def add_quantity(request,id):
+    current_user=request.user
+    product = Products.objects.get(id=id)
+    try:
+        cart = Cart.objects.get(cart_id= _cart_id(request))
+    except Cart.DoesNotExist:
+        cart = Cart.objects.create(cart_id =_cart_id(request))
+        cart.save()
+    if current_user.is_authenticated:
+        is_cart_item_exists = CartItem.objects.filter(cart_product__price=product.price, user=current_user).exists()
+        if is_cart_item_exists:
+            cart_item = CartItem.objects.get(cart_product=product, user=current_user)
+            cart_item.quantity += 1
+            cart_item.save()
+        else:
+            print('cart illa mwone')
+            cart_item = CartItem.objects.create(
+                cart_product = product,
+                quantity = request.GET['qty'],
+                user = current_user,
+            )
+    else:
+        is_cart_item_exists = CartItem.objects.filter(cart_product__price=product.price, cart=cart).exists()
+        if is_cart_item_exists:
+            cart_item = CartItem.objects.get(cart_product=product.id, cart=cart.id)
+            cart_item.quantity += 1 
+            cart_item.save()
+        else:
+            cart_item = CartItem.objects.create(
+                cart_product=product,
+                quantity = request.GET['qty'],
+                cart = cart,
+            )
+            cart_item.save()
+    return redirect('cart')
+
 def cart(request):
     current_user=request.user
     context={}
@@ -167,36 +213,32 @@ def delete_cartitem(request, id):
     cart_item.delete()
     return redirect('cart')
 
-def cart_update(request):
+def remove_quantity(request,id):
     current_user=request.user
-    p_id = str(request.GET['id'])
-    p_qty = request.GET['qty']
-    product = Products.objects.get(id=p_id)
-    if current_user.is_authenticated:
-        cart_item=CartItem.objects.get(user=current_user, cart_product=product)
-    else:
-        cart = Cart.objects.get(cart_id=_cart_id(request))
-        cart_item = CartItem.objects.get(cart_product=product, cart=cart)
-    cart_item.quantity = p_qty
-    cart_item.save()
-    if current_user.is_authenticated:
-        cart_items = CartItem.objects.filter(user=current_user, is_active=True)
-    else:
-        cart = Cart.objects.get(cart_id=_cart_id(request))
-        cart_items = CartItem.objects.filter(cart=cart, is_active=True)
-    total_amount = 0
-    for cart_item in cart_items:
-        total_amount += (cart_item.cart_product.price * cart_item.quantity)
-        tax = round((8 * float(total_amount))/100)
-        sub_total = total_amount + tax
-        context = {
-            'total_amount':total_amount,
-            'tax':tax,
-            'sub_total':sub_total,
-            'cart_items':cart_items,
-        }
-    t = render_to_string('Orders/cart-list.html', context)
-    return JsonResponse({'data':t})
+    product = Products.objects.get(id=id)
+    try:
+        if current_user.is_authenticated:
+            cart_item = CartItem.objects.get(cart_product=product, user=current_user)
+        else:
+            print('session')
+            cart = Cart.objects.get(cart_id =_cart_id(request))
+            print(cart,'cart kaynn')
+            cart_item = CartItem.objects.get(cart_product=product, cart=cart)
+            print(cart_item, 'cart_item kaynn')
+
+        print('if lek vanne')
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            print('quantity kurach')
+            cart_item.save()
+            print('saved')
+        else:
+            print('else is working')
+            cart_item.delete()
+            print('delete')
+    except:
+        pass
+    return redirect('cart')
 
 #---------------------Order--------------------------#
 

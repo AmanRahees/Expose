@@ -108,7 +108,6 @@ def otplogin(request):
                     is_cart_item_exists=CartItem.objects.filter(cart=cart).exists()
                     if is_cart_item_exists:
                         cart_item = CartItem.objects.filter(cart=cart)
-
                     for item in cart_item:
                         item.user = user
                         item.save()

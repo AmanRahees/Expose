@@ -62,3 +62,20 @@ class OrderItem(models.Model):
  
     def __str__(self):
         return '{} - {}'.format(self.order.id, self.order.tracking_no)
+
+Reasons = (
+        ('Recieved wrong Item', 'Recieved wrong Item'),
+        ('Damaged Product', 'Damaged Product'),
+        ("Don't like the color of the Product", "Don't like the color of the Product"),
+        ('Quality of the product not as expected', 'Quality of the product not as expected'),
+        ('Product missing in the Packet', 'Product missing in the Packet'),
+    )
+
+class Return(models.Model):
+    Order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True)
+    reason = models.CharField(max_length=200)
+    comment = models.CharField(max_length=256)
+    item_img = models.ImageField(upload_to='photos/return', max_length=256)
+
+    def __unicode__(self):
+        return self.Order

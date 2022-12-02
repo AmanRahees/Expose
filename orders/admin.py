@@ -6,3 +6,4 @@ from .models import *
 admin.site.register(useraddress)
 admin.site.register(Order)
 admin.site.register(OrderItem)
+admin.site.register(Return)

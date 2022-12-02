@@ -114,7 +114,50 @@
         </div>
         <hr>
         <div>
-            <h3><u>Reviews & Ratings</u><a href="#" class="float-right btn btn-sm btn-dark">Add Review +</a></h3>
+            <h3><u>Reviews & Ratings</u>
+                <!-- <a data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" class="float-right btn btn-sm btn-dark">
+                    Add Review +
+                </a>
+                <div class="collapse mt-2" id="collapseExample">
+                    <div class="card card-body h6">
+                      <form action="" method="post">
+                        <label class="ml-1"> Review Title:</label>
+                        <input type="text" class="form-control" placeholder="Title">
+                        <label class="ml-1 mt-2"> Review:</label>
+                        <input type="text" name="review" rows="4" class="form-control" placeholder="Review">
+                        <button class="btn btn-sm btn-dark float-right mt-2">submit</button>
+                      </form>
+                    </div>
+                  </div> -->
+                  <button type="button" class="btn btn-dark btn-sm float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">Add a Review+</button>
+                  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" style="font-family: Poppins-Regular;" id="exampleModalLabel">Leave a Review</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body" style="font-family: Poppins-Regular;">
+                          <form>
+                            <div class="form-group">
+                              <label for="recipient-name" class="col-form-label h6">Title:</label>
+                              <input type="text" class="form-control" id="recipient-name">
+                            </div>
+                            <div class="form-group">
+                              <label for="message-text" class="col-form-label h6">Review:</label>
+                              <textarea class="form-control" id="message-text"></textarea>
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-dark">Finish</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </h3>
             <div class="row mt-3">
                 <div class="col-md-5 border mx-3 py-3">
                 <h6 class="px-2"><i class="fa-solid fa-circle-user h5"></i> Aman Rahees <a href="#" class="float-right text-dark"><i class="fa-solid fa-ellipsis-vertical"></i></a></h6>
@@ -154,3 +197,4 @@
 </section>
 
 {% endblock %}
+

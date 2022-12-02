@@ -1,12 +1,223 @@
-{% extends 'home.html' %}
+{% extends 'base.html' %} 
 {% load static %}
+ {% block title %}
+  Cart page
+{%endblock%}
+
 {% block content %}
 
-<section class="p-t-23 p-b-140 mt-5">
-    <div class="container mt-3">
+  
 
-        
+
+<div class="cart_area section_padding_100 clearfix " id="cart-table">
+  <div class="container">
+    {% if not cart_items %}
+    <h2 class="text-center">Your shopping cart is Empty</h2>
+    <br>
+    <div class="text-center">
+
+        <a href="{% url 'store' %}" class="btn btn-primary">Continue Shopping</a>
     </div>
-</section>
 
-{% endblock %}
+    {% else %}
+    <div class="row">
+        <div class="col-12" >
+          <div class="cart-table clearfix">
+            <table class="table table-responsive">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                  <th>Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for cart_item in cart_items %}
+                <tr>
+                  <td class="cart_product_img d-flex align-items-center">
+                    <a href=""
+                      ><img
+                        src="{{ cart_item.product_id.pro_images.url}}"
+                        alt="Product"
+                    /></a>
+                    <div>
+                      {% for key in cart_item.product_id.productbrand.all %}
+                      <a href="{{ cart_item.product_id.get_absolute_url }}" class="link-danger" ><span class="mb-2 fw-bold">{{key.brand_name}}</span></a>
+                      {% endfor %}
+                      <h6>{{cart_item.product_id.product_name}}</h6>
+                    </div>
+                  </td>
+                    {% if cart_item.product_id.offer_price > 0 %}
+                  <td class="price">
+                    <span>₹{{cart_item.product_id.offer_price}}</span>
+                  </td>
+                  {% else %}
+                  <td class="price">
+                    <span>{{cart_item.product_id.offer_price}}</span>
+                  </td>
+                  {% endif %}
+                  
+                                      
+                    <td class="qty" >
+                        <div class="quantity">
+                        
+                           <span class="qty-minus">
+                             <!-- <a href="{% url 'remove_cart' cart_item.product_id.id %}" class="decrement-btn">
+                             <i class="fa fa-minus" aria-hidden="true"  ></i>
+                            </a> -->
+
+                                 <!-- HTMX -->
+                             <a hx-get="{% url 'remove_cart' cart_item.product_id.id %}" 
+                               hx-trigger="click" 
+                                hx-target="#target-id" 
+                                hx-swap="innerHTML">
+                             <i class="fa fa-minus" aria-hidden="true"  ></i>
+                            </a> 
+                            <!-- hx-get="/api/?action=feed" hx-trigger="load" hx-target="#app" hx-swap="innerHTML" -->
+                             <!-- <button  type="button" style="width: 20px;" class="decrement-btn"><i class="fa fa-minus" aria-hidden="true"  ></i></button>  -->
+                            </span> 
+                            <input
+                            type="number"
+                            class="qty-text"
+                            id="qty"
+                            step="1"
+                            min="1"
+                            max="99"
+                            name="quantity" 
+                            value="{{cart_item.quantitiy}}"
+                            disabled
+                            />
+                            <span class="qty-plus">
+                            <a hx-get="{% url 'add_cart' cart_item.product_id.id %}"
+                              hx-trigger="click" 
+                              hx-target="#target-id" 
+                              hx-swap="innerHTML">
+                                <i class="fa fa-plus" aria-hidden="true"></i
+                            ></a>
+                            </span>
+                        </div>
+                        </td>
+                        
+                        <td class="total_price">
+                        <span>₹ {{ cart_item.sub_total }}</span>
+                        </td>
+                    <td>
+                      {% comment %} <a
+                        href="{% url 'delete_cart' cart_item.product_id.id %}"
+                        class="btn btn-danger btn-rounded"
+                        >Remove</a
+                      >  {% endcomment %}
+                          <!-- Button trigger modal -->
+                      <button type="button" class="btn btn-danger btn-rounded" data-toggle="modal" data-target="#exampleModal{{cart_item.id}}">
+                        Remove
+                      </button>
+                    </td>
+                            
+
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModal{{cart_item.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      do you want to remove {{cart_item.product_id.product_name}}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <form action="{% url 'delete_cart' cart_item.product_id.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Remove</button>
+                      </form>
+                     
+                    </div>
+                  </div>
+                </div>
+              </div> 
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+       
+        </div>
+      </div>
+  
+      <div class="row d-flex justify-content-between  align-items-center">
+       
+        <div class="back-to-shop w-25">
+          <a href="{% url 'store' %}">Continue shooping</a>
+        </div>
+       
+        
+        <div class="col-12 col-lg-4">
+          <div class="cart-total-area mt-50 ml-5">
+            <div class="cart-page-heading">
+              <h5>Cart total</h5>
+              <p>Final info</p>
+            </div>
+  
+            <ul class="cart-total-chart">
+              <li><span>Subtotal</span> <span>₹{{total}}</span></li>
+              <li><span>delivery Charge</span> <span>₹{{delivery_charge}}</span></li>
+              <hr style="height:1px;border:none;color:#333;background-color:#333;" >
+              <li>
+                <span><strong>Total</strong></span>
+                <span><strong>₹{{grand_total}}</strong></span>
+              </li>
+            </ul>
+            <a href="{% url 'checkout' %}" class="btn karl-checkout-btn"
+              >Proceed to checkout</a
+            >
+          </div>
+        </div>
+      </div>
+
+    {% endif %}
+    
+  </div>
+</div>
+
+ {% comment %} 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  
+  console.log('note')
+  $(document).ready(function(){
+    console.log('athul')
+    
+    $('.decrement-btn').click(function (e){
+      e.preventDefault();
+      console.log("helloda");
+      
+      var_inc_value = $(this).closest('.product-data').fined('.qty-text').val();
+      var value = parseInt(inc_value, 10);
+      value = isNan(value) ? 0 : value;
+      if(value  > 1)
+      {
+        value--;
+        $(this).closest('.product-data').fined('.qty-text').val(value);
+        
+      }
+      
+      
+      
+      
+      
+    });
+  }); 
+</script>
+ 
+
+  
+{% endcomment %}
+
+
+
+{% endblock%}

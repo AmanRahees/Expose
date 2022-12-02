@@ -47,4 +47,4 @@ class AddSizeForm(forms.ModelForm):
       'size' : forms.TextInput(attrs={'class':'form-control w-75 text-light'}),
       'slug': forms.TextInput(attrs={'class':'form-control w-75 text-light'}),
       'is_acitve': forms.CheckboxInput()
-    }
+    } 
