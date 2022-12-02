@@ -123,5 +123,3 @@ def ReturnOrder(request, id):
             rorder.save()
     return redirect('myorders')
     
-def demo(request):
-    return render(request, 'Orders/checkout.html')
