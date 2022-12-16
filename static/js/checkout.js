@@ -17,7 +17,7 @@ $(document).ready(function(){
         {
             swal("Alert!", "Select an Address before proceeding!", "error");
             return false;
-        }
+        } 
         else
         {
             data = {
@@ -37,11 +37,11 @@ $(document).ready(function(){
             $.ajax({
                 method: "POST",
                 url: "/placeorder",
-                data: data,
+                data: data, 
                 success: function(responsec) {
-                    swal("Congragulations!", responsec.status, "success").then((value) => {
-                        window.location.href = '/myorders'
-                    });
+                    console.log(responsec.status);
+                    redirect_url = '/ordersuccess'
+                    window.location.href = redirect_url + '?order_number=' + responsec.tracking_no
                 }
             });
         }
@@ -110,9 +110,9 @@ $(document).ready(function(){
                                 url: "/placeorder",
                                 data: data,
                                 success: function(responsec) {
-                                    swal("Congragulations!", responsec.status, "success").then((value) => {
-                                        window.location.href = '/myorders'
-                                      });
+                                    console.log(responsec.status);
+                                    redirect_url = '/ordersuccess'
+                                    window.location.href = redirect_url + '?order_number=' + responsec.tracking_no
                                 }
                             });
                         },
@@ -132,5 +132,33 @@ $(document).ready(function(){
             
         }
     });
+
+    $('#couponbutton').click(function (e) {
+        e.preventDefault;
+        var coupon = $("[name ='coupon']").val();
+        var token = $("[name = 'csrfmiddlewaretoken']").val()
+        data = {
+            "code": coupon,
+            csrfmiddlewaretoken: token
+        }
+        $.ajax({
+            method: "POST",
+            url: "/checkout/",
+            data: data,
+            success: function (response7) {
+                console.log(response7.Status);
+                if (response7.Status == "Coupon Activated") {
+                    window.location.reload();
+                } else if (response7.Status == "Coupon changed") {
+                    window.location.reload();
+                } else {
+                    $('#msg').empty()
+                    $('#msg').html(response7.Status).fadeIn('fast').addClass('cart-styling').css('background-image', 'linear-gradient(to right, rgb(255, 0, 0), rgb(255, 255, 255)');
+
+                    $('#msg').delay(2500).fadeOut('slow');
+                }
+            }
+        })
+    })
 
 });

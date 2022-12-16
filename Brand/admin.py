@@ -8,3 +8,4 @@ class BrandAdmin(admin.ModelAdmin):
 
 admin.site.register(Brand, BrandAdmin)
 admin.site.register(Coupon)
+admin.site.register(Couponuser)

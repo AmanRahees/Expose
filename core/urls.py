@@ -13,7 +13,6 @@ urlpatterns = [
     path('Orders/', views.OrderManagement, name='Orders'),
     path('Update_Order/<int:id>', views.Update_Order, name='Update_Order'),
 
-
     path('category/', views.categoryList, name='category' ),
     path('addcategory/',views.AddCategory, name='addcategory'),
     path('editcategory/<int:id>', views.EditCategory ,name='editcategory'),
@@ -52,6 +51,8 @@ urlpatterns = [
     path('enable_subproduct/<int:id>/<str:status>/', views.enable_subproduct, name='enable_subproduct'),
     path('deletesubproduct/<int:id>/', views.deleteSubProduct, name='deletesubproduct'),
 
+    path('addImage/<int:id>', views.AddProductImage, name='add_img'),
+
     path('variations/', views.VariationList, name='variations'),
     path('addram', views.AddRam, name='addram'),
     path('enable_ram/<int:id>/<str:status>', views.enable_ram, name='enable_ram'),
@@ -61,14 +62,9 @@ urlpatterns = [
     path('enable_color/<int:id>/<str:status>', views.enable_color, name='enable_color'),
     path('deletecolor/<int:id>/', views.deleteColor, name='deletecolor'),
 
-    path('addsize', views.AddSize, name='addsize'),
-    path('enable_size/<int:id>/<str:status>', views.enable_size, name='enable_size'),
-    path('deletesize/<int:id>/', views.deleteSize, name='deletesize'),
-
-
     path('OfferManage/', views.OfferManage, name='offer_manage'),
-    path('addbrand_offer', views.addBrandOffer, name='add_boffer'),
-    path('brndoff/<int:id>', views.deletebrandoffer, name='brndoff_del'),
+    path('addbrand_offer', views.addCategoryOffer, name='add_boffer'),
+    path('ctgyoff/<int:id>', views.deleteCategoryoffer, name='ctgyoff_del'),
 
     path('product_offer/', views.ProductOffer, name='prdt_offer'),
     path('addprdt_offer', views.addPrdtOffer, name='add_pdtoffer'),
@@ -78,4 +74,8 @@ urlpatterns = [
     path('editcoupon/', views.EditCoupon, name='editcoupon'),
     path('statuscpn/<int:id>/<str:status>/', views.StatusCoupon, name='statuscpn'),
     path('deletecpn/<int:id>/', views.deleteCpn, name='deletecpn'),
+
+    path('salesreport/', views.sales_report, name='salesreport'),
+    path("salesreport_month/<int:id>",views.monthly_sales_report,name='salesreport_month'),
+    path("salesreport_year/<int:id>",views.yearly_sales_report,name='salesreport_year')
 ]

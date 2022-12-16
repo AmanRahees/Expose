@@ -51,11 +51,10 @@ class EditSubCategoryForm(forms.ModelForm):
 class AddProductForm(forms.ModelForm):
   class Meta:
     model = Products
-    fields = ["product_name","ram","size","color","price","stock","is_available"]
+    fields = ["product_name","ram","color","price","stock","is_available"]
     widgets = {
       'product_name': forms.Select(attrs={'class':'form-control text-light'}),
       'ram': forms.Select(attrs={'class':'form-control text-light'}),
-      'size': forms.Select(attrs={'class':'form-control text-light'}),
       'color': forms.Select(attrs={'class':'form-control text-light'}),
       'price': forms.NumberInput(attrs={'class':'text-light form-control active'}),
       'stock': forms.NumberInput(attrs={'class':'text-light form-control'}),

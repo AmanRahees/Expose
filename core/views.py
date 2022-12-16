@@ -13,7 +13,9 @@ from orders.forms import OrderStatus
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import never_cache
-import datetime
+from datetime import datetime,timedelta,date
+from django.db.models import Sum, Q
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
@@ -55,10 +57,88 @@ def logout_admin(request):
 @login_required(login_url='adminlogin')
 def dashboard(request):
     users = Account.objects.filter(is_superadmin = False)
-    orders = Order.objects.all().exclude(status='Completed')
+    orders = Order.objects.all().exclude(status='Completed'or 'Returned' or'Order cancelled')
+    mostpopular = Products.objects.annotate(test = Count('orderproduct')).order_by('-test')[:4]
+    count = []
+    name = []
+    for mo in mostpopular:
+        x = mo.test
+        count.append(x)
+        y = mo.product_name
+        name.append(y)
+    count1 = count[0]
+    count2 = count[1]
+    count3 = count[2]
+    count4 = count[3]
+    name1 = name[0]
+    name2 = name[1]
+    name3 = name[2]
+    name4 = name[3]
+    cod = Order.objects.filter(payment_mode = "Cash on Delivery").count()
+    razor = Order.objects.filter(payment_mode = "Paid by Razorpay").count()
+    paypal = Order.objects.filter(payment_mode = "Paid by PayPal").count()
+    total_products = ProductAttribute.objects.all().count()
+    revenue = Order.objects.all().aggregate(Sum('total_price'))
+    total_revenue = revenue['total_price__sum']
+    today = datetime.today()
+    today_date = today.strftime("%Y-%m-%d")
+    f = date(2022,9,6)
+    month = today.month
+    year = today.strftime("%Y")
+    one_week = datetime.today() - timedelta(days=7)
+    order_count_in_month = Order.objects.filter(created_at__year = year,created_at__month=month).count() 
+    order_count_in_day =Order.objects.filter(created_at__contains = today).count()
+    order_count_in_week = Order.objects.filter(created_at__gte = one_week).count()
+    today_sale = Order.objects.filter(created_at__date = today_date).count()
+    today = today.strftime("%A")
+    new_date = datetime.today() - timedelta(days = 1)
+    yester_day_sale =   Order.objects.filter(created_at__date = new_date).count()
+    yesterday = new_date.strftime("%A")
+    new_date = new_date - timedelta(days = 1)
+    day_2 = Order.objects.filter(created_at__date = new_date).count()
+    day_2_name = new_date.strftime("%A")
+    new_date = new_date - timedelta(days = 1)
+    day_3 = Order.objects.filter(created_at__date = new_date).count()
+    day_3_name = new_date.strftime("%A")
+    new_date = new_date - timedelta(days = 1)
+    day_4 = Order.objects.filter(created_at__date = new_date).count()
+    day_4_name = new_date.strftime("%A")
+    new_date = new_date - timedelta(days = 1)
+    day_5 = Order.objects.filter(created_at__date = new_date).count()
+    day_5_name = new_date.strftime("%A")
+    confirmed = Order.objects.filter(status = 'Completed').count()
+    canc_return = Order.objects.filter(Q(status = "Order cancelled") | Q(status = "Returned")).count()
     context={
         'users':users,
         'orders':orders,
+        "name1" : name1,
+        "name2" : name2,
+        "name3" : name3,
+        "name4" : name4,
+        "count1" : count1,
+        "count2" : count2,
+        "count3" : count3,
+        "count4" : count4,
+        "cod" : cod,
+        "razor" : razor,
+        "paypal" : paypal,
+        "order_count_in_month" : order_count_in_month,
+        "order_count_in_day" : order_count_in_day,
+        "order_count_in_week" : order_count_in_week,
+        "confirmed" : confirmed,
+        "canc_return" : canc_return,
+        "today_sale" : today_sale,
+        "yester_day_sale" : yester_day_sale,
+        "day_2": day_2,
+        "day_3": day_3,
+        "day_4": day_4,
+        "today" : today,
+        "yesterday" : yesterday,
+        "day_2_name" : day_2_name,
+        "day_3_name" : day_3_name,
+        "day_4_name" : day_4_name,
+        "total_revenue":total_revenue,
+        "total_products":total_products,
     }
     return render(request, 'Dashboard.html', context)
 
@@ -70,7 +150,14 @@ def dashboard(request):
 @never_cache
 @login_required(login_url='adminlogin')
 def UserManagement(request):
-    users = Account.objects.filter(is_superadmin = False)
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            users = Account.objects.filter(email__icontains = key, is_superadmin = False)
+        else:
+            return redirect('Users')
+    else:
+        users = Account.objects.filter(is_superadmin = False).order_by('-id')
     usercount = users.count()
     paginator = Paginator(users, 10)
     page = request.GET.get('page')
@@ -106,7 +193,14 @@ def deleteUser(request,id):
 @never_cache
 @login_required(login_url='adminlogin')
 def OrderManagement(request):
-    orders = Order.objects.all().order_by('-id')
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            orders = Order.objects.filter(tracking_no__icontains = key).order_by('-created_at')
+        else:
+            return redirect('Orders')
+    else:
+        orders = Order.objects.all().order_by('-id')
     ordercount = orders.count()
     paginator = Paginator(orders, 10)
     page = request.GET.get('page')
@@ -134,7 +228,14 @@ def Update_Order(request, id):
 @never_cache
 @login_required(login_url='adminlogin')
 def categoryList(request):
-    ctgy = Category.objects.all().order_by('-id')
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            ctgy = Category.objects.filter(category_name__icontains = key).order_by('-id')
+        else:
+            return redirect('category')
+    else:
+        ctgy = Category.objects.all().order_by('-id')
     ctgycount = ctgy.count()
     paginator = Paginator(ctgy, 10)
     page = request.GET.get('page')
@@ -151,10 +252,10 @@ def AddCategory(request):
     if request.method == "POST":
         form = AddCategoryForm(request.POST , request.FILES)
         if form.is_valid():
+            form.errors.as_data()
             form.save()
             return redirect('category')
         else:
-            print('error')
             return redirect('addcategory')
     else:
         form = AddCategoryForm()
@@ -211,7 +312,14 @@ def DeleteCategory(request, id):
 @never_cache
 @login_required(login_url='adminlogin')
 def SubCategoryList(request):
-    subctgy = SubCategory.objects.all().order_by('-id')
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            subctgy = SubCategory.objects.filter(subcategory_name__icontains = key).order_by('-id')
+        else:
+            return redirect('subcategory')
+    else:
+        subctgy = SubCategory.objects.all().order_by('-id')
     subctcnt = subctgy.count()
     paginator = Paginator(subctgy, 10)
     page = request.GET.get('page')
@@ -291,7 +399,14 @@ def DeleteSubCategory(request, id):
 @never_cache
 @login_required(login_url='adminlogin')
 def brandList(request):
-    brnd = Brand.objects.all().order_by('-id')
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            brnd = Brand.objects.filter(brand_name__icontains = key).order_by('-id')
+        else:
+            return redirect('brand')
+    else:
+        brnd = Brand.objects.all().order_by('-id')
     brndcount = brnd.count()
     paginator = Paginator(brnd, 7)
     page = request.GET.get('page')
@@ -364,7 +479,14 @@ def enable_brand(request,id,status):
 @never_cache
 @login_required(login_url='adminlogin')
 def ProductAttributeList(request):
-    prdts = ProductAttribute.objects.all().order_by('-id')
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            prdts = ProductAttribute.objects.filter(product_name__icontains = key).order_by('-id')
+        else:
+            return redirect('product')
+    else:
+        prdts = ProductAttribute.objects.all().order_by('-id')
     itcount = prdts.count()
     paginator = Paginator(prdts, 10)
     page = request.GET.get('page')
@@ -438,12 +560,21 @@ def enable_productAttribute(request,id,status):
 @never_cache
 @login_required(login_url='adminlogin')
 def SubProductList(request):
-    subprdts = Products.objects.all().order_by('-id')
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            subprdts = Products.objects.filter(product_name__product_name__icontains = key).order_by('-id')
+        else:
+            return redirect('subproduct')
+    else:
+        subprdts = Products.objects.all().order_by('-id')
+    spdt = subprdts.count()
     paginator = Paginator(subprdts, 10)
     page = request.GET.get('page')
     paged_products = paginator.get_page(page)
     context = {
         'subprdts':paged_products,
+        'spdt':spdt,
     }
     return render(request, 'Product/SubProduct.html', context)
 
@@ -516,7 +647,6 @@ def deleteSubProduct(request, id):
 @login_required(login_url='adminlogin')
 def VariationList(request):
     ram = Ram.objects.all().order_by('-id')
-    size = Size.objects.all().order_by('-id')
     color = Color.objects.all().order_by('-id')
     clrcnt = color.count()
     paginator = Paginator(color, 10)
@@ -524,7 +654,6 @@ def VariationList(request):
     paged_products = paginator.get_page(page)
     context = {
         'ram':ram,
-        'size':size,
         'color':paged_products,
         'clrcnt':clrcnt
     }
@@ -536,9 +665,11 @@ def AddRam(request):
     if request.method == "POST":
         form = AddRamForm(request.POST , request.FILES)
         if form.is_valid():
+            form.errors.as_data()
             form.save()
             return redirect('variations')
         else:
+            print(form.errors.as_data())
             messages.info(request, 'Ram already Added')
             return redirect('addram')
     else:
@@ -604,44 +735,6 @@ def deleteColor(request,id):
     color.delete()
     return redirect('variations')
 
-
-@never_cache
-@login_required(login_url='adminlogin')
-def AddSize(request):
-    if request.method == "POST":
-        form = AddSizeForm(request.POST , request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('variations')
-        else:
-            messages.info(request, 'Ram already Added')
-            return redirect('addsize')
-    else:
-        form = AddSizeForm()
-    context = {
-        'form': form,
-        }
-    return render(request, 'Product/AddVariation.html', context)
-
-@never_cache
-@login_required(login_url='adminlogin')
-def enable_size(request,id,status):
-    size = Size.objects.get(id=id)
-    if status == 'true':  
-        size.is_acitve = True
-    elif status == 'false':
-        size.is_acitve = False
-    size.save()
-    return redirect('variations')
-
-@never_cache
-@login_required(login_url='adminlogin')
-def deleteSize(request,id):
-    size = Size.objects.filter(id=id)
-    size.delete()
-    return redirect('variations')
-
-
 #--------------------Variation End-----------------#
 
 
@@ -650,26 +743,29 @@ def deleteSize(request,id):
 @never_cache
 @login_required(login_url='adminlogin')
 def OfferManage(request):
-    brndoff = Brand.objects.all().order_by('-brand_offer')
+    ctgyoff = Category.objects.all()
     context = {
-        'brndoff':brndoff
+        'ctgyoff':ctgyoff
     }
     return render(request, 'Product/OfferManage.html', context)
 
-def addBrandOffer(request):
+def addCategoryOffer(request):
     if request.method == "POST":
-        brand_name = request.POST.get('brand_name')
-        brand_offer = request.POST.get('brand_offer')
-        brndoff = Brand.objects.get(brand_name = brand_name)
-        brndoff.brand_offer =  brand_offer
-        brndoff.save()
+        category_name = request.POST.get('category_name')
+        category_offer = request.POST.get('category_offer')
+        if int(category_offer) >= 1 and int(category_offer) <= 80:
+            ctgyoff = Category.objects.get(category_name = category_name)
+            ctgyoff.category_offer =  category_offer
+            ctgyoff.save()
+        else:
+            messages.error(request, 'Offer must between 1% - 80%')
     return redirect('offer_manage')
 
-def deletebrandoffer(request, id):
-    brndoff = Brand.objects.get(id=id)
-    brndoff.brand_offer = 0
-    brndoff.save()
-    messages.success(request, 'Deleted Brand offer Successfully')
+def deleteCategoryoffer(request, id):
+    ctgyoff = Category.objects.get(id=id)
+    ctgyoff.category_offer = 0
+    ctgyoff.save()
+    messages.success(request, 'Deleted Category offer Successfully')
     return redirect('offer_manage')
 
 @never_cache
@@ -683,11 +779,14 @@ def ProductOffer(request):
 
 def addPrdtOffer(request):
     if request.method == "POST":
-        product_name = request.POST.get('product_name')
+        id = request.POST.get('id')
         product_offer = request.POST.get('product_offer')
-        brndoff = ProductAttribute.objects.get(product_name = product_name)
-        brndoff.product_offer =  product_offer
-        brndoff.save()
+        if int(product_offer) >= 1 and int(product_offer) <= 80:
+            pdtoff = ProductAttribute.objects.get(id=id)
+            pdtoff.product_offer =  product_offer
+            pdtoff.save()
+        else:
+            messages.error(request, 'Offer must between 1% - 80%')
     return redirect('prdt_offer')
 
 def deletePdtoffer(request, id):
@@ -730,7 +829,7 @@ def EditCoupon(request):
         else:
             messages.info(request, 'Offer must be 20% or below')
     return redirect('coupon')
-
+ 
 def StatusCoupon(request,id,status):
     cpn = Coupon.objects.get(id=id)
     if status == 'true':  
@@ -747,5 +846,71 @@ def deleteCpn(request,id):
 
 
 #---------------------Offer Management End-------------#
+
+#---------------------Sales Report--------------------#
+
+
+def sales_report(request):
+    year = datetime.now().year
+    today = datetime.today()
+    month = today.month
+    years = []
+    today_date=str(date.today())
+    if request.method == "POST":
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        val = datetime.strptime(end_date, '%Y-%m-%d')
+        end_date = val+timedelta(days=1)
+        orders = Order.objects.filter(Q(created_at__lt=end_date),Q(created_at__gte=start_date)).values('orderelate__product__product_name__product_name','orderelate__product__ram__ram','orderelate__product__color__color','orderelate__product__stock',
+        total = Sum('total_price'),).annotate(dcount=Sum('orderelate__quantity')).order_by()
+    else:
+        orders = Order.objects.filter(created_at__year=year,created_at__month=month,orderelate__product__is_available=True).values('orderelate__product__product_name__product_name','orderelate__product__ram__ram','orderelate__product__color__color','orderelate__product__stock',
+        total = Sum('total_price'),).annotate(dcount=Sum('orderelate__quantity')).order_by()
+        for i in range (10):
+            val = year-i
+            years.append(val)
+    context={
+        'orders':orders,
+        'today_date':today_date,
+        'years':years,
+    }
+    return render(request,'Report/SalesReport.html', context)  
+
+def monthly_sales_report(request, id):
+    orders = Order.objects.filter(created_at__month = id).values('orderelate__product__product_name__product_name','orderelate__product__stock',
+    total = Sum('total_price'),).annotate(dcount=Sum('orderelate__quantity')).order_by()
+    today_date=str(date.today())
+    context = {
+        'orders':orders,
+        'today_date':today_date
+    }
+    return render(request,'Report/SaleReport-table.html',context)
+
+def yearly_sales_report(request, id):
+    orders = Order.objects.filter(created_at__year = id).values('orderelate__product__product_name__product_name','orderelate__product__stock',
+    total = Sum('total_price'),).annotate(dcount=Sum('orderelate__quantity')).order_by()
+    today_date=str(date.today())
+    context = {
+        'orders':orders,
+        'today_date':today_date
+    }
+    return render(request,'Report/SaleReport-table.html',context)
+
+
+#--------------------SalesReport End------------------#
+
+#---------------------Image Gallery-------------------#
+
+def AddProductImage(request,id):
+    k = Products.objects.get(id=id)
+    if request.method == 'POST':
+        images = request.FILES ['images']
+        productImage = ProductImage.objects.create(product=k, images=images)
+        productImage.save()
+    return redirect('subproduct')
+
+#---------------------Image Gallery End-------------------#
+
+
 
 

@@ -17,9 +17,9 @@ Checkout
                     <div class="card shadow">
                         <div class="card-body">
                             {% if ads %}
-                            <h3 class="text-center">Your Addresses</h3>
+                            <h3 class="text-center"  style="font-family:Poppins-Regular ;">Your Addresses</h3>
                             {% else %}
-                            <h3 class="text-center">No Saved Address</h3>
+                            <h3 class="text-center"  style="font-family:Poppins-Regular ;">No Saved Address</h3>
                             {% endif %}
                             {% for a in ads %}
                             
@@ -29,7 +29,7 @@ Checkout
                                         <input name="test" type="radio">
                                     </a>
                                 </div>
-                                <div class="col-md-11 mx-4" style="color: #000;">
+                                <div class="col-md-11 mx-4" style="color: #444; font-family: Poppins-Medium;">
                                     {{a.name}} <br>
                                     {{a.mobile}} |
                                     {{a.user_id.email}} <br>
@@ -59,9 +59,62 @@ Checkout
         </div>
 
     <div class="col-md-5">
+        <div class="card shadow mb-4">
+            <div>
+                <div class="card-body d-flex justify-content-center align-items-center " style="gap:10px ;">
+                    <p class="h6 mt-1" style="font-family:Poppins-Regular ;">Coupon:</p>
+                    {% include 'Orders/cpn.html' %}
+                    <button type="button" class="btn btn-danger" id="couponbutton">Check</button>
+                    <button type="button" class="text-secondary mt-2" data-bs-toggle="modal" data-bs-target="#couponm">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </button>
+                    <div class="modal fade" id="couponm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Available Coupons</h5>
+                              <button type="button" class="btn-close text-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            {% if cpns %}
+                              {% for i in cpns %}
+                              <i class="fa-solid fa-circle" style="color:#222; font-size: 6px;"></i>
+                              <b class="ml-1" style="color: #222;">{{i.code}}</b>
+                              <p class="ml-3" style="color: #333;">Get {{i.offer_value}}% by applying this Coupon.
+                                <a href="" hx-get="{% url 'selcpn' i.id %}" hx-trigger="click" hx-target="#Couponchange" hx-swap="outerHTML" class="text-success">apply</a>
+                              </p><br>
+                              {% endfor %}
+                              {% else %}
+                              <p class="text-center">No Coupons Available</p>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+                {% if coupon_status == True %}
+                <div class="container">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        Code <strong>{{coupon_codes}}</strong> is activated!!
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+
+                {% endif %}
+                <div class="container mb-2">
+                    <div id="msg" class="text-light text-center" style="font-family: Poppins-Regular;">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
         <div class="card shadow">
             <div class="card-body">
-                <h5 style="color: #555;" class="text-center py-2">Order Summary</h5>
+                <h5 style="color: #555; font-family: Poppins-Regular;" class="text-center py-2">Order Summary</h5>
                 <table class="table table stripeds table-bordereds">
                     <thead>
                         <tr>
@@ -78,7 +131,7 @@ Checkout
                             </td>
                             <td>x{{prdts.quantity}}</td>
                             <td>
-                                <h6 class="text-dark">₹{{prdts.cart_product.price}}</h6>
+                                <h6 class="text-dark">₹{{prdts.cart_product.offer_price}}</h6>
                             </td>
                         </tr>
                         {% endfor %}
@@ -90,6 +143,11 @@ Checkout
                 <br>
                 <h6 class="d-flex justify-content-between container"><span>
                     Tax:</span><span>₹{{tax}}</span></h6>
+                {% if coupon_status == True %}
+                <h6 class="d-flex justify-content-between container mt-3">
+                    Coupon discount({{coup_perc}}%):<span>-₹{{coup_red}}</span>
+                </h5>
+                    {% endif %}
                 <h5 class="d-flex justify-content-between container mt-3"><span>
                     Grand Total:</span><span>₹{{grand_total}} </span></h5>
                 <input type="hidden" value="COD" name="payment_mode">
@@ -109,6 +167,9 @@ Checkout
                                 <button type="button" class="close text.-danger" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
+                            </div>
+                            <div class="modal-body">
+                               Are you sure you want to Confirm this Order?
                             </div>
                             <h6 class="mx-3"></h6>
                             <div class="modal-footer">
@@ -214,24 +275,16 @@ Checkout
                     "payment_id":orderData.id,
                     csrfmiddlewaretoken: token
                 }
-                console.log('ajaxintaada')
                 $.ajax({
                     method: "POST",
                     url: "/placeorder",
                     data: data,
                     success: function(responsec) {
-                        swal("Congragulations!", responsec.status, "success").then((value) => {
-                            window.location.href = '/myorders'
-                        });
+                        console.log(responsec.status);
+                        redirect_url = "{% url 'ordersuccess' %}"
+                        window.location.href = redirect_url + '?order_number=' + responsec.tracking_no
                     }
                 });
-            // Full available details
-            //console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-            // Show a success message within this page, e.g.
-            //const element = document.getElementById('paypal-button-container');
-            //element.innerHTML = '';
-            //element.innerHTML = '<h3>Thank you for your payment!</h3>';
-            // Or go to another URL:  actions.redirect('thank_you.html');
             
           });
         },
@@ -240,8 +293,8 @@ Checkout
           console.log(err);
         }
       }).render('#paypal-button-container');
-    // }
-    // initPayPalButton();
+    
+
   </script>
   
 {% endblock %}

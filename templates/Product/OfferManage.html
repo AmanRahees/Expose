@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Brand Offer
+Category Offer
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@ Brand Offer
 
         <ul class="nav nav-pills mb-3">
             <li class="nav-item">
-              <a href="{% url 'offer_manage' %}" class="nav-link btn-info active">Brand Offers</a>
+              <a href="{% url 'offer_manage' %}" class="nav-link btn-info active">Category Offers</a>
             </li>
             <li class="nav-item">
               <a href="{% url 'prdt_offer' %}" class="nav-link text-light" >Product Offers</a>
@@ -35,26 +35,24 @@ Brand Offer
                     <td>Sl.No</td>
                     <td>Brand</td>
                     <td>Offer value</td>
-                    <td>Time left</td>
                     <td>Action</td>
                     <td></td>
                 </tr>
             </thead>
             <tbody>
-                {% for i in brndoff %}
+                {% for i in ctgyoff %}
                 <tr class="text-center align-middle text-white">
                     <td>{{forloop.counter}}</td>
-                    <td>{{i.brand_name}}</td>
+                    <td>{{i.category_name}}</td>
                     <td>
-                      {% if i.brand_offer <=  0 %}
+                      {% if i.category_offer <=  0 %}
                       No offer 
                       {% else %}
-                      <span class="text-success">{{i.brand_offer}}%</span>
+                      <span class="text-success">{{i.category_offer}}%</span>
                       {% endif %}
                     </td>
-                    <td style="" id="demo"></td>
                     <td>
-                      {% if i.brand_offer <=  0 %}
+                      {% if i.category_offer <=  0 %}
                       <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addModal{{i.id}}" data-whatever="@fat">
                         Add +
                      </button>
@@ -65,7 +63,7 @@ Brand Offer
                       {% endif %}
                     </td>
                     <td>
-                      {% if i.brand_offer >  0 %}
+                      {% if i.category_offer >  0 %}
                       <a href="" class="text-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{i.id}}"><i class="fa-solid fa-trash"></i></a>
                       {% endif %}
                     </td>
@@ -83,7 +81,7 @@ Brand Offer
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <a href="{% url 'brndoff_del' i.id %}" class="btn btn-danger">Delete</a>
+                        <a href="{% url 'ctgyoff_del' i.id %}" class="btn btn-danger">Delete</a>
                       </div>
                     </div>
                   </div>
@@ -101,10 +99,10 @@ Brand Offer
                       <form action="{% url 'add_boffer' %}" method="post">
                         {% csrf_token %}
                         <div class="modal-body" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
-                            <label>Brand:</label>
-                            <input class="form-control mb-1 bg-dark text-light" name="brand_name" value="{{i.brand_name}}" readonly>
+                            <label>Category:</label>
+                            <input class="form-control mb-1 bg-dark text-light" name="category_name" value="{{i.category_name}}" readonly>
                             <label>Offer %:</label>
-                            <input class="form-control bg-dark text-light" name="brand_offer">
+                            <input class="form-control bg-dark text-light" type="number" maxlength="2" name="category_offer">
                         </div>
                         <div class="modal-footer">
                           <button type="submit" class="btn btn-success">Finish</button>
@@ -127,9 +125,9 @@ Brand Offer
                         {% csrf_token %}
                       <div class="modal-body" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
                           <label>Brand:</label>
-                          <input class="form-control mb-1 bg-dark text-light" name="brand_name" value="{{i.brand_name}}" readonly>
+                          <input class="form-control mb-1 bg-dark text-light" name="category_name" value="{{i.category_name}}" readonly>
                           <label>Offer %:</label>
-                          <input class="form-control bg-dark text-light" name="brand_offer" value="{{i.brand_offer}}">
+                          <input class="form-control bg-dark text-light" type="number" maxlength="2" name="category_offer" value="{{i.category_offer}}">
                       </div>
                       <div class="modal-footer">
                         <button type="submit" class="btn btn-success">Finish</button>
@@ -146,37 +144,6 @@ Brand Offer
       </div>
   </div>
 </div>
-
-<script>
-    // Set the date we're counting down to
-    var countDownDate = new Date("dec 5, 2022 15:37:25").getTime();
-    
-    // Update the count down every 1 second
-    var x = setInterval(function() {
-    
-      // Get today's date and time
-      var now = new Date().getTime();
-    
-      // Find the distance between now and the count down date
-      var distance = countDownDate - now;
-    
-      // Time calculations for days, hours, minutes and seconds
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    
-      // Display the result in the element with id="demo"
-      document.getElementById("demo").innerHTML = days + "d " + hours + "h "
-      + minutes + "m " + seconds + "s ";
-    
-      // If the count down is finished, write some text
-      if (distance < 0) {
-        clearInterval(x);
-        document.getElementById("demo").innerHTML = "EXPIRED";
-      }
-    }, 1000);
-    </script>
 
 {% endblock %}
 

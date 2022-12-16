@@ -2,51 +2,45 @@
 
 {% load static %}
 
-{% block title %}
-My Orders
-{% endblock %}
-
 {% block content %}
 
-<section class="p-t-23 p-b-140 mt-5">
-  <div class="container mt-3">
-    {% for message in messages %}
-        <div class="rounded mb-2 text-center mx-5" role="alert">
-              {{message}}
-        </div>
-    {% endfor %}
-		<div class="container">
-			<div class="bg-white rounded-lg d-block d-sm-flex border rounded">
-				
-				<nav bar class="profile-tab-nav border bg-dark p-2">
-					<div class="nav flex-column nav-pills">
-						<a class="nav-link" href="{% url 'settings' %}">
-							<i class="fa fa-user text-center"></i>
-							Profile
-						</a>
-						<a class="nav-link" href="{% url 'change_password' %}">
-							<i class="fa fa-key text-center mr-1"></i> 
-							Password
-						</a>
-						<a class="nav-link" href="{% url 'addresses' %}">
-							<i class="fa fa-home text-center"></i>
-							Addresses
-						</a>
-						<a class="nav-link active" href="{% url 'myorders' %}">
-							<i class="fa fa-tv text-center"></i> 
-							Orders
-						</a>
-						<a class="nav-link" href="{% url 'logout' %}" role="tab">
-							<!-- <i class="fa fa-bell text-center mr-1"></i>  -->
-							<i class="fa-solid fa-right-from-bracket"></i>
-							Logout
-						</a>
-					</div>
-				</nav>
+<section class="bg0 p-t-23 p-b-140 mt-5">
+	<div class="container mt-3">
 
-				{% block spage %}
-
-                <div class="py-5 ml-3 w-75">
+		<ul class="nav mb-3 cl3 flex justify-content-center" id="pills-tab" role="tablist">
+			<li class="mx-2">
+			  <a href="{% url 'settings' %}" class="btn btn-light active">
+				Profile
+			</a>
+			</li>
+			<li class="mx-2">
+				<a href="{% url 'change_password' %}" class="btn btn-light active">
+					Change Password
+				</a>
+			</li>
+			<li class="mx-2">
+				<a href="{% url 'myorders' %}" class="btn btn-dark">
+					Orders
+				</a>
+			</li>
+			<li class="mx-2">
+				<a href="{% url 'addresses' %}" class="btn btn-light active">
+					Addresses
+				</a>
+			</li>
+		  </ul>
+		  {% block dashcard %}
+					
+					{% if not orders %}
+                <div class="text-center mt-5">
+                    <div class="text-center">
+                      <img src="{% static 'images/empty-cart.png' %}" class="rounded w-50" alt="...">
+                    </div>
+                      <h2 class="mb-2">No Orders</h2>
+                      <a href="{% url 'products' %}" class="btn btn-primary mt-3 mb-5">Shop now</a>
+                  </div> 
+                {% else %}
+                <div class="py-5 ml-3">
                     <div class="container">
                         
                         <div class="row">
@@ -62,7 +56,7 @@ My Orders
                                                 
                                                     <span class="text-dark ml-1">{{items.product.product_name}}</span><small> (x{{items.quantity}})</small><br>
                                                 </a>
-                                                {% endfor %}
+                                                {% endfor %} 
                                             </div>
                 
                                             <div class="col-md-4 col-sm-12">
@@ -90,7 +84,7 @@ My Orders
                                             <div class="col-md-2 col-sm-12 d-flex align-items-center">
                                                 {% if i.status == "Order cancelled" or i.status == "Returned" %}
                 
-                                                {% elif i.status == "Completed" %}
+                                                {% elif i.status == "Completed" or i.status == "Out for Delivery" %}
                                                 <!-- <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
                                                     data-target="#return{{i.id}}">
                                                     Return
@@ -168,27 +162,7 @@ My Orders
                                                 </div>
                                               </div>
                 
-                                            <!-- <div class="modal fade" id="return{{i.id}}" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Return Order </h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Do you want to return this order?
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Close</button>
-                                                            <a href="{% url 'returnorder' i.id %}" class="btn btn-primary text-light">Return</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> -->
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -246,15 +220,12 @@ My Orders
                 </div>
 
             </div>
-        </div>
-                
-        {% endblock %}
-        </div>
-  </div>
+            {% endif %}
+			</div>
+
+			{% endblock %}
+
+	</div>
 </section>
+
 {% endblock %}
-
-
-
-
-                  

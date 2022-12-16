@@ -8,19 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	
 	<link rel="stylesheet" href="{% static 'css/style.css' %}">
-
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	</head>
 	<body>
-	<section class="mt-5">
+		<a href="{% url 'home' %}" title="Back to Home" class="float-right mr-5 fa-lg"><i class="fa-solid fa-xmark"></i></a>
+	<section class="mt-5 mb-5">
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-md-12 col-lg-10">
 					<div class="wrap d-md-flex">
-						<div class="img" style="background-image: url('/static/images/loginImg.jpg');">
+						<div class="img img-fluid" style="background-image: url('/static/images/loginImg.jpg');">
 			      </div>
 						<div class="login-wrap p-4 p-md-5">
 			      	<div class="d-flex">
@@ -38,12 +37,18 @@
                                  </div>
                          		{% endfor %}
 								
-								<div class="mb-3">
-									<label class="label" for="email">Email</label>
+								<label>Email</label>
+								<div class="mb-3 input-group form-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+									</div>
 									<input type="text" class="form-control" name="email" placeholder="example@gmail.com" required>
 								</div>
-								<div class="mb-3">
-								<label class="label" for="password">Password</label>
+								<label>Password</label>
+								<div class="mb-3 input-group form-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="fas fa-key"></i></span>
+									</div>
 								<input type="password" class="form-control" name="password" placeholder="Password" required>
 								</div>
 								<div class="form-group d-md-flex">

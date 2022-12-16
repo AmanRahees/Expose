@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import *
-from products.models import Products
+from products.models import *
 
 # Create your models here.
 
@@ -35,7 +35,7 @@ class Order(models.Model):
     district = models.CharField(max_length=50, null=False)
     city = models.CharField(max_length=50, null=False)
     pincode = models.IntegerField(null=False)
-    total_price = models.FloatField(null=False)
+    total_price = models.IntegerField(null=False)
     payment_mode = models.CharField(max_length=150, null=False)
     payment_id = models.CharField(max_length=250, null=True, blank=True)
     orderstatus = (
@@ -56,12 +56,16 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="orderelate")
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    price = models.FloatField(null=False)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name="orderproduct")
+    price = models.IntegerField(null=False)
     quantity = models.IntegerField(null=False)
  
     def __str__(self):
         return '{} - {}'.format(self.order.id, self.order.tracking_no)
+    
+class successordermod(models.Model):
+    order_id = models.CharField(max_length = 150, null = True, blank = True)
+    status = models.BooleanField(default = False, null = True, blank = True)
 
 Reasons = (
         ('Recieved wrong Item', 'Recieved wrong Item'),
@@ -72,10 +76,26 @@ Reasons = (
     )
 
 class Return(models.Model):
-    Order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True)
+    Order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, related_name='returnReason')
     reason = models.CharField(max_length=200)
     comment = models.CharField(max_length=256)
     item_img = models.ImageField(upload_to='photos/return', max_length=256)
 
     def __unicode__(self):
         return self.Order
+
+
+class ReviewRating(models.Model):
+    product = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=50, blank=True)
+    review = models.TextField(max_length=500, blank=True)
+    rating = models.FloatField()
+    ip = models.CharField(max_length=20 , blank=True)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.subject
+        

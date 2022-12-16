@@ -6,4 +6,6 @@ from .models import *
 admin.site.register(useraddress)
 admin.site.register(Order)
 admin.site.register(OrderItem)
+admin.site.register(successordermod)
 admin.site.register(Return)
+admin.site.register(ReviewRating)

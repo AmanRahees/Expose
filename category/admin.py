@@ -12,12 +12,6 @@ class RamAdmin(admin.ModelAdmin):
 class ColorAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':('color',)}
 
-class SizeAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug':('size',)}
-
-
-
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Ram, RamAdmin)
 admin.site.register(Color, ColorAdmin)
-admin.site.register(Size, SizeAdmin)

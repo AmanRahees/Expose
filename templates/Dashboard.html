@@ -57,7 +57,7 @@
             <span class="nav-link"></span>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'dashboard' %}">
+            <a class="nav-link" href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %} style="color: #fff;" {% endif %}>
               <span class="menu-icon" >
                 <i class="mdi mdi-speedometer" style="font-size: 18px;"></i>
               </span>
@@ -65,7 +65,7 @@
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'Users' %}">
+            <a class="nav-link" href="{% url 'Users' %}" {% if request.resolver_match.url_name == 'Users' %} style="color: #fff;" {% endif %}>
               <span class="menu-icon">
                 <i class="fa-solid fa-users"></i>
               </span>
@@ -73,7 +73,7 @@
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'Orders' %}">
+            <a class="nav-link" href="{% url 'Orders' %}" {% if request.resolver_match.url_name == 'Orders' %} style="color: #fff;" {% endif %}>
               <span class="menu-icon">
                 <i class="mdi mdi-table-large"></i>
               </span>
@@ -81,7 +81,7 @@
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'category' %}">
+            <a class="nav-link" href="{% url 'category' %}" {% if request.resolver_match.url_name == 'category' %} style="color: #fff;" {% endif %}>
               <span class="menu-icon">
                 <i class="mdi mdi-table-large"></i>
               </span>
@@ -90,7 +90,7 @@
           </li>
 
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'subcategory' %}">
+            <a class="nav-link" href="{% url 'subcategory' %}"  {% if request.resolver_match.url_name == 'subcategory' %} style="color: #fff;" {% endif %}>
               <span class="menu-icon">
                 <i class="mdi mdi-table-large"></i>
               </span>
@@ -99,7 +99,7 @@
           </li>
 
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'brand' %}">
+            <a class="nav-link" href="{% url 'brand' %}" {% if request.resolver_match.url_name == 'brand' %} style="color: #fff;" {% endif %}>
               <span class="menu-icon">
                 <i class="mdi mdi-table-large"></i>
               </span>
@@ -108,7 +108,7 @@
           </li>
 
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'product' %}">
+            <a class="nav-link" href="{% url 'product' %}" {% if request.resolver_match.url_name == 'product' %} style="color: #fff;" {% endif %}>
               <span class="menu-icon">
                 <i class="mdi mdi-table-large"></i>
               </span>
@@ -117,7 +117,7 @@
           </li>
 
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'subproduct' %}">
+            <a class="nav-link" href="{% url 'subproduct' %}" {% if request.resolver_match.url_name == 'subproduct' %} style="color: #fff;" {% endif %}>
               <span class="menu-icon">
                 <i class="mdi mdi-table-large"></i>
               </span>
@@ -126,15 +126,18 @@
           </li>
           
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'offer_manage' %}">
+            <a class="nav-link" href="{% url 'offer_manage' %}" {% if request.resolver_match.url_name == 'offer_manage' %} style="color: #fff;" 
+            {% elif request.resolver_match.url_name == 'prdt_offer' %} style="color: #fff;"
+            {% elif request.resolver_match.url_name == 'coupon' %} style="color: #fff;"
+            {% endif %}>
               <span class="menu-icon">
                 <i class="mdi mdi-table-large"></i>
               </span>
-              <span class="menu-title">offers & Coupons</span>
+              <span class="menu-title">Offers & Coupons</span>
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="http://www.bootstrapdash.com/demo/corona-free/jquery/documentation/documentation.html">
+            <a class="nav-link" href="{% url 'salesreport' %}" {% if request.resolver_match.url_name == 'salesreport' %} style="color: #fff;" {% endif %}>
               <span class="menu-icon">
                 <i class="mdi mdi-file-document-box text-light"></i>
               </span>
@@ -156,13 +159,7 @@
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
               <span class="mdi mdi-menu"></span>
             </button>
-            <ul class="navbar-nav w-100">
-              <li class="nav-item w-100">
-                <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
-                  <input type="text" class="form-control w-50 text-dark bg-light" placeholder="Search">
-                </form>
-              </li>
-            </ul>
+            
             <ul class="navbar-nav navbar-nav-right">
               
               <li class="nav-item dropdown">
@@ -188,13 +185,33 @@
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="row">
-              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card"  title="Total Revenue">
                 <div class="card">
+                  <div class="card-body rounded" style="background-color:#13C513;">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          <h4 class="mb-0">₹{{total_revenue}}</h4>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-danger">
+                          <i class="fa-solid fa-sack-dollar text-light"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-light font-weight-normal">Total Revenue</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card"  title="Total Users">
+                <div class="card">
+                  <a href="{% url 'Users' %}" class="text-decoration-none text-light">
                   <div class="card-body rounded" style="background-color:#00ACFC;">
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">{{users.count}}</h3>
+                          <h3 class="mb-0">{{users.count}}+</h3>
                           <!-- <p class="text-success ml-2 mb-0 font-weight-medium">new</p> -->
                         </div>
                       </div>
@@ -204,17 +221,19 @@
                         </div>
                       </div>
                     </div>
-                    <h6 class="text-secondary font-weight-normal">Users</h6>
+                    <h6 class="text-light font-weight-normal">Users</h6>
                   </div>
+                  </a>
                 </div>
               </div>
-              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card"  title="Total Pending Orders">
                 <div class="card">
+                  <a href="{% url 'Orders' %}" class="text-decoration-none text-light">
                   <div class="card-body rounded" style="background-color:#FCB000;">
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">{{orders.count}}</h3>
+                          <h3 class="mb-0">{{orders.count}}+</h3>
                           <!-- <p class="text-success ml-2 mb-0 font-weight-medium">+11%</p> -->
                         </div>
                       </div>
@@ -224,239 +243,72 @@
                         </div>
                       </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">Orders</h6>
+                    <h6 class="text-light font-weight-normal">Orders</h6>
                   </div>
+                  </a>
                 </div>
               </div>
-              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+              
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card"  title="Total Products">
                 <div class="card">
-                  <div class="card-body rounded" style="background-color:#13C513;">
-                    <div class="row">
-                      <div class="col-9">
-                        <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$12.34</h3>
-                          <p class="text-danger ml-2 mb-0 font-weight-medium">-2.4%</p>
-                        </div>
-                      </div>
-                      <div class="col-3">
-                        <div class="icon icon-box-danger">
-                          <span class="fa-solid fa-box icon-item"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <h6 class="text-muted font-weight-normal">Orders</h6>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                <div class="card">
+                  <a href="{% url 'product' %}" class="text-decoration-none text-light">
                   <div class="card-body rounded" style="background-color:#F33623;">
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$31.53</h3>
-                          <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
+                          <h3 class="mb-0">{{total_products}}+</h3>
                         </div>
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-success ">
-                          <span class="fa-solid fa-clock icon-item"></span>
+                          <span class="fa-solid fa-box icon-item"></span>
                         </div>
                       </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">Pending</h6>
+                    <h6 class="text-light font-weight-normal">Total Products</h6>
                   </div>
+                  </a>
                 </div>
               </div>
             </div>
+
             <div class="row">
-              <div class="col-md-4 grid-margin stretch-card">
+              <div class="col-lg-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Transaction History</h4>
-                    <canvas id="transaction-history" class="transaction-chart"></canvas>
-                    <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
-                      <div class="text-md-center text-xl-left">
-                        <h6 class="mb-1">Transfer to Paypal</h6>
-                        <p class="text-muted mb-0">07 Jan 2019, 09:12AM</p>
-                      </div>
-                      <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-                        <h6 class="font-weight-bold mb-0">$236</h6>
-                      </div>
-                    </div>
-                    <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
-                      <div class="text-md-center text-xl-left">
-                        <h6 class="mb-1">Tranfer to Razorpay</h6>
-                        <p class="text-muted mb-0">07 Jan 2019, 09:12AM</p>
-                      </div>
-                      <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-                        <h6 class="font-weight-bold mb-0">$593</h6>
-                      </div>
-                    </div>
+                    <h4 class="card-title">Mode of payment</h4>
+                    <canvas id="doughnutChart" style="height:250px"></canvas>
                   </div>
                 </div>
               </div>
-              <div class="col-md-8 grid-margin stretch-card">
+              <div class="col-lg-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <div class="d-flex flex-row justify-content-between">
-                      <h4 class="card-title mb-1">Open Projects</h4>
-                      <p class="text-muted mb-1">Your data status</p>
-                    </div>
-                    <div class="row">
-                      <div class="col-12">
-                        <div class="preview-list">
-                          <div class="preview-item border-bottom">
-                            <div class="preview-thumbnail">
-                              <div class="preview-icon bg-primary">
-                                <i class="mdi mdi-file-document"></i>
-                              </div>
-                            </div>
-                            <div class="preview-item-content d-sm-flex flex-grow">
-                              <div class="flex-grow">
-                                <h6 class="preview-subject">Admin dashboard design</h6>
-                                <p class="text-muted mb-0">Broadcast web app mockup</p>
-                              </div>
-                              <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                                <p class="text-muted">15 minutes ago</p>
-                                <p class="text-muted mb-0">30 tasks, 5 issues </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="preview-item border-bottom">
-                            <div class="preview-thumbnail">
-                              <div class="preview-icon bg-success">
-                                <i class="mdi mdi-cloud-download"></i>
-                              </div>
-                            </div>
-                            <div class="preview-item-content d-sm-flex flex-grow">
-                              <div class="flex-grow">
-                                <h6 class="preview-subject">Wordpress Development</h6>
-                                <p class="text-muted mb-0">Upload new design</p>
-                              </div>
-                              <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                                <p class="text-muted">1 hour ago</p>
-                                <p class="text-muted mb-0">23 tasks, 5 issues </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="preview-item border-bottom">
-                            <div class="preview-thumbnail">
-                              <div class="preview-icon bg-info">
-                                <i class="mdi mdi-clock"></i>
-                              </div>
-                            </div>
-                            <div class="preview-item-content d-sm-flex flex-grow">
-                              <div class="flex-grow">
-                                <h6 class="preview-subject">Project meeting</h6>
-                                <p class="text-muted mb-0">New project discussion</p>
-                              </div>
-                              <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                                <p class="text-muted">35 minutes ago</p>
-                                <p class="text-muted mb-0">15 tasks, 2 issues</p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="preview-item border-bottom">
-                            <div class="preview-thumbnail">
-                              <div class="preview-icon bg-danger">
-                                <i class="mdi mdi-email-open"></i>
-                              </div>
-                            </div>
-                            <div class="preview-item-content d-sm-flex flex-grow">
-                              <div class="flex-grow">
-                                <h6 class="preview-subject">Broadcast Mail</h6>
-                                <p class="text-muted mb-0">Sent release details to team</p>
-                              </div>
-                              <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                                <p class="text-muted">55 minutes ago</p>
-                                <p class="text-muted mb-0">35 tasks, 7 issues </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="preview-item">
-                            <div class="preview-thumbnail">
-                              <div class="preview-icon bg-warning">
-                                <i class="mdi mdi-chart-pie"></i>
-                              </div>
-                            </div>
-                            <div class="preview-item-content d-sm-flex flex-grow">
-                              <div class="flex-grow">
-                                <h6 class="preview-subject">UI Design</h6>
-                                <p class="text-muted mb-0">New application planning</p>
-                              </div>
-                              <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                                <p class="text-muted">50 minutes ago</p>
-                                <p class="text-muted mb-0">27 tasks, 4 issues </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <h4 class="card-title">Most sold products</h4>
+                    <canvas id="barChart" style="height:230px"></canvas>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-sm-4 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <h5>Revenue</h5>
-                    <div class="row">
-                      <div class="col-8 col-sm-12 col-xl-8 my-auto">
-                        <div class="d-flex d-sm-block d-md-flex align-items-center">
-                          <h2 class="mb-0">$32123</h2>
-                          <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
-                        </div>
-                        <h6 class="text-muted font-weight-normal">11.38% Since last month</h6>
-                      </div>
-                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
-                        <i class="icon-lg mdi mdi-codepen text-primary ml-auto"></i>
-                      </div>
+            
+              <div class="row">
+                <div class="col-lg-6 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Delivery Status's</h4>
+                      <canvas id="pieChart" style="height:250px"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Line chart</h4>
+                      <canvas id="lineChart" style="height:250px"></canvas>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-sm-4 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <h5>Sales</h5>
-                    <div class="row">
-                      <div class="col-8 col-sm-12 col-xl-8 my-auto">
-                        <div class="d-flex d-sm-block d-md-flex align-items-center">
-                          <h2 class="mb-0">$45850</h2>
-                          <p class="text-success ml-2 mb-0 font-weight-medium">+8.3%</p>
-                        </div>
-                        <h6 class="text-muted font-weight-normal"> 9.61% Since last month</h6>
-                      </div>
-                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
-                        <i class="icon-lg mdi mdi-wallet-travel text-danger ml-auto"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-4 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <h5>Purchase</h5>
-                    <div class="row">
-                      <div class="col-8 col-sm-12 col-xl-8 my-auto">
-                        <div class="d-flex d-sm-block d-md-flex align-items-center">
-                          <h2 class="mb-0">$2039</h2>
-                          <p class="text-danger ml-2 mb-0 font-weight-medium">-2.1% </p>
-                        </div>
-                        <h6 class="text-muted font-weight-normal">2.27% Since last month</h6>
-                      </div>
-                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
-                        <i class="icon-lg mdi mdi-monitor text-success ml-auto"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             {% endblock %}
          
           <!-- partial:partials/_footer.html -->
@@ -492,5 +344,481 @@
     <!-- Custom js for this page -->
     <script src="{% static 'assets/js/dashboard.js' %}"></script>
     <!-- End custom js for this page -->
+
+    <script>
+
+$(function () {
+    /* ChartJS
+     * -------
+     * Data and config for chartjs
+     */
+    'use strict';
+    var cod = "{{cod}}"
+    var razor = "{{razor}}"
+    var paypal = "{{paypal}}"
+    var count1 = "{{count1}}"
+    var count2 = "{{count2}}"
+    var count3 = "{{count3}}"
+    var count4 = "{{count4}}"
+    var name1 = "{{name1}}"
+    var name2 = "{{name2}}"
+    var name3 = "{{name3}}"
+    var name4 = "{{name4}}"
+
+    //  console.log(diff);
+    var data = {
+
+      labels: [name1, name2, name3, name4],
+      datasets: [{
+        label: 'sold units',
+        data: [count1, count2, count3, count4],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1,
+        fill: false
+      }]
+    };
+
+    
+
+
+
+    var datas = {
+
+      labels: ["{{day_3_name}}", "{{day_2_name}}", "{{yesterday}}","{{today}}"],
+      datasets: [{
+        label: 'Total order',
+        data: ["{{day_3}}", "{{day_2}}", "{{yester_day_sale}}", "{{today_sale}}"],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1,
+        fill: false
+      }]
+    };
+
+
+    
+    var multiLineData = {
+      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+      datasets: [{
+        label: 'Dataset 1',
+        data: [12, 19, 3, 5, 2, 3],
+        borderColor: [
+          '#587ce4'
+        ],
+        borderWidth: 2,
+        fill: false
+      },
+      {
+        label: 'Dataset 2',
+        data: [5, 23, 7, 12, 42, 23],
+        borderColor: [
+          '#ede190'
+        ],
+        borderWidth: 2,
+        fill: false
+      },
+      {
+        label: 'Dataset 3',
+        data: [15, 10, 21, 32, 12, 33],
+        borderColor: [
+          '#f44252'
+        ],
+        borderWidth: 2,
+        fill: false
+      }
+      ]
+    };
+    var options = {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          },
+          gridLines: {
+            color: "rgba(204, 204, 204,0.1)"
+          }
+        }],
+        xAxes: [{
+          gridLines: {
+            color: "rgba(204, 204, 204,0.1)"
+          }
+        }]
+      },
+      legend: {
+        display: false
+      },
+      elements: {
+        point: {
+          radius: 0
+        }
+      }
+    };
+
+
+    var doughnutPieData = {
+      datasets: [{
+        data: [cod, paypal, razor],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.5)',
+          'rgba(54, 162, 235, 0.5)',
+          'rgba(255, 206, 86, 0.5)',
+          'rgba(75, 192, 192, 0.5)',
+          'rgba(153, 102, 255, 0.5)',
+          'rgba(255, 159, 64, 0.5)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+      }],
+
+      // These labels appear in the legend and in the tooltips when hovering different arcs
+      labels: [
+        "COD", "PayPal", "RazorPay"
+      ]
+    };
+    var doughnutPieOptions = {
+      responsive: true,
+      animation: {
+        animateScale: true,
+        animateRotate: true
+      }
+    };
+
+
+    var confirmed = "{{confirmed}}"
+    var canc_return = "{{canc_return}}"
+
+    var doughnutPieDatas = {
+      datasets: [{
+        data: [confirmed, canc_return],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.5)',
+          'rgba(54, 162, 235, 0.5)',
+          'rgba(255, 206, 86, 0.5)',
+          'rgba(75, 192, 192, 0.5)',
+          'rgba(153, 102, 255, 0.5)',
+          'rgba(255, 159, 64, 0.5)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+      }],
+
+      // These labels appear in the legend and in the tooltips when hovering different arcs
+      labels: [
+        "Delivered", "Return/cancelled"
+      ]
+    };
+    var doughnutPieOptionss = {
+      responsive: true,
+      animation: {
+        animateScale: true,
+        animateRotate: true
+      }
+    };
+
+
+
+
+
+    var areaData = {
+      labels: ["2013", "2014", "2015", "2016", "2017"],
+      datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1,
+        fill: true, // 3: no fill
+      }]
+    };
+
+    var areaOptions = {
+      plugins: {
+        filler: {
+          propagate: true
+        }
+      },
+      scales: {
+        yAxes: [{
+          gridLines: {
+            color: "rgba(204, 204, 204,0.1)"
+          }
+        }],
+        xAxes: [{
+          gridLines: {
+            color: "rgba(204, 204, 204,0.1)"
+          }
+        }]
+      }
+    }
+
+    var multiAreaData = {
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      datasets: [{
+        label: 'Facebook',
+        data: [8, 11, 13, 15, 12, 13, 16, 15, 13, 19, 11, 14],
+        borderColor: ['rgba(255, 99, 132, 0.5)'],
+        backgroundColor: ['rgba(255, 99, 132, 0.5)'],
+        borderWidth: 1,
+        fill: true
+      },
+      {
+        label: 'Twitter',
+        data: [7, 17, 12, 16, 14, 18, 16, 12, 15, 11, 13, 9],
+        borderColor: ['rgba(54, 162, 235, 0.5)'],
+        backgroundColor: ['rgba(54, 162, 235, 0.5)'],
+        borderWidth: 1,
+        fill: true
+      },
+      {
+        label: 'Linkedin',
+        data: [6, 14, 16, 20, 12, 18, 15, 12, 17, 19, 15, 11],
+        borderColor: ['rgba(255, 206, 86, 0.5)'],
+        backgroundColor: ['rgba(255, 206, 86, 0.5)'],
+        borderWidth: 1,
+        fill: true
+      }
+      ]
+    };
+
+    var multiAreaOptions = {
+      plugins: {
+        filler: {
+          propagate: true
+        }
+      },
+      elements: {
+        point: {
+          radius: 0
+        }
+      },
+      scales: {
+        xAxes: [{
+          gridLines: {
+            display: false
+          }
+        }],
+        yAxes: [{
+          gridLines: {
+            display: false
+          }
+        }]
+      }
+    }
+
+    var scatterChartData = {
+      datasets: [{
+        label: 'First Dataset',
+        data: [{
+          x: -10,
+          y: 0
+        },
+        {
+          x: 0,
+          y: 3
+        },
+        {
+          x: -25,
+          y: 5
+        },
+        {
+          x: 40,
+          y: 5
+        }
+        ],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)'
+        ],
+        borderWidth: 1
+      },
+      {
+        label: 'Second Dataset',
+        data: [{
+          x: 10,
+          y: 5
+        },
+        {
+          x: 20,
+          y: -30
+        },
+        {
+          x: -25,
+          y: 15
+        },
+        {
+          x: -10,
+          y: 5
+        }
+        ],
+        backgroundColor: [
+          'rgba(54, 162, 235, 0.2)',
+        ],
+        borderColor: [
+          'rgba(54, 162, 235, 1)',
+        ],
+        borderWidth: 1
+      }
+      ]
+    }
+
+    var scatterChartOptions = {
+      scales: {
+        xAxes: [{
+          type: 'linear',
+          position: 'bottom',
+          gridLines: {
+            color: "rgba(204, 204, 204,0.1)"
+          }
+        }],
+        yAxes: [{
+          gridLines: {
+            color: "rgba(204, 204, 204,0.1)"
+          }
+        }]
+      }
+    }
+    // Get context with jQuery - using jQuery's .get() method.
+    if ($("#barChart").length) {
+      var barChartCanvas = $("#barChart").get(0).getContext("2d");
+      // This will get the first returned node in the jQuery collection.
+      var barChart = new Chart(barChartCanvas, {
+        type: 'bar',
+        data: data,
+        options: options
+      });
+    }
+
+    if ($("#lineChart").length) {
+      var lineChartCanvas = $("#lineChart").get(0).getContext("2d");
+      var lineChart = new Chart(lineChartCanvas, {
+        type: 'line',
+        data: datas,
+        options: options
+      });
+    }
+
+    if ($("#linechart-multi").length) {
+      var multiLineCanvas = $("#linechart-multi").get(0).getContext("2d");
+      var lineChart = new Chart(multiLineCanvas, {
+        type: 'line',
+        data: multiLineData,
+        options: options
+      });
+    }
+
+    if ($("#areachart-multi").length) {
+      var multiAreaCanvas = $("#areachart-multi").get(0).getContext("2d");
+      var multiAreaChart = new Chart(multiAreaCanvas, {
+        type: 'line',
+        data: multiAreaData,
+        options: multiAreaOptions
+      });
+    }
+
+    if ($("#doughnutChart").length) {
+      var doughnutChartCanvas = $("#doughnutChart").get(0).getContext("2d");
+      var doughnutChart = new Chart(doughnutChartCanvas, {
+        type: 'doughnut',
+        data: doughnutPieData,
+        options: doughnutPieOptions
+      });
+    }
+
+    if ($("#pieChart").length) {
+      var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
+      var pieChart = new Chart(pieChartCanvas, {
+        type: 'pie',
+        data: doughnutPieDatas,
+        options: doughnutPieOptionss
+      });
+    }
+
+    if ($("#areaChart").length) {
+      var areaChartCanvas = $("#areaChart").get(0).getContext("2d");
+      var areaChart = new Chart(areaChartCanvas, {
+        type: 'line',
+        data: areaData,
+        options: areaOptions
+      });
+    }
+
+    if ($("#scatterChart").length) {
+      var scatterChartCanvas = $("#scatterChart").get(0).getContext("2d");
+      var scatterChart = new Chart(scatterChartCanvas, {
+        type: 'scatter',
+        data: scatterChartData,
+        options: scatterChartOptions
+      });
+    }
+
+    if ($("#browserTrafficChart").length) {
+      var doughnutChartCanvas = $("#browserTrafficChart").get(0).getContext("2d");
+      var doughnutChart = new Chart(doughnutChartCanvas, {
+        type: 'doughnut',
+        data: browserTrafficData,
+        options: doughnutPieOptions
+      });
+    }
+  });
+
+    </script>
+
   </body>
 </html>

@@ -10,22 +10,24 @@ Brand
 <div class="main-panel">
   <div class="content-wrapper">
       <div class="row">
+
+        <h4 class="card-title text-warning">Brand ({{brndcount}})<a href="{% url 'addbrand' %}" class="float-right btn btn-warning">Add +</a></h4>
         
-          <div class="col-12 grid-margin">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title text-warning">Brand ({{brndcount}})<a href="{% url 'addbrand' %}" class="float-right btn btn-warning">Add +</a></h4>
+        <form action="{% url 'brand' %}" method="get">
+          <input type="text" class="form-control text-white" style="width:250px ; display: inline;" placeholder="Search"
+            name="key">
+          <button style="height:38px ;" class="btn btn-primary pl-3" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+                
                 <div class="table-responsive">
-                  <table class="table">
-                    <thead class="text-secondary">
-                      <tr class=" text-center">
-                        <th> Id </th>
-                        <th> Image </th>
-                        <th> Brand </th>
-                        <th> Visibility </th>
-                        <th> Action </th>
-                      </tr>
-                    </thead>
+                  <table class="table col-md-12 mt-3" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                    <tr class="table-dark text-center">
+                      <td>Sl.No</td>
+                      <td>Image</td>
+                      <td>Brand</td>
+                      <td>Status</td>
+                      <td>Action</td>
+                   </tr>
                     <tbody class="text-light">
                       {% for i in brnd %}
                       <tr class=" text-center">
@@ -121,7 +123,6 @@ Brand
               </div>
             </div>
           </div>
-        </div>
   
 
 {% endblock %}

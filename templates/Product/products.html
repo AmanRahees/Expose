@@ -10,15 +10,19 @@ Products
 <div class="main-panel">
   <div class="content-wrapper">
       <div class="row">
+        <h4 class="card-title text-warning">Products ({{itcount}})<a href="{% url 'addproduct' %}" class="float-right btn btn-warning mb-2">Add +</a></h4>
         
-          <div class="col-12 grid-margin">
-            <div class="card">
-              <div class="card-body">
+        <form action="{% url 'product' %}" method="get">
+          <input type="text" class="form-control text-white" style="width:250px ; display: inline;" placeholder="Search"
+            name="key">
+          <button style="height:38px ;" class="btn btn-primary pl-3" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+
                 <div class="table-responsive">
-                  <h4 class="card-title text-warning">Products ({{itcount}})<a href="{% url 'addproduct' %}" class="float-right btn btn-warning mb-2">Add +</a></h4>
-                      <table class="table">
-                        <thead class="text-secondary">
-                          <tr class="text-center">
+                  
+                  <table class="table col-md-12 mt-3" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                    <thead>
+                      <tr class="table-dark text-center">
                                 <td>Sl.No</td>
                                 <td>Product Name</td>
                                 <td>Category</td>
@@ -33,8 +37,10 @@ Products
                           <tr class=" text-center">
                               <th> {{ forloop.counter }}</th>
                               
-                              <th>{{i.product_name}}</th>
-                              <!-- <th>₹ {{i.price}}</th> -->
+                              <th>
+                                <!-- <a href="{{i.image.url}}"><img src="{{i.image.url}}" class="rounded img-fluid w-25"></a> -->
+                                {{i.product_name}}
+                              </th>
                               <th>{{i.category_name}}</th>
                               <th>{{i.subcategory_name}}</th>
                               <th>{{i.brand_name}}</th>
@@ -77,9 +83,7 @@ Products
                         </tbody>
                     </table>
                   </div>                    
-                  </div>
-                </div>
-              </div>
+                  
             </div>
             <div class="d-flex justify-content-center align-items-center">
               {% if prdts.has_other_pages %}

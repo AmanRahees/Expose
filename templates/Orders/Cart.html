@@ -23,7 +23,7 @@ Cart
     
         
         <h4 class="mt-3 p-2">Cart ({{cart_items.count}}) <span class="float-right h5">Total : ₹{{total_amount}}</span></h4>
-        <section  class="cart_area border mt-2 border-dark">
+        <section  class="cart_area border mt-2 border-secondary">
           <div class="container">
               <div class="cart_inner">
                   <div class="table-responsive">
@@ -46,13 +46,29 @@ Cart
                                         <div class="aside"><img src="{{cart_item.cart_product.product_name.image.url}}" width="60px" class="img-sm"></div>
                                     </figure>
                                     <figcaption class="info pl-3">
-                                        <a href="{{product.get_url}}" class="title text-dark">{{cart_item.cart_product.product_name}}</a>
-                                        <p class="text-muted small">{{ cart_item.cart_product.color}}<br>{{cart_item.cart_product.ram}}</p>
+                                        <a href="{% url 'productDetail' cart_item.cart_product.product_name.category_name.slug cart_item.cart_product.product_name.slug %}" class="title text-dark">{{cart_item.cart_product.product_name}}
+                                          {% if cart_item.cart_product.product_name.product_offer > 0 and cart_item.cart_product.product_name.product_offer >= cart_item.cart_product.product_name.category_name.category_offer %}
+                                          <span class="mt-1 ml-1 text-success" style="font-size: 10px;">{{cart_item.cart_product.product_name.product_offer}}% off</span>
+                                          {% elif cart_item.cart_product.product_name.category_name.category_offer > 0 and cart_item.cart_product.product_name.product_offer <= cart_item.cart_product.product_name.category_name.category_offer %}
+                                          <span class="mt-1 ml-1 text-success" style="font-size: 10px;">{{cart_item.cart_product.product_name.category_name.category_offer}}% off</span>
+                                          {% endif %}
+                                        </a>
+                                        <a href="{% url 'productDetail' cart_item.cart_product.product_name.category_name.slug cart_item.cart_product.product_name.slug %}">
+                                        <p class="cl3 small"><span class="text-dark" style="font-weight: 600;">Color :</span> {{ cart_item.cart_product.color}}<br>
+                                          <span class="text-dark" style="font-weight: 600;">Memory :</span> {{cart_item.cart_product.ram}}</p></a>
                                     </figcaption>
                                 </td>
                                 <td> 
                                     <div class="price-wrap"> 
-                                        <var class="price">₹{{cart_item.cart_product.price}}</var>
+                                      {% if  cart_item.cart_product.product_name.product_offer > 0 %}
+                                        <var class="price  text-success">₹{{cart_item.cart_product.offer_price}}</var><br>
+                                        <small class="price" style="text-decoration:line-through ;">₹{{cart_item.cart_product.price}}</small>
+                                      {% elif cart_item.cart_product.product_name.category_name.category_offer %}
+                                      <var class="price  text-success">₹{{cart_item.cart_product.offer_price}}</var><br>
+                                      <small class="price" style="text-decoration:line-through ;">₹{{cart_item.cart_product.price}}</small>
+                                      {% else %}
+                                      <var class="price">₹{{cart_item.cart_product.offer_price}}</var><br>
+                                      {% endif %}
                                     </div> 
                                 </td>
                                 <td>

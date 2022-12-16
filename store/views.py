@@ -10,7 +10,9 @@ from orders.models import *
 from orders.forms import *
 from django.core.exceptions import ObjectDoesNotExist
 from .models import *
+from Brand.models import *
 from django.core.paginator import Paginator 
+from datetime import date
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
@@ -28,17 +30,17 @@ def home(request):
     }
     return render(request, 'home.html',context)
 
-
+ 
 #-----------------------Product Page--------------------------#
 
 @never_cache 
 def store(request):
     ctgy = Category.objects.filter(is_active=True)
-    prdts = ProductAttribute.objects.filter(is_active = True,category_name__is_active=True)
-    clr = Products.objects.distinct().values('color__color','color__id','color__color_code')
-    ram = Products.objects.distinct().values('ram__ram','ram__id')
-    brand = Brand.objects.all()
-    paginator = Paginator(prdts, 15)
+    prdts = ProductAttribute.objects.filter(is_active = True,category_name__is_active=True, productrelate__is_available=True).distinct()
+    clr = Products.objects.distinct().values('color__color','color__id','color__color_code','color__slug')
+    ram = Products.objects.distinct().values('ram__ram','ram__id','ram__slug')
+    brnd = Brand.objects.filter(is_available=True)
+    paginator = Paginator(prdts, 12)
     page = request.GET.get('page')
     paged_products = paginator.get_page(page)
     context = {
@@ -46,17 +48,19 @@ def store(request):
         "ctgy":ctgy,
         "clr":clr,
         "ram":ram,
-        "brand":brand
+        "brnd":brnd,
     }
     return render(request, 'store/shop.html', context)
 
 @never_cache
 def by_category(request,category_slug):
     categories = Category.objects.get(slug=category_slug)
-    prdts = ProductAttribute.objects.filter(category_name = categories, is_active = True)
-    clr = Products.objects.distinct().values('color__color','color__id','color__color_code')
-    ram = Products.objects.distinct().values('ram__ram','ram__id')
-    paginator = Paginator(prdts, 15)
+    ctgy = Category.objects.filter(is_active=True)
+    brnd = Brand.objects.filter(is_available=True)
+    prdts = ProductAttribute.objects.filter(category_name = categories, is_active = True, productrelate__is_available=True).distinct()
+    clr = Products.objects.distinct().values('color__color','color__id','color__color_code','color__slug').distinct()
+    ram = Products.objects.distinct().values('ram__ram','ram__id','ram__slug').distinct()
+    paginator = Paginator(prdts, 12)
     page = request.GET.get('page')
     paged_products = paginator.get_page(page)
     productCount = prdts.count()
@@ -65,19 +69,24 @@ def by_category(request,category_slug):
         "productCount": productCount,
         "clr":clr,
         "ram":ram,
+        "brnd":brnd,
+        "ctgy":ctgy,
     }
     return render(request, 'store/shop.html', context)
 
+
 def productDetail(request,category_slug, product_slug):
     prdts = ProductAttribute.objects.get(slug=product_slug)
-    ram = Products.objects.filter(product_name=prdts).values('id','ram__id','ram__ram','color__id','price','stock').distinct()
-    colors = Products.objects.filter(product_name=prdts).values('color__id','color__color','color__color_code').distinct()
+    relprdts = ProductAttribute.objects.filter(category_name=prdts.category_name).exclude(product_name=prdts)
+    ram = Products.objects.filter(product_name=prdts, is_available=True).values('id','ram__id','ram__ram','color__id','price','stock').distinct()
+    colors = Products.objects.filter(product_name=prdts, is_available=True).values('color__id','color__color','color__color_code').distinct()
     images = ProductImage.objects.filter(product__product_name=prdts)
     context = {
          'prdts':prdts,
-         'ram':ram,
+         'ram':ram, 
          'colors':colors,
-         'images':images
+         'images':images,
+         'relprdts':relprdts,
     }
     return render(request, 'store/ProductView.html', context)
     
@@ -189,7 +198,13 @@ def cart(request):
             cart_items = CartItem.objects.filter(cart=cart, is_active=True).order_by('-id')
         total_amount = 0
         for cart_item in cart_items:
-            total_amount += (cart_item.cart_product.price * cart_item.quantity)
+            poff_price = round(cart_item.cart_product.price - cart_item.cart_product.price * cart_item.cart_product.product_name.product_offer /100)
+            coff_price = round(cart_item.cart_product.price - cart_item.cart_product.price * cart_item.cart_product.product_name.category_name.category_offer /100)
+            if poff_price <= coff_price:
+                total_amount += (poff_price * cart_item.quantity)
+            elif poff_price >= coff_price:
+                total_amount += (coff_price * cart_item.quantity)
+        print(total_amount)
         tax = round((6 * float(total_amount))/100)
         grand_total = total_amount + tax
         context = {
@@ -244,14 +259,65 @@ def remove_quantity(request,id):
 
 @login_required(login_url='login')
 def checkout(request):
+    if request.method == "POST":
+        code = request.POST.get('code')
+        try:
+            today = date.today()
+            value = Coupon.objects.get(code = code)
+            if not value.valid_at >= today:
+                return JsonResponse({"Status" : "Coupon is not valid currently"})
+            try:
+                test = Couponuser.objects.filter(user = request.user).exists()
+                if test:
+                    current1 = Couponuser.objects.get(user = request.user)
+                    if current1.coupon_code != code:
+                        current1.coupon_code = code
+                        current1.coupon_value = value.offer_value
+                        current1.coupon_model = value
+                        current1.save()
+                        return JsonResponse({"Status" : "Coupon changed"})
+                    return JsonResponse({"Status" : "Coupon already Entered"})
+                Couponuser.objects.create(
+                        user = request.user,
+                        coupon_model = value,
+                        coupon_code = code,
+                        coupon_value = value.offer_value   
+                    )
+            except Exception as e:
+                pass
+            return JsonResponse({"Status" : "Coupon Activated"})
+        except:
+            return JsonResponse({"Status" : "Invalid coupon"})
+    cpns = Coupon.objects.filter(active=True)
     mycart = CartItem.objects.filter(user=request.user)
     ads = useraddress.objects.filter(user_id = request.user)
     account = Account.objects.filter(email = request.user)
     total_amount = 0
     for cart_item in mycart:
-        total_amount += (cart_item.cart_product.price * cart_item.quantity)
-    tax = round((6 * float(total_amount))/100)
+        poff_price = round(cart_item.cart_product.price - cart_item.cart_product.price * cart_item.cart_product.product_name.product_offer /100)
+        coff_price = round(cart_item.cart_product.price - cart_item.cart_product.price * cart_item.cart_product.product_name.category_name.category_offer /100)
+        if poff_price <= coff_price:
+            total_amount += (poff_price * cart_item.quantity)
+        elif poff_price >= coff_price:
+            total_amount += (coff_price * cart_item.quantity)
+    tax = round((2 * float(total_amount))/100)
     grand_total = total_amount + tax
+    coup_perc = 0
+    try: 
+        coup_value = Couponuser.objects.get(user = request.user, used=False)
+        coupon_status = True
+        coup_perc = coup_value.coupon_value
+        coupon_codes = coup_value.coupon_code
+    except Exception as e:
+        coupon_codes = None
+        coupon_status = False
+        coup_perc = 0
+
+    final_total = total_amount + tax
+
+    grand_total  = int(grand_total - grand_total * int(coup_perc)/100)
+    coup_red = final_total - grand_total
+
     context = {
         'ads':ads,
         'account':account,
@@ -259,6 +325,11 @@ def checkout(request):
         'total_amount':total_amount,
         'tax':tax,
         'grand_total':grand_total,
+        'coupon_status' : coupon_status,
+        'coupon_codes' : coupon_codes,
+        'coup_perc' : coup_perc,
+        'coup_red':coup_red,
+        'cpns':cpns
     }
     return render(request, 'Orders/checkout.html', context)
 
@@ -285,6 +356,16 @@ def SelectedAddress(request, id):
     }
     return render(request, 'Orders/checkout2.html', context)
 
+@never_cache
+def SelectedCoupon(request, id):
+    cpn = Coupon.objects.get(id=id)
+    context = {
+        'cpn': cpn
+    }
+    return render(request, 'Orders/cpn.html', context)
+
+
+
 @login_required(login_url='login')
 def razorpaycheck(request):
     mycart = CartItem.objects.filter(user=request.user)
@@ -302,13 +383,19 @@ def razorpaycheck(request):
 def OrderConfirmed(request):
     return render(request, 'Orders/confirmed.html')
 
+#------------------------Filter-----------------#
+
+
+
 #--------------------------Search View-----------------------------#
 
 def Search(request):
     if 'keyword' in request.GET:
         keyword = request.GET['keyword']
         if keyword:
-            prdts = ProductAttribute.objects.order_by('-created_date').filter(Q(description__icontains=keyword)|Q(product_name__icontains=keyword))
+            prdts = ProductAttribute.objects.order_by('-created_date').filter(Q(description__icontains=keyword)|Q(product_name__icontains=keyword)
+                |Q(brand_name__brand_name__icontains=keyword)|Q(category_name__category_name__icontains=keyword)|Q(productrelate__ram__ram__icontains=keyword)
+                |Q(productrelate__color__color__icontains=keyword)).distinct()
         else:
             return redirect('products')
     context={
@@ -381,7 +468,146 @@ def deleteAddress(request, id):
     usid.delete()
     return redirect('addresses')
 
+def by_brand(request, brand_slug):
+    brand = Brand.objects.get(slug=brand_slug)
+    ctgy = Category.objects.filter(is_active=True)
+    brnd = Brand.objects.filter(is_available=True)
+    prdts = ProductAttribute.objects.filter(brand_name = brand, is_active = True, productrelate__is_available=True).distinct()
+    clr = Products.objects.distinct().values('color__color','color__id','color__color_code','color__slug')
+    ram = Products.objects.distinct().values('ram__ram','ram__id','ram__slug')
+    paginator = Paginator(prdts, 12)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    productCount = prdts.count()
+    context = {
+        "prdts": paged_products,
+        "productCount": productCount,
+        "clr":clr,
+        "ram":ram,
+        "brnd":brnd,
+        "ctgy":ctgy,
+    }
+    return render(request, 'store/shop.html', context)
 
+def by_color(request, color_slug):
+    color = Color.objects.get(slug=color_slug)
+    ctgy = Category.objects.filter(is_active=True)
+    brnd = Brand.objects.filter(is_available=True)
+    prdts = ProductAttribute.objects.filter(productrelate__color = color, is_active = True, productrelate__is_available=True).distinct()
+    clr = Products.objects.distinct().values('color__color','color__id','color__color_code','color__slug').distinct()
+    ram = Products.objects.distinct().values('ram__ram','ram__id','ram__slug').distinct()
+    paginator = Paginator(prdts, 12)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    productCount = prdts.count()
+    for i in prdts:
+        print(i.product_name)
+    context = {
+        "prdts": paged_products,
+        "productCount": productCount,
+        "clr":clr,
+        "ram":ram,
+        "brnd":brnd,
+        "ctgy":ctgy,
+    }
+    return render(request, 'store/shop.html', context)
 
+def by_ram(request, ram_slug):
+    ram = Ram.objects.get(slug=ram_slug)
+    ctgy = Category.objects.filter(is_active=True)
+    brnd = Brand.objects.filter(is_available=True)
+    prdts = ProductAttribute.objects.filter(productrelate__ram = ram, is_active = True, productrelate__is_available=True).distinct()
+    clr = Products.objects.distinct().values('color__color','color__id','color__color_code','color__slug').distinct()
+    ram = Products.objects.distinct().values('ram__ram','ram__id','ram__slug').distinct()
+    paginator = Paginator(prdts, 12)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    productCount = prdts.count()
+    for i in prdts:
+        print(i.product_name)
+    context = {
+        "prdts": paged_products,
+        "productCount": productCount,
+        "clr":clr,
+        "ram":ram,
+        "brnd":brnd,
+        "ctgy":ctgy,
+    }
+    return render(request, 'store/shop.html', context)
+
+def demo(request):
+    return render(request, 'demo.html')
+
+@never_cache
+@login_required(login_url='login')
+def wishlist(request):
+    witem = Wishlist.objects.filter(user=request.user,product__is_available=True)
+    wcount = witem.count()
+    context = {
+        'witem':witem,
+        'wcount':wcount,
+    }
+    return render(request, 'demo.html', context)
+
+def AddtoWishlist(request):
+    if request.user.is_authenticated:
+        product = Products.objects.get(id=request.GET['id'])
+        if product:
+            if Wishlist.objects.filter(user=request.user,product=product):
+                return JsonResponse({'status':"Not"})
+            else:
+                Wishlist.objects.create(user=request.user,product=product)
+                return JsonResponse({'status':"Add"})
+        else:
+            return JsonResponse({'status':"No Such Product Found"})
+    else:
+        return redirect('login')
+
+def RemoveWhishlist(request,id):
+    witem = Wishlist.objects.get(user=request.user,id=id)
+    witem.delete()
+    return redirect('wishlist')
+
+# def ReviewSubmit(request, product_id):
+#     url = request.META.get('HTTP_REFERER')
+#     if request.method == 'POST':
+#         try:
+#             reviews = ReviewRating.objects.get(user__id=request.user.id, product__id=product_id)
+#             form = ReviewForm(request.POST, instance=reviews)
+#             form.save()
+#             return redirect(url)
+#         except ReviewRating.DoesNotExist:
+#             form = ReviewForm(request.POST)
+#             if form.is_valid():
+#                 data = ReviewRating()
+#                 data.subject = form.cleaned_data['subject']
+#                 data.rating = form.cleaned_data['rating']
+#                 data.review = form.cleaned_data['review']
+#                 data.ip = request.META.get('REMOTE_ADDR')
+#                 data.product = product_id
+#                 data.user = request.user.id
+#                 data.save()
+
+# def filterdata(request):
+#     colors = request.GET.getlist('color[]')
+#     print('ki')
+#     print(colors)
+#     rams = request.GET.getlist('ram[]')
+#     brands = request.GET.getlist('brand[]')
+#     categories = request.GET.getlist('category[]')
+#     prdts = ProductAttribute.objects.all().order_by('-id')
+    
+#     if len(colors)>0:
+#         prdts = prdts.filter(productrelate__color__id__in=colors).distinct()
+#     if len(rams)>0:
+#         prdts = prdts.filter(productrelate__ram__id__in=rams).distinct()
+#     if len(brands)>0:
+#         prdts = prdts.filter(brand_name__id__in=brands).distinct()
+#     if len(categories)>0:
+#         prdts = prdts.filter(category_name__id__in=categories).distinct()
+    
+    # t=render_to_string('store/filterlist.html',{'prdts':prdts})
+    # return render(request, 'shop.html',{'prdts':'prdts'})
+    # return JsonResponse({'data':'prdts'})
 
 

@@ -4,16 +4,13 @@
 
 <div class="main-panel">
     <div class="content-wrapper">
-      <a href="{% url 'subproduct' %}" class="float-right btn btn-outline-info">Back</a>
+      <a href="{% url 'subproduct' %}" class="float-right btn btn-info">Back</a>
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="btn btn-primary nav-link active mr-2" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Memory ({{ram.count}})</button>
+              <button class="btn-primary nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Memory ({{ram.count}})</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link btn btn-success mr-2 mb-2" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Sizes ({{size.count}})</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link btn btn-info mr-2" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Colors ({{clrcnt}})</button>
+              <button class="nav-link btn-success" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Colors ({{clrcnt}})</button>
             </li>
           </ul>
           <div class="tab-content bg-dark" id="myTabContent">
@@ -72,63 +69,6 @@
                       {% endfor %}
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Sizes -->
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              <h4 class="text-warning">Size ({{size.count}})<a href="{% url 'addsize' %}" class="btn btn-warning float-right mb-2">Add+</a></h4>
-                <table class="table">
-                    <thead class="text-secondary">
-                      <tr class="text-center">
-                            <td>Sl.No</td>
-                            <td>Size</td>
-                            <td>Status</td>
-                            <td>Action</td>
-                      </tr>
-                    </thead>
-                    <tbody class="text-light">
-                      {% for i in size %}
-                      <tr class=" text-center">
-                          <th> {{ forloop.counter }}</th>
-                          <th>{{i.size}}</th>
-                          <th> 
-                              {% if i.is_acitve == True %}
-                              <a href="{% url 'enable_size' id=i.id status='false' %}" class="btn btn-outline-success py-2">Enabled</a>                             
-                              {% else %}
-                              <a href="{% url 'enable_size' id=i.id status='true' %}" class="btn btn-outline-danger py-2">Disabled</a>
-                              {% endif %}
-                          </th>
-                          <th>
-                            <button type="button" class="btn btn-outline-danger py-1 pr-1 pl-2 border border-none bg-none" data-toggle="modal" data-target="#exampleModal{{i.id}}">
-                              <i class="fa-solid fa-trash"></i>
-                            </button>
-
-              
-                            <div class="modal fade" id="exampleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Delete Size</h5>
-                                    <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    Are you sure you want to delete this Size?
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <a href="{% url 'deletesize' i.id %}" type="button" class="btn btn-danger">Delete</a>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </th>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                </table>
-
             </div>
 
             <!-- Colors -->

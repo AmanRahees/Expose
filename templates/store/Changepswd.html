@@ -2,86 +2,82 @@
 
 {% load static %}
 
-{% block title %}
-Change Password
-{% endblock %}
-
 {% block content %}
 
-<section class="p-t-23 p-b-140 mt-5">
-  <div class="container mt-3">
-    {% for message in messages %}
-        <div class="rounded mb-2 text-center mx-5" role="alert">
-              {{message}}
-        </div>
-    {% endfor %}
-		<div class="container">
-			<div class="bg-white rounded-lg d-block d-sm-flex border rounded">
-				
-				<nav bar class="profile-tab-nav border bg-dark p-2">
-					<div class="nav flex-column nav-pills">
-						<a class="nav-link " href="{% url 'settings' %}">
-							<i class="fa fa-user text-center"></i>
-							Profile
-						</a>
-						<a class="nav-link active" href="{% url 'change_password' %}">
-							<i class="fa fa-key text-center mr-1"></i> 
-							Password
-						</a>
-						<a class="nav-link" href="{% url 'addresses' %}">
-							<i class="fa fa-home text-center"></i>
-							Addresses
-						</a>
-						<a class="nav-link" href="{% url 'myorders' %}">
-							<i class="fa fa-tv text-center"></i> 
-							Orders
-						</a>
-						<a class="nav-link" href="{% url 'logout' %}" role="tab">
-							<!-- <i class="fa fa-bell text-center mr-1"></i>  -->
-							<i class="fa-solid fa-right-from-bracket"></i>
-							Logout
-						</a>
+<section class="bg0 p-t-23 p-b-140 mt-5">
+	<div class="container mt-3">
+
+		<ul class="nav mb-3 cl3 flex justify-content-center" id="pills-tab" role="tablist">
+			<li class="mx-2">
+			  <a href="{% url 'settings' %}" class="btn btn-light active">
+				Profile
+			</a>
+			</li>
+			<li class="mx-2">
+				<a href="{% url 'change_password' %}" class="btn btn-dark">
+					Change Password
+				</a>
+			</li>
+			<li class="mx-2">
+				<a href="{% url 'myorders' %}" class="btn  btn-light active">
+					Orders
+				</a>
+			</li>
+			<li class="mx-2">
+				<a href="{% url 'addresses' %}" class="btn  btn-light active">
+					Addresses
+				</a>
+			</li>
+		  </ul>
+		  {% block dashcard %}
+
+		  <div class="py-5 container">
+			
+		  <div class="container">
+			
+			<div class="row flex justify-content-center">
+			<div class="card mx-5 col-md-5">
+			
+				<div class="d-flex">
+					<div class="w-100">
+						<h3 class="my-2 text-center cl3">Change Password</h3>
 					</div>
-				</nav>
+						  
+				  </div>
+				  	<form action="{% url 'change_password' %}" method="post">
+						  {% csrf_token %}
 
-				{% block spage %}
+						  {% for message in messages %}
+						  <div class="alert-danger rounded mb-2 text-center" role="alert">
+							   {{message}}
+						   </div>
+						   {% endfor %}
+						  
+						  <div class="mb-3">
+							  <label>Current password</label>
+							  <input type="password" name="current_password" class="form-control" placeholder="Enter Your Current Password" required>
+						  </div>
+						  <div class="mb-3">
+						  <label>New Password</label>
+						  <input type="password" name="password" class="form-control" placeholder="Enter Your New Password" required>
+						  </div>
+						  <div class="mb-3">
+						  <label>Confirm new Password</label>
+						  <input type="password" name="password2" class="form-control" placeholder="Confirm Your New Password" required>
+						  </div>
+						  
+						  <div class="form-group mt-4">
+						  <button type="submit" class="form-control btn btn-primary rounded submit px-3">Sign In</button>
+						  </div>
 
-				<div class="m-5 active " id="account" role="tabpanel" aria-labelledby="account-tab">
+						</div>
+						</div>
+					</div>
 
-                    <h3 class="mb-4">Change Password</h3>
-                    <form action="{% url 'change_password' %}" method="post">
-                        {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label>Current password</label>
-                                <input type="password" name="current_password" class="form-control" placeholder="Enter Your Current Password" required>
-                            </div>
-                        </div>
-                    
-                        <div class="col-md-8">
-                            <div class="form-group"> 
-                                <label>New password</label>
-                                <input type="password" name="password" class="form-control" placeholder="Enter Your New Password" required>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label>Confirm new password</label>
-                                <input type="password" name="password2" class="form-control" placeholder="Confirm Your New Password" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary">Update</button>
-                        <a href="{% url 'settings' %}" class="btn btn-light" >Cancel</a>
-                    </div>
-                    </form>
+				</div>
 
-                </div>
-            </div>
-            {% endblock%}
-        </div>
-  </div>
+			{% endblock %}
+	</div>
 </section>
+
 {% endblock %}

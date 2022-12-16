@@ -61,7 +61,7 @@ My Orders
                     </td>
                     <td>x{{prdts.quantity}}</td>
                     <td>
-                        <h6 class="text-dark">₹{{prdts.product.price}}</h6>
+                        <h6 class="text-dark">₹{{prdts.product.offer_price}}</h6>
                     </td>
                 </tr>
                 {% endfor %}
@@ -73,10 +73,15 @@ My Orders
         <br>
         <h6 class="d-flex justify-content-between container"><span>
             Tax:</span><span>₹{{tax}}</span></h6>
+        {% if coupon_status == True %}
+        <h6 class="d-flex justify-content-between container mt-3">
+            Coupon discount({{coup_perc}}%):<span>-₹{{coup_red}}</span>
+        </h5>
+        {% endif %}
         <h5 class="d-flex justify-content-between container mt-3"><span>
             Grand Total:</span><span>₹{{orders.total_price}} </span></h5>
     </div>
-</div>
+</div> 
 </div>
 </div>
 

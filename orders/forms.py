@@ -29,3 +29,7 @@ class OrderStatus(forms.ModelForm):
         model = Order
         fields = ['status']
 
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = ReviewRating
+        fields = ['subject','review','rating']

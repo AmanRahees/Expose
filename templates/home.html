@@ -28,12 +28,14 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'vendor/daterangepicker/daterangepicker.css' %}">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{% static 'vendor/slick/slick.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/detail.css' %}">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{% static 'vendor/MagnificPopup/magnific-popup.css' %}">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.css' %}">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -62,7 +64,7 @@
 			<div class="top-bar">
 				<div class="content-topbar flex-sb-m h-full container">
 					<div class="left-top-bar">
-						Free shipping for standard order over $100
+						
 					</div>
 
 					<div class="right-top-bar flex-w h-full">
@@ -91,29 +93,39 @@
 					<div class="menu-desktop">
 						<ul class="main-menu">
 							<li>
-								<a href="{% url 'home' %}" class="text-decoration-none">Home</a>
+								<a href="{% url 'home' %}" class="text-decoration-none" {% if request.resolver_match.url_name == 'home' %} style="color: #e3b04b;" {% endif %}>
+									Home
+								</a>
 							</li>
 
 							<li>
-								<a href="{% url 'products' %}" class="text-decoration-none">Products</a>
+								<a href="{% url 'products' %}" class="text-decoration-none" {% if request.resolver_match.url_name == 'products' %} style="color: #e3b04b;" {% endif %}>
+									Products
+								</a>
 							</li>
 
 							<li>
-								<a href="" class="text-decoration-none">More</a>
-							</li>
-
-							<li>
-								<a href="" class="text-decoration-none">Contact</a>
+								{% if user.is_authenticated %}
+								<a href="{% url 'settings' %}" class="text-decoration-none" {% if request.resolver_match.url_name == 'settings' %} style="color: #e3b04b;"
+								{% elif request.resolver_match.url_name == 'change_password' %} style="color: #e3b04b;"
+								{% elif request.resolver_match.url_name == 'addresses' %} style="color: #e3b04b;"
+								{% elif request.resolver_match.url_name == 'myorders' %} style="color: #e3b04b;"
+								{% endif %}>
+									Settings
+								</a>
+								{% else %}
+								<button type="button" class="text-decoration-none text-muted disabled" title="You Must Login to Open">Settings</a>
+								{% endif %}
 							</li>
 
 							<li>
 								{% if user.is_authenticated %}
 								<ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
 									<li class="nav-item dropdown">
-										<a class="nav-link dropdown-toggle text-capitalize cl2" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{user.first_name}}</a>
+										<a class="nav-link dropdown-toggle text-capitalize cl2" style="font-family: Poppins-Medium;" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+											{{user.first_name}}</a>
 										<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
 											<form>
-												<li><a class="dropdown-item log-drop" href="{% url 'settings' %}">Settings</a></li>
 												<li><a class="dropdown-item log-drop" href="{% url 'logout' %}">Logout</a></li>
 											</form>
 										</ul>
@@ -130,17 +142,17 @@
 					
 					<div class="wrap-icon-header flex-w flex-r-m">
 						<form action="{% url 'search' %}" method="get" class="wrap-icon-header flex-w  flex-r-m">
-						<input type="text" class="border rounded px-2 py-2 w-50" name="keyword" placeholder="Search">
+						<input type="text" class="border rounded px-2 py-2 col-md-5" name="keyword" placeholder="Search">
 						<button type="submit" class="btn btn-dark p-2 px-3">
 							<i class="zmdi zmdi-search py-1"></i>
 						</button>
 						</form>
 						
 						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti cart-list" data-notify="{{cart_count}}">
-							<a href="{% url 'cart' %}"><i class="zmdi zmdi-shopping-cart cl2 hov-cl1"></i></a>
+							<a href="{% url 'cart' %}" title="Cart"><i class="zmdi zmdi-shopping-cart cl2 hov-cl1"  {% if request.resolver_match.url_name == 'cart' %} style="color: #e3b04b;" {% endif %}></i></a>
 						</div>
 
-						<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+						<a href="{% url 'wishlist' %}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="{{w_count}}" title="wishlist">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
 					</div>
@@ -186,15 +198,17 @@
 				</li>
 
 				<li>
-					<a href="{% url 'products'  %}"">Products</a>
+					<a href="{% url 'products'  %}">Products</a>
 				</li>
 
 				<li>
-					<a href="#">More</a>
-				</li>
-
-				<li>
-					<a href="#">Contact</a>
+					{% if user.is_authenticated %}
+					<a href="{% url 'settings' %}" class="text-decoration-none" >
+						Settings
+					</a>
+					{% else %}
+					<button type="button" class="text-decoration-none text-muted disabled ml-4" title="You Must Login to Open">Settings</a>
+					{% endif %}
 				</li>
 
 				<li>
@@ -204,7 +218,6 @@
 										<a class="nav-link dropdown-toggle text-capitalize text-secondary ml-4" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{user.first_name}}</a>
 										<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
 											<form>
-												<li><a class="dropdown-item log-drop" href="#">Settings</a></li>
 												<li><a class="dropdown-item log-drop" href="{% url 'logout' %}">Logout</a></li>
 											</form>
 										</ul>
@@ -240,7 +253,7 @@
 						</div>
 							
 						<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-							<a href="product.html" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+							<a href="{% url 'products' %}" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
 								Shop Now
 							</a>
 						</div>
@@ -264,7 +277,7 @@
 						</div>
 							
 						<div class="layer-slick1 animated visible-false" data-appear="slideInUp" data-delay="1600">
-							<a href="product.html" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+							<a href="{% url 'products' %}" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
 								Shop Now
 							</a>
 						</div>
@@ -366,30 +379,53 @@
 	<div class="container">
 		<div class="p-b-10">
 			<h3 class="ltext-103 cl5">
-				Popular Products
+				Latest Products
 			</h3>
 		</div>
 
 		
 		
-		<div class="row isotope-grid">
+		<div class="row isotope-grid mt-5">
+		
+			{% if not prdts %}
+				<h1 class="text-center"><span class="h3">No Results Found</span></h1>
+			{% else %}
 			{% for i in prdts %}
-			
-			<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women ">
+			<div class="col-xm-8 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women ">
 			
 			<div class="block2">
 			<div class="block2-pic hov-img0">
 			<a href="{{ i.get_url }}"><img src="{{i.image.url}}"  alt="IMG-PRODUCT"></a>
 			</div>
-			<div class="block2-txt flex-w flex-t p-t-14">
+			<div class="block2-txt flex-w flex-t p-t-14 mx-2">
 			<div class="block2-txt-child1 flex-col-l ">
 			<a href="{{ i.get_url }}" class="stext-104 text-dark font-weight-bold trans-04 js-name-b2 p-b-6">
 				{{i.product_name}}
+				{% if i.product_offer > 0 and i.product_offer >= i.category_name.category_offer %}
+				<span class="mt-1 ml-1 text-success" style="font-size: 10px;">{{i.product_offer}}% off</span>
+				{% elif i.category_name.category_offer > 0 and i.product_offer <= i.category_name.category_offer %}
+				<span class="mt-1 ml-1 text-success" style="font-size: 10px;">{{i.category_name.category_offer}}% off</span>
+				{% endif %}
 			</a>
-			<!-- <small class="font-small" style="text-decoration:line-through;">₹{{p.price}}</small> -->
-			<p>
-				<a href="{{ i.get_url }}" class=" text-success">₹{{i.productrelate.first.price}}</a>
+			{% if i.product_offer > 0 %}
+			<div class="row">
+			<p class="ml-3 mr-1">
+				<a href="{{ i.get_url }}" class=" text-success">₹{{i.productrelate.first.offer_price}}</a>
 			</p>
+			<small class="font-small mt-1" style="text-decoration:line-through;">₹{{i.productrelate.first.price}}</small>
+			</div>
+			{% elif i.category_name.category_offer > 0 %}
+			<div class="row">
+				<p class="ml-3 mr-1">
+					<a href="{{ i.get_url }}" class=" text-success">₹{{i.productrelate.first.offer_price}}</a>
+				</p>
+				<small class="font-small mt-1" style="text-decoration:line-through;">₹{{i.productrelate.first.price}}</small>
+			</div>
+			{% else %}
+			<p>
+				<a href="{{ i.get_url }}" style="color: #555;">₹{{i.productrelate.first.price}}</a>
+			</p>
+			{% endif %}
 			</div>
 			<div class="block2-txt-child2 flex-r p-t-3 mt-3">
 			<a href="#" class="btn-addwish-b2 dis-block pos-relative">
@@ -399,10 +435,10 @@
 			</div>
 			</div>
 			</div>
-		
+			
 			
 			{% endfor %}
-			
+			{% endif %}
 			</div>
 
 		<!-- Load more -->
@@ -562,7 +598,6 @@
 <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{% static 'js/checkout.js' %}"></script>
-<script src="{% static 'js/filter.js' %}"></script>
 <!--===============================================================================================-->
 <script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
 <!--===============================================================================================-->

@@ -25,8 +25,8 @@ class ProductAttribute(models.Model):
     product_name = models.CharField(max_length=200, unique=True)
     slug = models.CharField(max_length=200, unique=True)
     description = models.CharField(max_length=1024, null=True)
-    product_offer = models.IntegerField(default=0)
     image = models.ImageField(upload_to='photos/product', max_length=256, null=True, blank=True)
+    product_offer = models.IntegerField(default=0)
     category_name = models.ForeignKey(Category, on_delete=models.CASCADE)
     subcategory_name = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     brand_name  = models.ForeignKey(Brand, on_delete=models.CASCADE)
@@ -42,11 +42,10 @@ class ProductAttribute(models.Model):
 class Products(models.Model):
     product_name = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE, related_name="productrelate", blank=True, null=True)
     ram = models.ForeignKey(Ram, on_delete=models.CASCADE, null=True, blank=True)
-    size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True, blank=True)
     color = models.ForeignKey(Color, on_delete=models.CASCADE, null=True, blank=True)
     price = models.IntegerField(default=1)
     stock = models.IntegerField(default=1)
-    is_available = models.BooleanField(default=True)
+    is_available = models.BooleanField(default=True) 
     created_date = models.DateTimeField(auto_now=True)
     modified_date = models.DateTimeField(auto_now=True)
 
@@ -56,6 +55,17 @@ class Products(models.Model):
 
     def __unicode__(self):
         return self.product_name
+ 
+    def offer_price(self):
+        product_offer = round(int(self.price) - int(self.price) * int(self.product_name.product_offer) / 100)
+        category_offer = round(int(self.price) - int(self.price) * int(self.product_name.category_name.category_offer) / 100)
+        if product_offer == int(self.price) and category_offer == int(self.price):
+            return self.price
+        if product_offer <= category_offer:
+            return product_offer
+        else:
+            return category_offer
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Products,related_name="productimg", on_delete=models.CASCADE)
