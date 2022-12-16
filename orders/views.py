@@ -38,7 +38,7 @@ def placeOrder(request):
         neworder.user = request.user
         neworder.payment_mode = request.POST.get('payment_mode')
         neworder.payment_id = request.POST.get('payment_id')
-        mycart = CartItem.objects.filter(user=request.user)
+        mycart = CartItem.objects.filter(user=request.user, cart_product__is_available=True)
         total_amount = 0
         tax = 0
         for cart_item in mycart:
@@ -52,14 +52,12 @@ def placeOrder(request):
         grand_total = total_amount + tax
 
         try:
-            print('coupon try')
             coup_value = Couponuser.objects.get(user = request.user)
             coupon_status = True
             coup_perc = coup_value.coupon_value
             coupon_codes = coup_value.coupon_code
             coup_value.used = True
             coup_value.save()
-            print('cpn try saved')
         except Exception as e:
             coupon_codes = None
             coupon_status = False
@@ -72,7 +70,7 @@ def placeOrder(request):
             trackno = 'EI' + str(random.randint(1111111,9999999))
         neworder.tracking_no = trackno
         neworder.save()
-        neworderItems = CartItem.objects.filter(user=request.user)
+        neworderItems = CartItem.objects.filter(user=request.user, cart_product__is_available=True)
         for item in neworderItems:
             OrderItem.objects.create(
                 order = neworder,
@@ -87,7 +85,7 @@ def placeOrder(request):
         successordermod.objects.create(
             order_id = neworder.tracking_no
         )
-        CartItem.objects.filter(user=request.user).delete()
+        CartItem.objects.filter(user=request.user, cart_product__is_available=True).delete()
         Couponuser.objects.filter(user = request.user).delete()
         payMode =  request.POST.get('payment_mode')
         if (payMode == "Cash on Delivery"):

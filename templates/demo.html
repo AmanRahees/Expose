@@ -30,7 +30,7 @@
                                 </td>
                                 <td>
                                     <a href="{% url 'productDetail' i.product.product_name.category_name.slug i.product.product_name.slug %}" class="title cl3">
-                                        <span class="cl3 wish-item" data-id="{{i.product.id}}">{{i.product.product_name}}</span>
+                                        <span class="cl3 wish-item{{i.product.id}}" data-id="{{i.product.id}}">{{i.product.product_name}}</span>
                                         {% if i.product.product_name.product_offer > 0 and i.product.product_name.product_offer >= i.product.product_name.category_name.category_offer %}
                                         <span class="mt-1 ml-1 text-success" style="font-size: 10px;">{{i.product.product_name.product_offer}}% off</span>
                                         {% elif i.product.product_name.category_name.category_offer > 0 and i.product.product_name.product_offer <= i.product.product_name.category_name.category_offer %}
@@ -55,7 +55,7 @@
                                     </a>
                                 <td>
                                   
-                                    <button id="AddfwtoC" class="btn btn-dark" title="Add to Cart"><i class="zmdi zmdi-shopping-cart text-light"></i></button>
+                                    <button id="AddfwtoC" class="btn btn-dark cartButton" data-id="{{i.product.id}}" title="Add to Cart"><i class="zmdi zmdi-shopping-cart text-light"></i></button>
                                     
 
                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{i.id}}">

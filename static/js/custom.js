@@ -167,18 +167,18 @@ $(document).ready(function(){
 
 $(document).ready(function(){
 
-    $('#AddfwtoC').click(function (e) { 
+    $(".cartButton").on('click', function(e){
         e.preventDefault();
-        $(".wish-item").addClass("selected")
+        var tid = $(this).data('id')
+        console.log(tid)
+        $(".wish-item"+tid).addClass("selected")
         var _vm=$(this);
-        var _wId =$('.selected').data('id')
         var _qty= 1
-        console.log(_wId);
 
         $.ajax({
             url:'/add-to-cart',
                 data:{
-                    'id':_wId,
+                    'id':tid,
                     'qty':_qty,
                 },
                 dataType:'json',
@@ -194,7 +194,6 @@ $(document).ready(function(){
                     );
                 }
         });
-        
     });
 
 });

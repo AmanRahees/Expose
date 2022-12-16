@@ -192,10 +192,10 @@ def cart(request):
     context={}
     try:
         if current_user.is_authenticated:
-            cart_items = CartItem.objects.filter(user=current_user, is_active=True).order_by('-id')
+            cart_items = CartItem.objects.filter(user=current_user, cart_product__is_available=True, is_active=True).order_by('-id')
         else:
             cart = Cart.objects.get(cart_id=_cart_id(request))
-            cart_items = CartItem.objects.filter(cart=cart, is_active=True).order_by('-id')
+            cart_items = CartItem.objects.filter(cart=cart, cart_product__is_available=True, is_active=True).order_by('-id')
         total_amount = 0
         for cart_item in cart_items:
             poff_price = round(cart_item.cart_product.price - cart_item.cart_product.price * cart_item.cart_product.product_name.product_offer /100)
@@ -204,7 +204,6 @@ def cart(request):
                 total_amount += (poff_price * cart_item.quantity)
             elif poff_price >= coff_price:
                 total_amount += (coff_price * cart_item.quantity)
-        print(total_amount)
         tax = round((6 * float(total_amount))/100)
         grand_total = total_amount + tax
         context = {
@@ -289,7 +288,7 @@ def checkout(request):
         except:
             return JsonResponse({"Status" : "Invalid coupon"})
     cpns = Coupon.objects.filter(active=True)
-    mycart = CartItem.objects.filter(user=request.user)
+    mycart = CartItem.objects.filter(user=request.user,  cart_product__is_available=True)
     ads = useraddress.objects.filter(user_id = request.user)
     account = Account.objects.filter(email = request.user)
     total_amount = 0
@@ -368,7 +367,7 @@ def SelectedCoupon(request, id):
 
 @login_required(login_url='login')
 def razorpaycheck(request):
-    mycart = CartItem.objects.filter(user=request.user)
+    mycart = CartItem.objects.filter(user=request.user,  cart_product__is_available=True)
     total_amount = 0
     for cart_item in mycart:
         total_amount += (cart_item.cart_product.price * cart_item.quantity)
