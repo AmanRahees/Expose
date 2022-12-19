@@ -80,12 +80,10 @@ def productDetail(request,category_slug, product_slug):
     relprdts = ProductAttribute.objects.filter(category_name=prdts.category_name).exclude(product_name=prdts)
     ram = Products.objects.filter(product_name=prdts, is_available=True).values('id','ram__id','ram__ram','color__id','price','stock').distinct()
     colors = Products.objects.filter(product_name=prdts, is_available=True).values('color__id','color__color','color__color_code').distinct()
-    images = ProductImage.objects.filter(product__product_name=prdts)
     context = {
          'prdts':prdts,
          'ram':ram, 
          'colors':colors,
-         'images':images,
          'relprdts':relprdts,
     }
     return render(request, 'store/ProductView.html', context)
@@ -103,53 +101,41 @@ def _cart_id(request):
 def add_to_cart(request):
     current_user=request.user
     product = Products.objects.get(id=request.GET['id'])
-    try:
-        print('first try')
-        cart = Cart.objects.get(cart_id= _cart_id(request))
-        print('first try end')
-    except Cart.DoesNotExist:
-        print('first except')
-        cart = Cart.objects.create(cart_id =_cart_id(request))
-        cart.save()
-        print('first except end')
-    if current_user.is_authenticated:
-        print('User Authenticated')
-        is_cart_item_exists = CartItem.objects.filter(cart_product__price=product.price, user=current_user).exists()
-        if is_cart_item_exists:
-            print('cart item exists')
-            cart_item = CartItem.objects.get(cart_product=product, user=current_user)
-            cart_item.quantity += int(request.GET['qty'])
-            cart_item.save()
-            print('indayath sett aayi')
-        else:
-            print('cart illa mwone')
-            cart_item = CartItem.objects.create(
-                cart_product = product,
-                quantity = request.GET['qty'],
-                user = current_user,
-            )
-            print('ippam cartil add aaki')
+    if CartItem.objects.filter(user=request.user,cart_product=product): 
+      return JsonResponse({'status':"Don't Add"})
     else:
-        print('Session vech keri')
-        is_cart_item_exists = CartItem.objects.filter(cart_product__price=product.price, cart=cart).exists()
-        if is_cart_item_exists:
-            print('session cartil already ind')
-            cart_item = CartItem.objects.get(cart_product=product.id, cart=cart.id)
-            cart_item.quantity += int(request.GET['qty'])
-            cart_item.save()
-            print(cart_item.quantity)
-            print('session cartil athinte quantity kooti')
+        try:
+            cart = Cart.objects.get(cart_id= _cart_id(request))
+        except Cart.DoesNotExist:
+            cart = Cart.objects.create(cart_id =_cart_id(request))
+            cart.save()
+        if current_user.is_authenticated:
+            is_cart_item_exists = CartItem.objects.filter(cart_product__price=product.price, user=current_user).exists()
+            if is_cart_item_exists:
+                cart_item = CartItem.objects.get(cart_product=product, user=current_user)
+                cart_item.quantity += int(request.GET['qty'])
+                cart_item.save()
+            else:
+                cart_item = CartItem.objects.create(
+                    cart_product = product,
+                    quantity = request.GET['qty'],
+                    user = current_user,
+                )
         else:
-            print('session cartil  sadhanam  illa')
-            cart_item = CartItem.objects.create(
-                cart_product=product,
-                quantity = request.GET['qty'],
-                cart = cart,
-            )
-            cart_item.save()
-            print('sambavam sesssion carttil addd aakitund')
-    print('add to cart success aayi mwonee')
-    return JsonResponse({'single_product':'success'})
+            is_cart_item_exists = CartItem.objects.filter(cart_product__price=product.price, cart=cart).exists()
+            if is_cart_item_exists:
+                cart_item = CartItem.objects.get(cart_product=product.id, cart=cart.id)
+                cart_item.quantity += int(request.GET['qty'])
+                cart_item.save()
+                print(cart_item.quantity)
+            else:
+                cart_item = CartItem.objects.create(
+                    cart_product=product,
+                    quantity = request.GET['qty'],
+                    cart = cart,
+                )
+                cart_item.save()
+        return JsonResponse({'single_product':'success'})
 
 def add_quantity(request,id):
     current_user=request.user
@@ -165,25 +151,11 @@ def add_quantity(request,id):
             cart_item = CartItem.objects.get(cart_product=product, user=current_user)
             cart_item.quantity += 1
             cart_item.save()
-        else:
-            print('cart illa mwone')
-            cart_item = CartItem.objects.create(
-                cart_product = product,
-                quantity = request.GET['qty'],
-                user = current_user,
-            )
     else:
         is_cart_item_exists = CartItem.objects.filter(cart_product__price=product.price, cart=cart).exists()
         if is_cart_item_exists:
             cart_item = CartItem.objects.get(cart_product=product.id, cart=cart.id)
             cart_item.quantity += 1 
-            cart_item.save()
-        else:
-            cart_item = CartItem.objects.create(
-                cart_product=product,
-                quantity = request.GET['qty'],
-                cart = cart,
-            )
             cart_item.save()
     return redirect('cart')
 
@@ -389,6 +361,10 @@ def OrderConfirmed(request):
 #--------------------------Search View-----------------------------#
 
 def Search(request):
+    ctgy = Category.objects.filter(is_active=True)
+    clr = Products.objects.distinct().values('color__color','color__id','color__color_code','color__slug')
+    ram = Products.objects.distinct().values('ram__ram','ram__id','ram__slug')
+    brnd = Brand.objects.filter(is_available=True)
     if 'keyword' in request.GET:
         keyword = request.GET['keyword']
         if keyword:
@@ -399,6 +375,10 @@ def Search(request):
             return redirect('products')
     context={
         'prdts':prdts,
+        'ctgy':ctgy,
+        'clr':clr,
+        'ram':ram,
+        'brnd':brnd,
     }
     return render(request,'store/shop.html', context)
 
@@ -546,7 +526,7 @@ def wishlist(request):
         'witem':witem,
         'wcount':wcount,
     }
-    return render(request, 'demo.html', context)
+    return render(request, 'store/wishlist.html', context)
 
 def AddtoWishlist(request):
     if request.user.is_authenticated:

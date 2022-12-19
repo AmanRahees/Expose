@@ -743,9 +743,19 @@ def deleteColor(request,id):
 @never_cache
 @login_required(login_url='adminlogin')
 def OfferManage(request):
-    ctgyoff = Category.objects.all()
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            ctgyoff = Category.objects.filter(Q(category_name__icontains = key)|Q(category_offer__icontains = key)).order_by('-id')
+        else:
+            return redirect('coupon')
+    else:
+        ctgyoff = Category.objects.all()
+    paginator = Paginator(ctgyoff, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     context = {
-        'ctgyoff':ctgyoff
+        'ctgyoff':paged_products
     }
     return render(request, 'Product/OfferManage.html', context)
 
@@ -771,9 +781,19 @@ def deleteCategoryoffer(request, id):
 @never_cache
 @login_required(login_url='adminlogin')
 def ProductOffer(request):
-    pdtoff = ProductAttribute.objects.all().order_by('-product_offer')
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            pdtoff = ProductAttribute.objects.filter(Q(product_name__icontains = key)|Q(product_offer__icontains=key)).order_by('-product_offer')
+        else:
+            return redirect('prdt_offer')
+    else:
+        pdtoff = ProductAttribute.objects.all().order_by('-product_offer')
+    paginator = Paginator(pdtoff, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     context = {
-        'pdtoff':pdtoff
+        'pdtoff':paged_products
     }
     return render(request, 'Product/ProductOffer.html', context)
 
@@ -799,7 +819,14 @@ def deletePdtoffer(request, id):
 @never_cache
 @login_required(login_url='adminlogin')
 def CpnLIst(request):
-    cpn = Coupon.objects.all().order_by('valid_at')
+    if 'key' in request.GET:
+        key = request.GET.get('key')
+        if key:
+            cpn = Coupon.objects.filter(Q(code__icontains = key)|Q(offer_value__icontains = key)).order_by('-id')
+        else:
+            return redirect('coupon')
+    else:
+        cpn = Coupon.objects.all().order_by('-id')
     if request.method == 'POST':
         form = CouponForm(request.POST , request.FILES)
         if form.is_valid():
@@ -810,9 +837,12 @@ def CpnLIst(request):
             return redirect('coupon')
     else:
         form = CouponForm()
+    paginator = Paginator(cpn, 10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     context={
         'form':form,
-        'cpn':cpn,
+        'cpn':paged_products,
     }
     return render(request, 'Product/Coupon.html', context)
 
@@ -877,39 +907,26 @@ def sales_report(request):
     return render(request,'Report/SalesReport.html', context)  
 
 def monthly_sales_report(request, id):
-    orders = Order.objects.filter(created_at__month = id).values('orderelate__product__product_name__product_name','orderelate__product__stock',
+    orders = Order.objects.filter(created_at__month = id).values('orderelate__product__product_name__product_name','orderelate__product__ram__ram','orderelate__product__color__color','orderelate__product__stock',
     total = Sum('total_price'),).annotate(dcount=Sum('orderelate__quantity')).order_by()
     today_date=str(date.today())
     context = {
         'orders':orders,
         'today_date':today_date
     }
-    return render(request,'Report/SaleReport-table.html',context)
+    return render(request,'Report/SalesReport-table.html',context)
 
 def yearly_sales_report(request, id):
-    orders = Order.objects.filter(created_at__year = id).values('orderelate__product__product_name__product_name','orderelate__product__stock',
+    orders = Order.objects.filter(created_at__year = id).values('orderelate__product__product_name__product_name','orderelate__product__ram__ram','orderelate__product__color__color','orderelate__product__stock',
     total = Sum('total_price'),).annotate(dcount=Sum('orderelate__quantity')).order_by()
     today_date=str(date.today())
     context = {
         'orders':orders,
         'today_date':today_date
     }
-    return render(request,'Report/SaleReport-table.html',context)
+    return render(request,'Report/SalesReport-table.html',context)
 
 
-#--------------------SalesReport End------------------#
-
-#---------------------Image Gallery-------------------#
-
-def AddProductImage(request,id):
-    k = Products.objects.get(id=id)
-    if request.method == 'POST':
-        images = request.FILES ['images']
-        productImage = ProductImage.objects.create(product=k, images=images)
-        productImage.save()
-    return redirect('subproduct')
-
-#---------------------Image Gallery End-------------------#
 
 
 

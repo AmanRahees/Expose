@@ -131,10 +131,15 @@ $(document).ready(function(){
                 success:function(res){
                     $(".cart-list").text(res.totalitems);
                     _vm.attr('disabled',false);
-                    swal("Success!","Added to Cart Successfully!","success").then(function () {
-                        return true;
-                        }
-                    );
+                    if (res.status != "Don't Add"){
+                        swal("Success!","Added to Cart Successfully!","success").then(function () {
+                            location.reload();
+                            }
+                        );
+                    }
+                    else{
+                        swal("Sorry!", "Already added in Cart!", "error");
+                    }
                 }
             });
         //End
@@ -153,10 +158,12 @@ $(document).ready(function(){
             },
             success: function (response) {
                 if(response.status == 'Not'){
-                    swal("Sorry!", "Product Already in wishlist!", "error");
+                    swal("Sorry!", "Already added in wishlist!", "error");
                 }
                 else{
-                    swal("Success!","Added to wishlist!","success")
+                    swal("Success!","Added to wishlist!","success").then(function(){
+                        location.reload();
+                    })
                 }
             }
         });
@@ -188,10 +195,15 @@ $(document).ready(function(){
                 success:function(res){
                     $(".cart-list").text(res.totalitems);
                     _vm.attr('disabled',false);
-                    swal("Success!","Added to Cart Successfully!","success").then(function () {
-                        return true;
-                        }
-                    );
+                    if (res.status != "Don't Add"){
+                        swal("Success!","Added to Cart Successfully!","success").then(function () {
+                            location.reload();
+                            }
+                        );
+                    }
+                    else{
+                        swal("Sorry!", "Already added in Cart!", "error");
+                    }
                 }
         });
     });

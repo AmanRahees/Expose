@@ -20,25 +20,35 @@
                         <div class="wrap-slick3-dots"></div>
                         <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
-                        <div class="slick3 gallery-lb border border-5">
+                        <div class="slick3 gallery-lb">
                             <div class="item-slick3" data-thumb="{{prdts.image.url}}">
                                 <div class="wrap-pic-w-m pos-relative">
                                     <img id="myimage" src="{{prdts.image.url}}">
-                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04 border" href="{{prdts.image.url}}">
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.image.url}}">
                                         <i class="fa fa-expand"></i>
                                     </a>
                                 </div>
                             </div>
-                            {% for imgs in images %}
-                            <div class="item-slick3" data-thumb="{{imgs.images.url}}">
+                            {% if prdts.image_2 %}
+                            <div class="item-slick3" data-thumb="{{prdts.image_2.url}}">
                                 <div class="wrap-pic-w pos-relative">
-                                    <img src="{{imgs.images.url}}" alt="IMG-PRODUCT">
-                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04 border" href="{{imgs.images.url}}">
+                                    <img src="{{prdts.image_2.url}}" alt="IMG-PRODUCT">
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.image_2.url}}">
                                         <i class="fa fa-expand"></i>
                                     </a>
                                 </div>
                             </div>
-                           {% endfor %}
+                           {% endif %}
+                            {% if prdts.image_3 %}
+                            <div class="item-slick3" data-thumb="{{prdts.image_3.url}}">
+                                <div class="wrap-pic-w pos-relative">
+                                    <img src="{{prdts.image_3.url}}" alt="IMG-PRODUCT">
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.image_3.url}}">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>
+                           {% endif %}
                            
                         </div>
                     </div>
@@ -47,21 +57,7 @@
             
             <div class="col-md-6 col-lg-5 p-b-30">
                 <div class="p-r-50 p-t-5 p-lr-0-lg"> 
-                    {% if user.is_authenticated %}
-                    <h5><button id="addtoWishlist" class="float-right border" title="Add to wishlist" style="border-radius: 50%;">
-                            <i class="fa-regular fa-heart cl3 p-2"></i>
-                        </button>
-                    </h5>
-                    <!-- <h5><button href="" class="float-right border" title="Added in wishlist" style="border-radius: 50%;">
-                        <i class="fa-solid fa-heart text-danger p-2"></i>
-                    </button>
-                    </h5> -->
-                    {% else %}
-                    <h5><a href="{% url 'login' %}" class="float-right border disabled" title="You must Login to Add" style="border-radius: 50%;">
-                        <i class="fa-regular fa-heart cl3 p-2"></i>
-                        </a>
-                    </h5>
-                    {% endif %}
+                    
 
                     <h4 class="mtext-105 cl2 js-name-detail p-b-14 text-capitalize">
                         {{prdts.product_name}} 
@@ -110,7 +106,7 @@
 
                     {% if prdts.product_offer >= prdts.category_name.category_offer %}
                     {% if ram %}
-                    <p>Availabe Memory :</p>
+                    <p>Memory :</p>
                     <div class="d-flex w-25 mt-2 text-dark">
                         
                     {% for memory in ram %}
@@ -119,12 +115,12 @@
                     </buton>
                     {% endfor %} 
                     {%else%}
-                        <h1>test</h1>
+                        
                     {% endif %}
                     {% else %}
 
                     {% if ram %}
-                    <p>Availabe Memory :</p>
+                    <p>Memory :</p>
                     <div class="d-flex w-25 mt-2 text-dark">
                         
                     {% for memory in ram %}
@@ -133,7 +129,7 @@
                     </buton>
                     {% endfor %} 
                     {%else%}
-                        <h1>test</h1>
+                    
                     {% endif %}
                     
                     {% endif %}
@@ -145,7 +141,7 @@
 
                     <div class="input-group my-3 w-50">
                         <input type="number" min="1" value="1" class="form-control w-50 d-none" id="productQty">
-                        <div class="input-group-append">
+                        <div class="input-group-append d-flex">
                         <input type="hidden" class="product-image" value="{{prdts.image.url}}">
                         <input type="hidden" class="product-id" value="{{prdts.id}}">
                         <input type="hidden" class="product-title" value="{{prdts.product_name}}">
@@ -153,6 +149,16 @@
                         <button class="btn btn-primary btn-lg" type="button" id="addToCartBtn">
                           Add to Cart <i class="zmdi zmdi-shopping-cart"></i>
                         </button>
+
+                        {% if user.is_authenticated %}
+                        <button id="addtoWishlist" class="btn btn-secondary active btn-lg ml-2 text-light" title="Add to wishlist">
+                                Add to wishlist <i class="fa-solid fa-heart"></i>
+                        </button>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-secondary active btn-lg ml-2 text-light" title="You must Login to Add">
+                            Add to wishlist <i class="fa-solid fa-heart"></i>
+                        </a>
+                        {% endif %}
 
                         </div>
                     </div>

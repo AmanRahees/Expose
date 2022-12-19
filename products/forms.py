@@ -6,12 +6,14 @@ from .models import *
 class AddProductAttributeForm(forms.ModelForm):
   class Meta:
     model = ProductAttribute
-    fields = ["product_name","slug","description","image","category_name","subcategory_name","brand_name","is_active"]
+    fields = ["product_name","slug","description","image","image_2","image_3","category_name","subcategory_name","brand_name","is_active"]
     widgets = {
       'product_name':forms.TextInput(attrs={'class':'text-light form-control'}),
       'slug':forms.TextInput(attrs={'class':'text-light form-control'}),
       'description': forms.Textarea(attrs={'class':'form-control'}),
       'image': forms.FileInput(attrs={'class':'form-control'}),
+      'image_2': forms.FileInput(attrs={'class':'form-control'}),
+      'image_3': forms.FileInput(attrs={'class':'form-control'}),
       'category_name':forms.Select(attrs={'class':'text-light form-control'}),
       'subcategory_name':forms.Select(attrs={'class':'text-light form-control'}),
       'brand_name':forms.Select(attrs={'class':'text-light form-control'}),
@@ -28,6 +30,8 @@ class EditProductAttributeForm(forms.ModelForm):
         'slug':forms.TextInput(attrs={'class':'text-light form-control'}),
         'description': forms.Textarea(attrs={'class':'form-control'}),
         'image': forms.FileInput(attrs={'class':'form-control'}),
+        'image_2': forms.FileInput(attrs={'class':'form-control'}),
+        'image_3': forms.FileInput(attrs={'class':'form-control'}),
       }
 
 

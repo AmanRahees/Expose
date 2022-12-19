@@ -51,8 +51,6 @@ urlpatterns = [
     path('enable_subproduct/<int:id>/<str:status>/', views.enable_subproduct, name='enable_subproduct'),
     path('deletesubproduct/<int:id>/', views.deleteSubProduct, name='deletesubproduct'),
 
-    path('addImage/<int:id>', views.AddProductImage, name='add_img'),
-
     path('variations/', views.VariationList, name='variations'),
     path('addram', views.AddRam, name='addram'),
     path('enable_ram/<int:id>/<str:status>', views.enable_ram, name='enable_ram'),

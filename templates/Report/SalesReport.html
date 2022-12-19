@@ -161,7 +161,7 @@ Sales Report
                     {% for year in years %}
               
                     <a class="dropdown-item text-white"
-                    hx-get=""
+                    hx-get="{% url 'salesreport_year' year %}"
                     hx-trigger="click"
                     hx-target="#slaes-report-table"
                     hx-swap="innerHTML"

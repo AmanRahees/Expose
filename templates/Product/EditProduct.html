@@ -37,9 +37,22 @@ Edit Product
                         </div>
 
                         <div class="mb-3">
-                          <label>Product Image :</label>
+                          <label>Image :</label>
                           <a href="{{ prdts.image.url }}"><img src="{{ prdts.image.url }}" width="150" height="200"></a>
                       </div>
+                      {% if prdts.image_2 %}
+                        <div class="mb-3">
+                          <label>Image 2 :</label>
+                          <a href="{{ prdts.image_2.url }}"><img src="{{ prdts.image_2.url }}" width="150" height="200"></a>
+                      </div>
+                      {% endif %}
+
+                      {% if prdts.image_3 %}
+                        <div class="mb-3">
+                          <label>Image 3 :</label>
+                          <a href="{{ prdts.image_3.url }}"><img src="{{ prdts.image_3.url }}" width="150" height="200"></a>
+                      </div>
+                      {% endif %}
                         
                         <button type="submit" class="btn btn-success">Update</button>
                     </form>

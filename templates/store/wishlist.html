@@ -1,0 +1,118 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block title %}
+Wishlist
+{% endblock %}
+
+{% block content %}
+
+<section class="bg0 p-t-23 p-b-140 mt-5">
+	<div class="container mt-3">
+        {% if wcount != 0 %}
+        <h4 class="mt-3 cl3 ml-5 mb-3 p-2">wishlist ({{wcount}})</h4>
+        
+        <section class="wishlist-section section-b-space">
+            <div class="container">
+                <div class="row flex justify-content-center">
+                    <div class="col-sm-10 card">
+                        <table class="table cart-table table-responsive-xs">
+                            <thead>
+                            <tr class="table-head">
+                                <th scope="col"></th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in witem %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'productDetail' i.product.product_name.category_name.slug i.product.product_name.slug %}"><img src="{{i.product.product_name.image.url}}" width="60px" alt=""></a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'productDetail' i.product.product_name.category_name.slug i.product.product_name.slug %}" class="title cl3">
+                                        <span class="cl3 wish-item{{i.product.id}}" data-id="{{i.product.id}}">{{i.product.product_name}}</span>
+                                        {% if i.product.product_name.product_offer > 0 and i.product.product_name.product_offer >= i.product.product_name.category_name.category_offer %}
+                                        <span class="mt-1 ml-1 text-success" style="font-size: 10px;">{{i.product.product_name.product_offer}}% off</span>
+                                        {% elif i.product.product_name.category_name.category_offer > 0 and i.product.product_name.product_offer <= i.product.product_name.category_name.category_offer %}
+                                        <span class="mt-1 ml-1 text-success" style="font-size: 10px;">{{i.product.product_name.category_name.category_offer}} off</span>
+                                        {% endif %}
+                                      </a>
+                                      <a href="{% url 'productDetail' i.product.product_name.category_name.slug i.product.product_name.slug %}">
+                                      <p class="cl3 small"><span class="text-dark" style="font-weight: 600;">Color :</span> {{ i.product.color}}<br>
+                                        <span class="text-dark" style="font-weight: 600;">Memory :</span> {{i.product.ram}}</p></a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'productDetail' i.product.product_name.category_name.slug i.product.product_name.slug %}">
+                                    {% if  i.product.product_name.product_offer > 0 %}
+                                    <h5 class="text-success">₹{{i.product.offer_price}}</h5>
+                                    <small class="cl3"  style="text-decoration:line-through ;">₹{{i.product.price}}</small>
+                                    {% elif i.product.product_name.category_name.category_offer %}
+                                    <h5 class="text-success">₹{{i.product.offer_price}}</h5>
+                                    <small class="cl3" style="text-decoration:line-through ;">₹{{i.product.price}}</small>
+                                    {% else %}
+                                    <h5>₹{{i.product.offer_price}}</h5>
+                                    {% endif %}
+                                    </a>
+                                <td>
+                                  
+                                    <button id="AddfwtoC" class="btn btn-dark cartButton mt-1" data-id="{{i.product.id}}" title="Add to Cart"><i class="zmdi zmdi-shopping-cart text-light"></i></button>
+                                    
+
+                                    <button type="button" class="btn btn-danger mt-1" title="Remove from wishlist" data-toggle="modal" data-target="#exampleModal{{i.id}}">
+                                        <i class="fa-solid fa-trash"></i>
+                                   </button>
+
+                                    <div class="modal fade" id="exampleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="exampleModalLabel">Remove Item</h5>
+                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                              </button>
+                                            </div>
+                                            <div class="modal-body">
+                                              Are you sure you want to remove this item from Whishlist?
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                              <a href="{% url 'removewishlist' i.id %}" data-item="{{cart_item.cart_product.id}}" class="btn btn-danger delete-item">
+                                                Yes
+                                              </a>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                            
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% else %}
+
+        <div class="text-center mt-5">
+          <div class="text-center">
+            <img src="{% static 'images/empty-cart.png' %}" class="rounded w-50" alt="...">
+          </div>
+            <h2>Your wishlist is Empty</h2>
+            <a href="{% url 'products' %}" class="btn btn-primary mt-3">Go to Shop</a>
+        </div> 
+
+        {% endif %}
+
+
+    </div>
+</section>
+
+{% endblock %}
