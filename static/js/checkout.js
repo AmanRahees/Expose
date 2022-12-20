@@ -81,7 +81,7 @@ $(document).ready(function(){
                     // console.log(response)
                     var options = {
                         "key": "rzp_test_u2afvxYxg4Tr0j", // Enter the Key ID generated from the Dashboard
-                        "amount":1*100, //response.grand_total * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                        "amount": response.grand_total * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
                         "currency": "INR",
                         "name": "Expose Mobiles & Laptops",
                         "description": "Thank you for buying from Us.",

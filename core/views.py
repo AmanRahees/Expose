@@ -753,12 +753,12 @@ def addCategoryOffer(request):
     if request.method == "POST":
         category_name = request.POST.get('category_name')
         category_offer = request.POST.get('category_offer')
-        if int(category_offer) >= 1 and int(category_offer) <= 80:
+        if int(category_offer) >= 1 and int(category_offer) <= 70:
             ctgyoff = Category.objects.get(category_name = category_name)
             ctgyoff.category_offer =  category_offer
             ctgyoff.save()
         else:
-            messages.error(request, 'Offer must between 1% - 80%')
+            messages.error(request, 'Offer must between 1% - 70%')
     return redirect('offer_manage')
 
 def deleteCategoryoffer(request, id):
@@ -790,12 +790,12 @@ def addPrdtOffer(request):
     if request.method == "POST":
         id = request.POST.get('id')
         product_offer = request.POST.get('product_offer')
-        if int(product_offer) >= 1 and int(product_offer) <= 80:
+        if int(product_offer) >= 1 and int(product_offer) <= 70:
             pdtoff = ProductAttribute.objects.get(id=id)
             pdtoff.product_offer =  product_offer
             pdtoff.save()
         else:
-            messages.error(request, 'Offer must between 1% - 80%')
+            messages.error(request, 'Offer must between 1% - 70%')
     return redirect('prdt_offer')
 
 def deletePdtoffer(request, id):

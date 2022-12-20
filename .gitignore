@@ -157,6 +157,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+expose/settings.py
 
 # pytype static type analyzer
 .pytype/

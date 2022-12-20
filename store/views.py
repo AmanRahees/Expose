@@ -102,15 +102,15 @@ def _cart_id(request):
 def add_to_cart(request):
     current_user=request.user
     product = Products.objects.get(id=request.GET['id'])
-    if CartItem.objects.filter(user=request.user,cart_product=product): 
-      return JsonResponse({'status':"Don't Add"})
-    else:
-        try:
-            cart = Cart.objects.get(cart_id= _cart_id(request))
-        except Cart.DoesNotExist:
-            cart = Cart.objects.create(cart_id =_cart_id(request))
-            cart.save()
-        if current_user.is_authenticated:
+    try:
+        cart = Cart.objects.get(cart_id= _cart_id(request))
+    except Cart.DoesNotExist:
+        cart = Cart.objects.create(cart_id =_cart_id(request))
+        cart.save()
+    if current_user.is_authenticated:
+        if CartItem.objects.filter(user=request.user,cart_product=product): 
+            return JsonResponse({'status':"Don't Add"})
+        else:
             is_cart_item_exists = CartItem.objects.filter(cart_product__price=product.price, user=current_user).exists()
             if is_cart_item_exists:
                 cart_item = CartItem.objects.get(cart_product=product, user=current_user)
@@ -122,7 +122,10 @@ def add_to_cart(request):
                     quantity = request.GET['qty'],
                     user = current_user,
                 )
-        else:
+    else:
+        if CartItem.objects.filter(cart=cart,cart_product=product): 
+            return JsonResponse({'status':"Don't Add"})
+        else: 
             is_cart_item_exists = CartItem.objects.filter(cart_product__price=product.price, cart=cart).exists()
             if is_cart_item_exists:
                 cart_item = CartItem.objects.get(cart_product=product.id, cart=cart.id)
@@ -136,7 +139,7 @@ def add_to_cart(request):
                     cart = cart,
                 )
                 cart_item.save()
-        return JsonResponse({'single_product':'success'})
+    return JsonResponse({'single_product':'success'})
 
 def add_quantity(request,id):
     current_user=request.user
@@ -344,7 +347,7 @@ def razorpaycheck(request):
     total_amount = 0
     for cart_item in mycart:
         total_amount += (cart_item.cart_product.price * cart_item.quantity)
-    tax = round((6 * float(total_amount))/100)
+    tax = round((2 * float(total_amount))/100)
     grand_total = total_amount + tax
     context = {
         'grand_total':grand_total,
