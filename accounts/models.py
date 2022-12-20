@@ -68,10 +68,6 @@ class Account(AbstractBaseUser):
     def has_module_perms(self, add_label):
         return True
     
-class Profile(models.Model):
-    user = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, related_name='userprofile')
-    profile_img = models.ImageField(upload_to='photos/Users', null=True, blank=True)
-
 
 
 

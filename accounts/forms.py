@@ -11,11 +11,3 @@ class EditAccountForm(forms.ModelForm):
             'email':forms.TextInput(attrs={'class':'form-control'}),
             'phone_number':forms.NumberInput(attrs={'class':'form-control'}),
         }
-
-class AddImageForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ["profile_img"]
-        widgets = {
-            'phone_number':forms.FileInput(attrs={'class':'form-control'}),
-        }
