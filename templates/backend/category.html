@@ -1,4 +1,4 @@
-{% extends 'dashboard.html' %}
+{% extends 'Dashboard.html' %}
 
 {% block title %}
 Products
@@ -34,7 +34,7 @@ Products
                                 <tr class=" text-center">
                                     <th> {{ forloop.counter }}</th>
                                     <th> 
-                                      <a href="{{ i.Category_img.url }}"><img class="rounded" width="100px" src="{{i.Category_img.url}} " /></a>
+                                      <a href="{{ i.Category_img.url }}"><img class="rounded" style="width: 60px;height:60px;" src="{{i.Category_img.url}} " /></a>
                                     </th>
                                     <th> {{i.category_name}}</th>
                                     <th>

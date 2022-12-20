@@ -1,4 +1,4 @@
-{% extends 'dashboard.html' %}
+{% extends 'Dashboard.html' %}
 
 {% block title %}
 Edit Brand
@@ -20,7 +20,7 @@ Edit Brand
                         <form method="post" action="{% url 'updatebrand' brnd.id %}" enctype="multipart/form-data">
                             
                             {% csrf_token %}
-                            
+                             
                             <div class="mb-3">
                                 <label>Brand Name :</label>
                                 <input id="title" class="mb-3 form-control w-75" type="text" name="brand_name" value="{{brnd.brand_name}}">

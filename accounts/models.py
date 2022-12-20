@@ -45,7 +45,7 @@ class Account(AbstractBaseUser):
     last_name = models.CharField(max_length=50)
     #username = models.CharField(max_length=50, blank=True)
     email = models.EmailField(max_length=100, unique=True)
-    phone_number = models.CharField(max_length=14, blank=True)
+    phone_number = models.CharField(max_length=14, blank=True, unique=True, null=False)
 
     date_joined = models.DateTimeField(auto_now_add = True)
     last_login = models.DateTimeField(auto_now_add=True)
@@ -67,6 +67,10 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, add_label):
         return True
+    
+class Profile(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, related_name='userprofile')
+    profile_img = models.ImageField(upload_to='photos/Users', null=True, blank=True)
 
 
 

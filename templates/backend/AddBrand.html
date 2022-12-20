@@ -1,4 +1,4 @@
-{% extends 'dashboard.html' %}
+{% extends 'Dashboard.html' %}
 
 {% block title %}
 Add Brand
@@ -22,9 +22,13 @@ Add Brand
                         
                         <div class="w-75 mb-3">Brand: {{form.brand_name}}</div>
                         <div class="w-75 mb-3">slug: {{form.slug}}</div>
-                        <div class="w-75 mb-3">Product Image1: {{form.Brand_img}}</div>
+                        <div class="w-75 mb-3">
+                          Product Image1: {{form.Brand_img}}
+                          <div id="image-box" class="image-container"></div>
+                           <button class="btn btn-outline-info" id="crop-btn" style="width: 100%; margin-top: 10px; display: none;" type="button">Crop</button>
+                        </div>
 
-                        <button type="submit">Add Brand</button>
+                        <button id="submit" type="submit">Add Brand</button>
                     </form>
                 </div>
             </div>
@@ -39,9 +43,57 @@ Add Brand
           console.log(x);
           document.getElementById("id_slug").value = x ;
         }
-      
-       
       </script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>
+
+<script>
+
+  var imagebox = document.getElementById('image-box')
+	var crop_btn = document.getElementById('crop-btn')
+	var input = document.getElementById('id_Brand_img')
+
+  input.addEventListener('change', ()=>{
+	  const img_data = input.files[0]
+	  const url = URL.createObjectURL(img_data)
+	  
+	  imagebox.innerHTML = `<img src="${url}" id="Brand_img" style="width:50%;">`
+
+	 const image = document.getElementById('Brand_img')
+
+	 document.getElementById('image-box').style.display = 'block'
+	 document.getElementById('crop-btn').style.display = 'block'
+	 document.getElementById('submit').style.display = 'none'
+
+	  const cropper = new Cropper(image, {
+	  autoCropArea: 1,
+	  viewMode: 1,
+	  scalable: false,
+	  zoomable: true,
+	  movable: false,
+	  aspectRatio: 80/99,
+	  })
+
+	  crop_btn.addEventListener('click', ()=>{
+	    cropper.getCroppedCanvas().toBlob((blob)=>{
+	      
+	     let fileInputElement = document.getElementById('id_Brand_img');
+	     let file = new File([blob], img_data.name,{type:"image/*", lastModified:new Date().getTime()});
+	     let container = new DataTransfer();
+	     container.items.add(file);
+	     fileInputElement.files = container.files;
+
+	     document.getElementById('image-box').style.display = 'none'
+	     document.getElementById('crop-btn').style.display = 'none'
+	     document.getElementById('submit').style.display = 'block'
+
+	      });
+	    });
+
+	});	
+
+</script>
       
 
 {% endblock %}

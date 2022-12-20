@@ -4,7 +4,11 @@ from orders.views import *
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('settings/',views.UserSettings, name='settings'),
+
+    path('profile/',views.UserSettings, name='settings'),
+    path('editprofile/',views.EditProfile, name='editprofile'),
+    path('updateprofile/<int:id>',views.UpdateProfile, name='updateprofile'),
+
     path('products/', views.store, name='products'),
     path('products/<slug:category_slug>/', views.by_category, name='by_category'),
     path('products/<slug:category_slug>/<slug:product_slug>/', views.productDetail, name= 'productDetail'),
@@ -44,6 +48,5 @@ urlpatterns = [
     path('products/color=<slug:color_slug>/', views.by_color, name='by_color'),
     path('products/memory=<slug:ram_slug>/', views.by_ram, name='by_ram'),
     
-    path('demo/', views.demo, name='demo'),
     # path('review/<int:product_id>', views.ReviewSubmit, name='addreview'),
 ]

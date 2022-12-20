@@ -11,6 +11,7 @@ from orders.forms import *
 from django.core.exceptions import ObjectDoesNotExist
 from .models import *
 from Brand.models import *
+from accounts.forms import *
 from django.core.paginator import Paginator 
 from datetime import date
 from django.db.models import Q
@@ -23,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 @never_cache
 def home(request):
     ctgy = Category.objects.filter(is_active=True)
-    prdts = ProductAttribute.objects.filter(is_active = True, category_name__is_active=True)
+    prdts = ProductAttribute.objects.filter(is_active = True, category_name__is_active=True).order_by('-id')[:2]
     context = {
         "ctgy":ctgy,
         "prdts": prdts
@@ -86,7 +87,7 @@ def productDetail(request,category_slug, product_slug):
          'colors':colors,
          'relprdts':relprdts,
     }
-    return render(request, 'store/ProductView.html', context)
+    return render(request, 'store/Productview.html', context)
     
 
 #----------------------------Cart-------------------------------#
@@ -390,6 +391,30 @@ def UserSettings(request):
 
 @never_cache
 @login_required(login_url=('login'))
+def EditProfile(request):
+    user = Account.objects.get(id=request.user.id)
+    context={
+        'user':user
+    }
+    return render(request, 'store/EditProfile.html', context)
+
+@never_cache
+@login_required(login_url=('login'))
+def UpdateProfile(request,id):
+    user = Account.objects.get(id=id)
+    form = EditAccountForm(request.POST, instance = user)
+    if form.is_valid():
+        form.save()
+        return redirect('settings')
+    else:
+         messages.error(request, 'Invalid Entry')
+    context = {
+        'user': user
+    } 
+    return render(request,'store/EditProfile.html', context)
+
+@never_cache
+@login_required(login_url=('login'))
 def MyAddresses(request):
     ads = useraddress.objects.filter(user_id = request.user)
     account = Account.objects.get(email = request.user)
@@ -513,9 +538,6 @@ def by_ram(request, ram_slug):
         "ctgy":ctgy,
     }
     return render(request, 'store/shop.html', context)
-
-def demo(request):
-    return render(request, 'demo.html')
 
 @never_cache
 @login_required(login_url='login')

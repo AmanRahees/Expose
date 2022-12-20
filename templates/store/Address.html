@@ -34,7 +34,7 @@
 				<div class="col-md-12">
 					<div class="row">
 					{% for t in ads %}	
-					<div class="col-md-5 my-2 text-dark card mx-5">
+					<div class="col-md-5 my-2 text-dark card mx-5"  style="box-shadow: 2px 2px 2px 4px #f3f3f3;;">
 						<div class="card-body"  style="border: 1px #000;">
 							<span>Address : {{forloop.counter}}</span> <br>
 							<div class="col-sm-12 col-md-12 col-xm-6">
@@ -51,7 +51,7 @@
 						</div>
 					</div>
 					{% endfor %}
-					<div class="col-md-5 my-2 text-dark card mx-5"  style="border: dotted #999;">
+					<div class="col-md-5 my-2 text-dark card mx-5"  style="border: dotted #999; box-shadow: 2px 2px 2px 3px #f3f3f3;;">
 					<a href="{% url 'addaddress' %}" class="col-md-12 my-2" style="color:#555;">
 						<div class="card-body border-5">
 							<h1 class="text-center mt-4">+ Add Address <i class="fa-sharp fa-solid fa-building-columns"></i></h1>
