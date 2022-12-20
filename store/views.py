@@ -24,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 @never_cache
 def home(request):
     ctgy = Category.objects.filter(is_active=True)
-    prdts = ProductAttribute.objects.filter(is_active = True, category_name__is_active=True).order_by('-id')[:2]
+    prdts = ProductAttribute.objects.filter(is_active = True, category_name__is_active=True).order_by('-id')[:4]
     context = {
         "ctgy":ctgy,
         "prdts": prdts
