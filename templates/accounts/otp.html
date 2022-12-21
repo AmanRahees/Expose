@@ -42,8 +42,9 @@
                 
                             <button class="btn btn-primary btn-lg btn-block mt-4" type="submit">VERIFY</button>
                             <div class="text-center mt-3">
-                                <p class="d-block mobile-text">Don't receive the code?
-                                <span class="font-weight-bold text-danger cursor btn py-0 px-0">Resend</span></p>
+                                <p class="d-block mobile-text">Did't receive the code?
+                                <span class="font-weight-bold text-danger cursor" id="timer"></span>
+                                <a href="{% url 'resend' %}" class="font-weight-bold text-success cursor btn py-0 px-0" style="display: none;" id="resend">Resend</a></p>
                             </div>
                           </div>
                     </form>
@@ -59,6 +60,28 @@
   <script src="{% static 'js/popper.js' %}"></script>
   <script src="{% static 'js/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/maina.js' %}"></script>
+
+  <script>
+    var timeLeft = 59;
+    var elem = document.getElementById('timer');
+    var re = document.getElementById('resend');
+    var timerId = setInterval(countdown, 1000);
+
+    function countdown() {
+        if (timeLeft == -1) {
+            clearTimeout(timerId);
+            resend();
+        } else {
+            elem.innerHTML = timeLeft + ' seconds remaining';
+            timeLeft--;
+        }
+    }
+
+    function resend() {
+        elem.style.display = "none";
+        re.style.display = "block";
+    }
+</script>
 
 	</body>
 </html>

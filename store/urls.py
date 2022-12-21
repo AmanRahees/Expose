@@ -47,6 +47,7 @@ urlpatterns = [
     path('products/&<slug:brand_slug>/', views.by_brand, name='by_brand'),
     path('products/color=<slug:color_slug>/', views.by_color, name='by_color'),
     path('products/memory=<slug:ram_slug>/', views.by_ram, name='by_ram'),
+
     
     # path('review/<int:product_id>', views.ReviewSubmit, name='addreview'),
 ]

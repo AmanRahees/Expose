@@ -16,6 +16,7 @@ from django.views.decorators.cache import never_cache
 from datetime import datetime,timedelta,date
 from django.db.models import Sum, Q
 from django.db.models import Count
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 # Create your views here.
@@ -178,6 +179,7 @@ def user_status(request,id,status):
 def deleteUser(request,id):
     users = Account.objects.get(id=id)
     users.delete()
+    messages.error(request, 'User deleted Successfully')
     return redirect('Users')
 
 #----------------------Usermanagement End------------------#
@@ -250,6 +252,7 @@ def AddCategory(request):
             form.save()
             return redirect('category')
         else:
+            messages.error(request, 'Category name Already exist')
             return redirect('addcategory')
     else:
         form = AddCategoryForm()
@@ -273,7 +276,7 @@ def UpdateCategory(request,id):
         form.save()  
         return redirect("category")
     else:
-         print(form.errors.as_data()) 
+         messages.error(request, 'Category name already exist')
     context = {
         'ctgy': ctgy
     }  
@@ -333,7 +336,7 @@ def AddSubCategory(request):
             form.save()
             return redirect('subcategory')
         else:
-            print('error')
+            messages.error(request, 'Subcategory name already exist')
             return redirect('addsubcategory')
     else:
         form = AddSubCategoryForm()
@@ -360,7 +363,7 @@ def UpdateSubCategory(request,id):
         form.save()  
         return redirect("subcategory")
     else:
-         print(form.errors.as_data()) 
+         messages.error(request, 'Subcategory name already exist')
     context = {
         'subctgy': subctgy
     }  
@@ -420,6 +423,7 @@ def AddBrand(request):
             form.save()
             return redirect('brand')
         else:
+            messages.error(request, 'Brand name already exist')
             return redirect('addbrand')
     else:
         form = AddBrandForm()
@@ -442,6 +446,8 @@ def UpdateBrand(request, id):
     if form.is_valid():  
         form.save()  
         return redirect("brand") 
+    else:
+        messages.error(request, 'Brand name already exist')
     context = {
         'brnd': brnd
     }  
@@ -452,6 +458,7 @@ def UpdateBrand(request, id):
 def DeleteBrand(request, id):
     brnd = Brand.objects.filter(id=id)
     brnd.delete()
+    messages.error(request, 'Brand deleted')
     return redirect('brand')
 
 @never_cache
@@ -469,6 +476,10 @@ def enable_brand(request,id,status):
 
 #-------------------ProductAttribute Views---------------#
 
+def List_SubCategory(request):
+    category = request.GET['category_id']
+    sub_categories = SubCategory.objects.filter(category_name=category).values()
+    return JsonResponse({'success': True,'sub_categories':list(sub_categories),},safe=False)
 
 @never_cache
 @staff_member_required(login_url='adminlogin')
@@ -533,6 +544,8 @@ def UpdateProductAttribute(request, id):
     if form.is_valid():  
         form.save()
         return redirect("product")  
+    else:
+        messages.error(request, 'Product already exist')
     context = {
         'prdts': prdts
     }  
@@ -608,7 +621,7 @@ def UpdateSubProduct(request, id):
         form.save()  
         return redirect("subproduct")
     else:
-         print(form.errors.as_data()) 
+        messages.error(request, 'Product already exist')
     context = {
         'subprdts': subprdts
     }  
@@ -663,8 +676,7 @@ def AddRam(request):
             form.save()
             return redirect('variations')
         else:
-            print(form.errors.as_data())
-            messages.info(request, 'Ram already Added')
+            messages.info(request, 'Ram already exist')
             return redirect('addram')
     else:
         form = AddRamForm()
@@ -693,7 +705,6 @@ def deleteRam(request,id):
     return redirect('variations')
 
 
-
 def AddColor(request):
     if request.method == "POST":
         form = AddColorForm(request.POST , request.FILES)
@@ -701,7 +712,7 @@ def AddColor(request):
             form.save()
             return redirect('variations')
         else:
-            messages.info(request, 'Ram already Added')
+            messages.info(request, 'Color already exist')
             return redirect('addcolor')
     else:
         form = AddColorForm()
@@ -881,6 +892,9 @@ def sales_report(request):
         end_date = val+timedelta(days=1)
         orders = Order.objects.filter(Q(created_at__lt=end_date),Q(created_at__gte=start_date)).values('orderelate__product__product_name__product_name','orderelate__product__ram__ram','orderelate__product__color__color','orderelate__product__stock',
         total = Sum('total_price'),).annotate(dcount=Sum('orderelate__quantity')).order_by()
+        for i in range (10):
+            val = year-i
+            years.append(val)
     else:
         orders = Order.objects.filter(created_at__year=year,created_at__month=month,orderelate__product__is_available=True).values('orderelate__product__product_name__product_name','orderelate__product__ram__ram','orderelate__product__color__color','orderelate__product__stock',
         total = Sum('total_price'),).annotate(dcount=Sum('orderelate__quantity')).order_by()
@@ -895,12 +909,18 @@ def sales_report(request):
     return render(request,'Report/SalesReport.html', context)  
 
 def monthly_sales_report(request, id):
+    year = datetime.now().year
     orders = Order.objects.filter(created_at__month = id).values('orderelate__product__product_name__product_name','orderelate__product__ram__ram','orderelate__product__color__color','orderelate__product__stock',
     total = Sum('total_price'),).annotate(dcount=Sum('orderelate__quantity')).order_by()
     today_date=str(date.today())
+    years = []
+    for i in range (10):
+        val = year-i
+        years.append(val)
     context = {
         'orders':orders,
-        'today_date':today_date
+        'today_date':today_date,
+        'years':years
     }
     return render(request,'Report/SalesReport-table.html',context)
 

@@ -17,6 +17,12 @@ Edit Product
                   <h1 class="card-title text-center">Edit Product<a href="{% url 'product' %}" class="float-right btn btn-warning">Back</a></h1>
                   <div class="table-responsive">
 
+                    {% for message in messages %}
+                        <div class="alert-danger rounded mb-2 text-center" role="alert">
+                              {{message}}
+                          </div>
+                    {% endfor %}
+
                     <form method="post" action="{% url 'updateproduct' prdts.id %}" enctype="multipart/form-data"">
         
                         {% csrf_token %}

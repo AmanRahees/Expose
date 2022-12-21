@@ -54,7 +54,12 @@
                         </div>
 
                         <div class="w-75 mb-3">Product Category: {{form.category_name}}</div>
-                        <div class="w-75 mb-3">Sub-Category: {{form.subcategory_name}}</div>
+                        <div class="w-75 mb-3">
+							Sub-Category: 
+							<select class="form-control text-white" name="subcategory_name" id="id_sub_category">
+								<option value="" selected="">---------</option>
+							</select>
+						</div>
                         <div class="w-75 mb-3">Product Brand: {{form.brand_name}}</div>
                         <div class="w-75 mb-3">Enable: {{form.is_active}}</div>
                        
@@ -67,15 +72,49 @@
             </div>
           </div>
 
-          <script>
-            document.getElementById("id_product_name").onkeyup = function(){
-              console.log()
-              var x = document.getElementById("id_product_name").value.toLowerCase().replaceAll(" ","-");
-              console.log(x);
-              document.getElementById("id_slug").value = x ;
-              document.getElementById("product_name_id").value = x;
-            }
-          </script>
+<script>
+document.getElementById("id_product_name").onkeyup = function(){
+	console.log()
+	var x = document.getElementById("id_product_name").value.toLowerCase().replaceAll(" ","-");
+	console.log(x);
+	document.getElementById("id_slug").value = x ;
+	document.getElementById("product_name_id").value = x;
+}
+</script>
+
+<script>
+	function getsub(sel)
+	{
+	  var url = "{% url 'list_subcategory' %}"
+	  console.log(url);
+	  category_id = sel.value
+	  data = {
+		  'category_id':category_id,
+	  }
+	  console.log(category_id)
+	  $.ajax({
+		  url: url,
+		  data: data,
+		  dataType: 'json',
+		  success: function(data){
+			if(data.success){
+			  let option_data = '<option value="" selected="">---------</option>'
+			  $.each(data.sub_categories, function(index, ele){
+				option_data += 
+					`<option value='${ele.id}'>${ele.subcategory_name}</option>`
+			  })
+			  $('#id_sub_category').html(option_data)
+			  
+  
+			  
+			}else{
+			  alert('fail')
+			}
+		  }
+		})
+	}
+  </script>
+
 		  
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>

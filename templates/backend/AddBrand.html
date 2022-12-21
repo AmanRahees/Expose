@@ -17,6 +17,12 @@ Add Brand
                   <h1 class="card-title text-center">Add Brand<a href="{% url 'brand' %}" class="float-right btn btn-warning">Back</a></h1>
                   <div class="table-responsive mx-5">
 
+                    {% for message in messages %}
+                        <div class="alert-danger rounded mb-2 text-center w-75" role="alert">
+                              {{message}}
+                          </div>
+                    {% endfor %}
+
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         

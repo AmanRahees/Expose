@@ -10,6 +10,8 @@ urlpatterns = [
     path('change_password/', views.ChangePassword, name='change_password'),
     path('forgot_password/', views.ForgotPassword, name='forgot_password'),
     path('resetPassword/', views.reset_password, name='resetPassword'),
+    path('resend_otp/', views.resendotp, name='resend'),
+
 
     path('reset_password_validate/<uidb64>/<token>/', views.reset_password_validate, name='reset_password_validate'),
 ]

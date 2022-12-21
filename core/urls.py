@@ -34,7 +34,7 @@ urlpatterns = [
     path('deletebrand/<int:id>/', views.DeleteBrand, name='deletebrand'),
     path('enable_brand/<int:id>/<str:status>/', views.enable_brand, name='enable_brand'),
 
-
+    path('list-subcategory', views.List_SubCategory, name='list_subcategory'),
 
 
     path('product/', views.ProductAttributeList, name='product'),

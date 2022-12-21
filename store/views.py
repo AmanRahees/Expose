@@ -16,6 +16,7 @@ from django.core.paginator import Paginator
 from datetime import date
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
 # Create your views here.
 
@@ -78,7 +79,7 @@ def by_category(request,category_slug):
 
 def productDetail(request,category_slug, product_slug):
     prdts = ProductAttribute.objects.get(slug=product_slug)
-    relprdts = ProductAttribute.objects.filter(category_name=prdts.category_name).exclude(product_name=prdts)
+    relprdts = ProductAttribute.objects.filter(category_name=prdts.category_name).exclude(product_name=prdts)[:4]
     ram = Products.objects.filter(product_name=prdts, is_available=True).values('id','ram__id','ram__ram','color__id','price','stock').distinct()
     colors = Products.objects.filter(product_name=prdts, is_available=True).values('color__id','color__color','color__color_code').distinct()
     context = {
@@ -232,81 +233,87 @@ def remove_quantity(request,id):
 
 #---------------------Order--------------------------#
 
+@never_cache
 @login_required(login_url='login')
 def checkout(request):
-    if request.method == "POST":
-        code = request.POST.get('code')
-        try:
-            today = date.today()
-            value = Coupon.objects.get(code = code)
-            if not value.valid_at >= today:
-                return JsonResponse({"Status" : "Coupon is not valid currently"})
+    cart_count = 0
+    cart_count = CartItem.objects.all().filter(user=request.user, cart_product__is_available=True).count()
+    if cart_count: 
+        if request.method == "POST":
+            code = request.POST.get('code')
             try:
-                test = Couponuser.objects.filter(user = request.user).exists()
-                if test:
-                    current1 = Couponuser.objects.get(user = request.user)
-                    if current1.coupon_code != code:
-                        current1.coupon_code = code
-                        current1.coupon_value = value.offer_value
-                        current1.coupon_model = value
-                        current1.save()
-                        return JsonResponse({"Status" : "Coupon changed"})
-                    return JsonResponse({"Status" : "Coupon already Entered"})
-                Couponuser.objects.create(
-                        user = request.user,
-                        coupon_model = value,
-                        coupon_code = code,
-                        coupon_value = value.offer_value   
-                    )
-            except Exception as e:
-                pass
-            return JsonResponse({"Status" : "Coupon Activated"})
-        except:
-            return JsonResponse({"Status" : "Invalid coupon"})
-    cpns = Coupon.objects.filter(active=True)
-    mycart = CartItem.objects.filter(user=request.user,  cart_product__is_available=True)
-    ads = useraddress.objects.filter(user_id = request.user)
-    account = Account.objects.filter(email = request.user)
-    total_amount = 0
-    for cart_item in mycart:
-        poff_price = round(cart_item.cart_product.price - cart_item.cart_product.price * cart_item.cart_product.product_name.product_offer /100)
-        coff_price = round(cart_item.cart_product.price - cart_item.cart_product.price * cart_item.cart_product.product_name.category_name.category_offer /100)
-        if poff_price <= coff_price:
-            total_amount += (poff_price * cart_item.quantity)
-        elif poff_price >= coff_price:
-            total_amount += (coff_price * cart_item.quantity)
-    tax = round((2 * float(total_amount))/100)
-    grand_total = total_amount + tax
-    coup_perc = 0
-    try: 
-        coup_value = Couponuser.objects.get(user = request.user, used=False)
-        coupon_status = True
-        coup_perc = coup_value.coupon_value
-        coupon_codes = coup_value.coupon_code
-    except Exception as e:
-        coupon_codes = None
-        coupon_status = False
+                today = date.today()
+                value = Coupon.objects.get(code = code)
+                if not value.valid_at >= today:
+                    return JsonResponse({"Status" : "Coupon is not valid currently"})
+                try:
+                    test = Couponuser.objects.filter(user = request.user).exists()
+                    if test:
+                        current1 = Couponuser.objects.get(user = request.user)
+                        if current1.coupon_code != code:
+                            current1.coupon_code = code
+                            current1.coupon_value = value.offer_value
+                            current1.coupon_model = value
+                            current1.save()
+                            return JsonResponse({"Status" : "Coupon changed"})
+                        return JsonResponse({"Status" : "Coupon already Entered"})
+                    Couponuser.objects.create(
+                            user = request.user,
+                            coupon_model = value,
+                            coupon_code = code,
+                            coupon_value = value.offer_value   
+                        )
+                except Exception as e:
+                    pass
+                return JsonResponse({"Status" : "Coupon Activated"})
+            except:
+                return JsonResponse({"Status" : "Invalid coupon"})
+        cpns = Coupon.objects.filter(active=True)
+        mycart = CartItem.objects.filter(user=request.user,  cart_product__is_available=True)
+        ads = useraddress.objects.filter(user_id = request.user)
+        account = Account.objects.filter(email = request.user)
+        total_amount = 0
+        for cart_item in mycart:
+            poff_price = round(cart_item.cart_product.price - cart_item.cart_product.price * cart_item.cart_product.product_name.product_offer /100)
+            coff_price = round(cart_item.cart_product.price - cart_item.cart_product.price * cart_item.cart_product.product_name.category_name.category_offer /100)
+            if poff_price <= coff_price:
+                total_amount += (poff_price * cart_item.quantity)
+            elif poff_price >= coff_price:
+                total_amount += (coff_price * cart_item.quantity)
+        tax = round((2 * float(total_amount))/100)
+        grand_total = total_amount + tax
         coup_perc = 0
+        try: 
+            coup_value = Couponuser.objects.get(user = request.user, used=False)
+            coupon_status = True
+            coup_perc = coup_value.coupon_value
+            coupon_codes = coup_value.coupon_code
+        except Exception as e:
+            coupon_codes = None
+            coupon_status = False
+            coup_perc = 0
 
-    final_total = total_amount + tax
+        final_total = total_amount + tax
 
-    grand_total  = int(grand_total - grand_total * int(coup_perc)/100)
-    coup_red = final_total - grand_total
+        grand_total  = int(grand_total - grand_total * int(coup_perc)/100)
+        coup_red = final_total - grand_total
 
-    context = {
-        'ads':ads,
-        'account':account,
-        'mycart':mycart,
-        'total_amount':total_amount,
-        'tax':tax,
-        'grand_total':grand_total,
-        'coupon_status' : coupon_status,
-        'coupon_codes' : coupon_codes,
-        'coup_perc' : coup_perc,
-        'coup_red':coup_red,
-        'cpns':cpns
-    }
-    return render(request, 'Orders/checkout.html', context)
+        context = {
+            'ads':ads,
+            'account':account,
+            'mycart':mycart,
+            'total_amount':total_amount,
+            'tax':tax,
+            'grand_total':grand_total,
+            'coupon_status' : coupon_status,
+            'coupon_codes' : coupon_codes,
+            'coup_perc' : coup_perc,
+            'coup_red':coup_red,
+            'cpns':cpns
+        }
+        return render(request, 'Orders/checkout.html', context)
+    else:
+        return redirect('home')
 
 def AddOrderAddress(request):
     if request.method == "POST":
@@ -613,5 +620,3 @@ def RemoveWhishlist(request,id):
     # t=render_to_string('store/filterlist.html',{'prdts':prdts})
     # return render(request, 'shop.html',{'prdts':'prdts'})
     # return JsonResponse({'data':'prdts'})
-
-

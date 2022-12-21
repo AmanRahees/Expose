@@ -14,7 +14,7 @@ class AddProductAttributeForm(forms.ModelForm):
       'image': forms.FileInput(attrs={'class':'form-control'}),
       'image_2': forms.FileInput(attrs={'class':'form-control'}),
       'image_3': forms.FileInput(attrs={'class':'form-control'}),
-      'category_name':forms.Select(attrs={'class':'text-light form-control'}),
+      'category_name':forms.Select(attrs={'class':'text-light form-control', 'onchange' : "getsub(this);"}),
       'subcategory_name':forms.Select(attrs={'class':'text-light form-control'}),
       'brand_name':forms.Select(attrs={'class':'text-light form-control'}),
       'is_acitve':forms.CheckboxInput()

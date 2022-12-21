@@ -18,6 +18,11 @@
             <!-- Memory -->
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
               <h4 class="text-warning">Memory ({{ram.count}})<a href="{% url 'addram' %}" class="btn btn-warning float-right mb-2">Add+</a></h4>
+              {% for message in messages %}
+                  <div class="alert-danger rounded mb-2 text-center" role="alert">
+                        {{message}}
+                    </div>
+              {% endfor %}
                 <table class="table">
                     <thead class="text-secondary">
                       <tr class="text-center">

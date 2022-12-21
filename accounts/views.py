@@ -48,6 +48,7 @@ def signup(request):
 @never_cache
 def otpVerification(request):
     phone_number=request.session['phone_number']
+    print(phone_number)
     if request.method=='POST':
         phone_number=request.session['phone_number']
         user= Account.objects.get(phone_number=phone_number)
@@ -60,12 +61,18 @@ def otpVerification(request):
             login(request, user)
             return redirect('home')
         else:
-            messages.info(request, 'Invalid OTP')
+            messages.error(request, 'Invalid OTP')
             return redirect('verification')
     context={
         'phone_number':phone_number
     }
     return render(request, 'accounts/otp.html',context)
+
+@never_cache
+def resendotp(request):
+    phone_number=request.session['phone_number']
+    send_otp(phone_number)
+    return redirect('verification')
 
 @never_cache
 def Userlogin(request):

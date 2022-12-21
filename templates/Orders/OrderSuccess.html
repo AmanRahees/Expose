@@ -5,23 +5,40 @@
 {% block content %}
 
 <section class="bg0 p-t-23 p-b-140 mt-5">
-	<div class="container">
-
-<div class="py-5">
     <div class="container">
-        <div class="row">
+        <input type="button" class="btn btn-success float-right mr-5 my-2" id="btnExport" value="Download Invoice">
+        
+        <div class="py-5">
+            <div class="container">
+            <div class="row" id="invoice">
+            <div class="col-md-12 mb-3">
+                <div class="card shadow">
+                    <div class="card-body text-center" style="font-family: Cairo, sans-serif;">
+                        <img width="100px" src="{% static 'images/order_confirm.webp' %}">
+                        <h1 class="mb-2">Order confirmed</h1>
+                        <h4 class="mb-2">Your item will be delivered soon</h4>
+                        <h3 class="text-danger mb-2">Thank you for your purchase!!</h3>
+                        
+                        <h4 class="mb-2">Your tracking number is : 
+                                {{obj.tracking_no}}
+                            </h4>
+                            <h4>Mode of  payment : {{obj.payment_mode}}</h4>
+                           
+                    </div>
+                </div>
+            </div>
             <div class="col-md-6">
                 <div class="card shadow">
-                   <div class="card-body">
+                   <div class="card-body"  style="font-family: Cairo, sans-serif;">
                             <h3 class="text-center">Shipping Address</h3>
                             
                             <div class="row">
-                                <div class="col-md-11 mx-4" style="font-weight: 700;">
-                                    <h6 class="my-1"><span style="color: #333; font-weight: 700;">{{obj.name}}</span></h6>
-                                    <h6 class="my-1"><span style="color: #333; font-weight: 700;">{{obj.phone}}</h6>
-                                    <h6 class="my-1"><span style="color: #333; font-weight: 700;">{{obj.address}}, {{obj.address_2}}</span></h6>
-                                    <h6 class="my-1"><span style="color: #333; font-weight: 700;">{{obj.city}}, {{obj.district}}, {{obj.state}}</h6>
-                                    <h6 class="my-1"><span style="color: #333; font-weight: 700;">{{obj.pincode}}</h6>
+                                <div class="col-md-11 mx-4">
+                                    <h6 class="my-1 p-1" style="font-weight: 700;">Name: <span style="font-weight: 200;">{{obj.name}}</span></h6>
+                                    <h6 class="my-1 p-1" style="font-weight: 700;">Phone: <span style="font-weight: 200;">{{obj.phone}}</h6>
+                                    <h6 class="my-1 p-1" style="font-weight: 700;">Address: <span style="font-weight: 200;">{{obj.address}}, {{obj.address_2}}</span></h6>
+                                    <h6 class="my-1 p-1 ml-5" style="font-weight: 700;"><span style="font-weight: 200;" class="ml-3">{{obj.city}}, {{obj.district}}, {{obj.state}}</h6>
+                                    <h6 class="my-1 p-1 ml-5" style="font-weight: 700;"><span style="font-weight: 200;" class="ml-3">{{obj.pincode}}</h6>
                                 </div>
                             </div>
                             
@@ -32,14 +49,13 @@
                 <div class="card shadow">
                     <div class="card-body text-center">
                         <h4 class="text-center mb-2">Order Summary</h4>
-                        <table class="table table stripeds table-bordereds">
+                        <table class="table table stripeds table-bordereds" style="font-family: Cairo, sans-serif;">
                             <tbody>
                                 {% for it in items %}
                                 <tr>
                                     <td>
                                         <a class="text-dark" href="{% url 'productDetail' it.product.product_name.category_name.slug it.product.product_name.slug %}">
-                                        <img height="60px" src="{{it.product.product_name.image.url}}" alt="">
-                                        {{it.product.product_name}}<br>
+                                        {{it.product.product_name}}<br><small style="font-size: 10px;">({{it.product.ram}},{{it.product.color}})</small><br>
                                         </a>
                                     </td>
                                     <td>x{{it.quantity}}</td>
@@ -57,27 +73,35 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 mt-5">
-                <div class="card shadow">
-                    <div class="card-body text-center">
-                        <img width="100px" src="{% static 'images/order_confirm.webp' %}">
-                        <h1 class="mb-2">Order confirmed</h1>
-                        <h4 class="mb-2">Your item will be delivered soon</h4>
-                        <h3 class="text-danger mb-2">Thank you for your purchase!!</h3>
-                        
-                        <h4 class="mb-2">Your tracking number is : 
-                                {{obj.tracking_no}}
-                            </h4>
-                            <h4>Mode of  payment : {{obj.payment_mode}}</h4>
-                           
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
 </div>
 
 </div>
 </section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <!-- script for for pdf creation -->
+
+    <script type="text/javascript">
+        $("body").on("click", "#btnExport", function () {
+            html2canvas($('#invoice')[0], {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 500
+                        }]
+                    };
+                    pdfMake.createPdf(docDefinition).download("invoice.pdf");
+                }
+            });
+        });
+    </script>
+
 
 {% endblock %}

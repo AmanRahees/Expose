@@ -8,6 +8,22 @@
 
 
 {% block content %}
+<style>
+    * {box-sizing: border-box;}
+
+.img-magnifier-container {
+  position: relative;
+}
+
+.img-magnifier-glass {
+  position: absolute;
+  border: .1px solid #fff;
+  cursor: none;
+  /*Set the size of the magnifier glass:*/
+  width: 80px;
+  height: 80px;
+}
+</style>
 
 <section class="bg0 p-t-23 p-b-140 mt-5">
 <div class="container">
@@ -23,7 +39,9 @@
                         <div class="slick3 gallery-lb">
                             <div class="item-slick3" data-thumb="{{prdts.image.url}}">
                                 <div class="wrap-pic-w-m pos-relative">
-                                    <img id="myimage" src="{{prdts.image.url}}">
+                                    <div class="img-magnifier-container">
+                                        <img id="myimage" src="{{prdts.image.url}}" width="600" height="400" alt="Girl">
+                                      </div>
                                     <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.image.url}}">
                                         <i class="fa fa-expand"></i>
                                     </a>
@@ -32,7 +50,9 @@
                             {% if prdts.image_2 %}
                             <div class="item-slick3" data-thumb="{{prdts.image_2.url}}">
                                 <div class="wrap-pic-w pos-relative">
-                                    <img src="{{prdts.image_2.url}}" alt="IMG-PRODUCT">
+                                    <div class="img-magnifier-container">
+                                        <img id="myimage2" src="{{prdts.image_2.url}}" width="600" height="400" alt="Girl">
+                                      </div>
                                     <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.image_2.url}}">
                                         <i class="fa fa-expand"></i>
                                     </a>
@@ -42,7 +62,9 @@
                             {% if prdts.image_3 %}
                             <div class="item-slick3" data-thumb="{{prdts.image_3.url}}">
                                 <div class="wrap-pic-w pos-relative">
-                                    <img src="{{prdts.image_3.url}}" alt="IMG-PRODUCT">
+                                    <div class="img-magnifier-container">
+                                        <img id="myimage3" src="{{prdts.image_3.url}}" width="600" height="400" alt="Girl">
+                                      </div>
                                     <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.image_3.url}}">
                                         <i class="fa fa-expand"></i>
                                     </a>
@@ -247,7 +269,7 @@
             <div class="container mt-5">
                 <h3 class="text-dark text-center" style="font-weight: 600;">RELATED PRODUCTS </h3>
                 
-                <div class="row isotope-grid container mt-5">
+                <div class="row isotope-grid mt-5">
                     {% for i in relprdts %}
                     
                     <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women ">
@@ -278,6 +300,17 @@
                     </div>
                 </div>
                 {% endif %}
+
+                <script src="{% static 'js/zoom.js' %}"></script>
+
+                <script>
+                    /* Execute the magnify function: */
+                    magnify("myimage", 2);
+                    magnify("myimage2", 2);
+                    magnify("myimage3", 2);
+                    /* Specify the id of the image, and the strength of the magnifier glass: */
+                </script>
+
         </div>
     </div>
 </section>
