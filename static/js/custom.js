@@ -29,10 +29,12 @@ $(document).ready(function(){
         $(".p-off").text(x)
         
         var _pstock = $(".color"+_color).first().data('stock')
-        if (_pstock > 0){
-            $(".p-stock").removeClass("text-danger")
-            $(".p-stock").addClass("text-success")
-            $(".p-stock").text(_pstock+" left");
+        if (_pstock <= 10 && _pstock > 0){
+            $(".p-stock").addClass("text-danger")
+            $(".p-stock").text("Only "+_pstock+" left");
+        }
+        else if (_pstock > 10){
+            $(".p-stock").text(" ");
         }
         else{
             $(".p-stock").addClass("text-danger")
@@ -57,10 +59,12 @@ $(document).ready(function(){
 
         $(".product-price").text("₹"+_price);
         $(".off-per").text(_peroff+"% off");
-        if (_pstock > 0){
-            $(".p-stock").removeClass("text-danger")
-            $(".p-stock").addClass("text-success")
-            $(".p-stock").text(_pstock+" left");
+        if (_pstock <= 10 && _pstock > 0){
+            $(".p-stock").addClass("text-danger")
+            $(".p-stock").text("Only "+_pstock+" left");
+        }
+        else if (_pstock > 10){
+            $(".p-stock").text(" ");
         }
         else{
             $(".p-stock").addClass("text-danger")
@@ -84,9 +88,12 @@ $(document).ready(function(){
     $(".color"+_color).first().addClass('active');
     $(".product-price").text("₹"+_price);
     $(".off-per").text(_peroff+"% off");
-    if (_pstock > 0){
-        $(".p-stock").addClass("text-success")
-        $(".p-stock").text(_pstock+" left");
+    if (_pstock <= 10 && _pstock > 0){
+        $(".p-stock").addClass("text-danger")
+        $(".p-stock").text("Only "+_pstock+" left");
+    }
+    else if (_pstock > 10){
+        $(".p-stock").text(" ");
     }
     else{
         $(".p-stock").addClass("text-danger")
@@ -195,13 +202,19 @@ $(document).ready(function(){
                 success:function(res){
                     $(".cart-list").text(res.totalitems);
                     _vm.attr('disabled',false);
-                    if (res.status != "Don't Add"){
+                    if (res.single_product == "success"){
+                        console.log('add');
                         swal("Success!","Added to Cart Successfully!","success").then(function () {
                             location.reload();
                             }
                         );
                     }
-                    else{
+                    else if (res.status == "Out of stock"){
+                        console.log('sldkjfslf');
+                        swal("Sorry!", "Out of stock!", "error");
+                    }
+                    else if (res.status == "Don't Add"){
+                        console.log('no');
                         swal("Sorry!", "Already added in Cart!", "error");
                     }
                 }
