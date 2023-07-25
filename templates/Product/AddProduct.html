@@ -1,0 +1,256 @@
+{% extends 'Dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<div class="main-panel">
+  <div class="content-wrapper">
+      <div class="row">
+        
+          <div class="col-12 grid-margin">
+            <div class="card">
+              <div class="card-body">
+                  <h1 class="card-title text-center">Add Product<a href="{% url 'product' %}" class="float-right btn btn-warning">Back</a></h1>
+                  <div class="table-responsive mx-5">
+
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% for message in messages %}
+                                <div class="alert alert-danger rounded mb-2 text-center w-75">
+                                     {{message}}
+                                 </div>
+                        {% endfor %}
+                        
+                        <div class="w-75 mb-3">Product Name: {{form.product_name}}</div>
+                        <div class="w-75 mb-3">slug: {{form.slug}}</div>
+                        <div class="w-75 mb-3">Description: {{form.description}}</div>
+
+                        <div class="w-75 mb-3">Image: 
+                          {{form.image}}
+                          
+                          <div id="image-box" class="image-container"></div>
+                           <button class="btn btn-outline-info" id="crop-btn" style="width: 100%; margin-top: 10px; display: none;" type="button">Crop</button>
+                          
+                        </div>
+
+                        <div class="w-75 mb-3">Image 2: 
+                          {{form.image_2}}
+                          
+                          <div id="image-box_2" class="image-container_2"></div>
+                           <button class="btn btn-outline-info" id="crop-btn_2" style="width: 100%; margin-top: 10px; display: none;" type="button">Crop</button>
+                          
+                        </div>
+
+                        <div class="w-75 mb-3">Image 3: 
+                          {{form.image_3}}
+                          
+                          <div id="image-box_3" class="image-container_3"></div>
+                           <button class="btn btn-outline-info" id="crop-btn_3" style="width: 100%; margin-top: 10px; display: none;" type="button">Crop</button>
+                          
+                        </div>
+
+                        <div class="w-75 mb-3">Product Category: {{form.category_name}}</div>
+                        <div class="w-75 mb-3">
+							Sub-Category: 
+							<select class="form-control text-white" name="subcategory_name" id="id_sub_category">
+								<option value="" selected="">---------</option>
+							</select>
+						</div>
+                        <div class="w-75 mb-3">Product Brand: {{form.brand_name}}</div>
+                        <div class="w-75 mb-3">Enable: {{form.is_active}}</div>
+                       
+                        <button type="submit" id="submit" class="btn btn-success">Add Product</button>
+                    </form>
+          
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+<script>
+document.getElementById("id_product_name").onkeyup = function(){
+	console.log()
+	var x = document.getElementById("id_product_name").value.toLowerCase().replaceAll(" ","-");
+	console.log(x);
+	document.getElementById("id_slug").value = x ;
+	document.getElementById("product_name_id").value = x;
+}
+</script>
+
+<script>
+	function getsub(sel)
+	{
+	  var url = "{% url 'list_subcategory' %}"
+	  console.log(url);
+	  category_id = sel.value
+	  data = {
+		  'category_id':category_id,
+	  }
+	  console.log(category_id)
+	  $.ajax({
+		  url: url,
+		  data: data,
+		  dataType: 'json',
+		  success: function(data){
+			if(data.success){
+			  let option_data = '<option value="" selected="">---------</option>'
+			  $.each(data.sub_categories, function(index, ele){
+				option_data += 
+					`<option value='${ele.id}'>${ele.subcategory_name}</option>`
+			  })
+			  $('#id_sub_category').html(option_data)
+			  
+  
+			  
+			}else{
+			  alert('fail')
+			}
+		  }
+		})
+	}
+  </script>
+
+		  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>
+
+
+<script>
+	var imagebox = document.getElementById('image-box')
+	var crop_btn = document.getElementById('crop-btn')
+	var input = document.getElementById('id_image')
+
+	var imagebox_2 = document.getElementById('image-box_2')
+	var crop_btn_2 = document.getElementById('crop-btn_2')
+	var input_2 = document.getElementById('id_image_2')
+
+	var imagebox_3 = document.getElementById('image-box_3')
+	var crop_btn_3 = document.getElementById('crop-btn_3')
+	var input_3 = document.getElementById('id_image_3')
+
+	input.addEventListener('change', ()=>{
+	  const img_data = input.files[0]
+	  const url = URL.createObjectURL(img_data)
+	  
+	  imagebox.innerHTML = `<img src="${url}" id="image" style="width:50%;">`
+
+	 const image = document.getElementById('image')
+
+	 document.getElementById('image-box').style.display = 'block'
+	 document.getElementById('crop-btn').style.display = 'block'
+	 document.getElementById('submit').style.display = 'none'
+
+	  const cropper = new Cropper(image, {
+	  autoCropArea: 1,
+	  viewMode: 1,
+	  scalable: false,
+	  zoomable: true,
+	  movable: false,
+	  aspectRatio: 80/99,
+	  })
+
+	  crop_btn.addEventListener('click', ()=>{
+	    cropper.getCroppedCanvas().toBlob((blob)=>{
+	      
+	     let fileInputElement = document.getElementById('id_image');
+	     let file = new File([blob], img_data.name,{type:"image/*", lastModified:new Date().getTime()});
+	     let container = new DataTransfer();
+	     container.items.add(file);
+	      fileInputElement.files = container.files;
+
+	     document.getElementById('image-box').style.display = 'none'
+	     document.getElementById('crop-btn').style.display = 'none'
+	     document.getElementById('submit').style.display = 'block'
+
+	      });
+	    });
+	});
+
+	input_2.addEventListener('change', ()=>{
+	  const img_data = input_2.files[0]
+	  const url = URL.createObjectURL(img_data)
+	  
+	  imagebox_2.innerHTML = `<img src="${url}" id="image_2" style="width:50%;">`
+
+	 const image = document.getElementById('image_2')
+
+	 document.getElementById('image-box_2').style.display = 'block'
+	 document.getElementById('crop-btn_2').style.display = 'block'
+	 document.getElementById('submit').style.display = 'none'
+
+	  const cropper = new Cropper(image, {
+	  autoCropArea: 1,
+	  viewMode: 1,
+	  scalable: false,
+	  zoomable: true,
+	  movable: false,
+	  aspectRatio: 80/99,
+	  })
+
+	  crop_btn_2.addEventListener('click', ()=>{
+	    cropper.getCroppedCanvas().toBlob((blob)=>{
+	      
+	     let fileInputElement = document.getElementById('id_image_2');
+	     let file = new File([blob], img_data.name,{type:"image/*", lastModified:new Date().getTime()});
+	     let container = new DataTransfer();
+	     container.items.add(file);
+	     fileInputElement.files = container.files;
+
+	     document.getElementById('image-box_2').style.display = 'none'
+	     document.getElementById('crop-btn_2').style.display = 'none'
+	     document.getElementById('submit').style.display = 'block'
+
+	      });
+	    });
+
+	});	
+
+
+	input_3.addEventListener('change', ()=>{
+	  const img_data = input_3.files[0]
+	  const url = URL.createObjectURL(img_data)
+	  
+	  imagebox_3.innerHTML = `<img src="${url}" id="image_3" style="width:50%;">`
+
+	 const image = document.getElementById('image_3')
+
+	 document.getElementById('image-box_3').style.display = 'block'
+	 document.getElementById('crop-btn_3').style.display = 'block'
+	 document.getElementById('submit').style.display = 'none'
+
+	  const cropper = new Cropper(image, {
+	  autoCropArea: 1,
+	  viewMode: 1,
+	  scalable: false,
+	  zoomable: true,
+	  movable: false,
+	  aspectRatio: 80/99,
+	  })
+
+	  crop_btn_3.addEventListener('click', ()=>{
+	    cropper.getCroppedCanvas().toBlob((blob)=>{
+	      
+	     let fileInputElement = document.getElementById('id_image_3');
+	     let file = new File([blob], img_data.name,{type:"image/*", lastModified:new Date().getTime()});
+	     let container = new DataTransfer();
+	     container.items.add(file);
+	     fileInputElement.files = container.files;
+
+	     document.getElementById('image-box_3').style.display = 'none'
+	     document.getElementById('crop-btn_3').style.display = 'none'
+	     document.getElementById('submit').style.display = 'block'
+
+	      });
+	    });
+
+	});
+
+
+</script>
+
+{% endblock %}

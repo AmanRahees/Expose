@@ -1,0 +1,54 @@
+{% extends 'Dashboard.html' %}
+
+{% block content %}
+
+<div class="main-panel">
+  <div class="content-wrapper">
+      <div class="row">
+        
+          <div class="col-12 grid-margin">
+            <div class="card">
+              <div class="card-body">
+                  <h1 class="card-title text-center">Edit Product<a href="{% url 'subproduct' %}" class="float-right btn btn-warning">Back</a></h1>
+                  <div class="table-responsive">
+
+                    {% for message in messages %}
+                        <div class="alert-danger rounded mb-2 text-center" role="alert">
+                              {{message}}
+                          </div>
+                    {% endfor %}
+
+                    <form method="post" action="{% url 'updatesubproduct' subprdts.id %}" enctype="multipart/form-data"">
+        
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label>Product Name :</label>
+                            <h4 class="mb-3 form-control">{{subprdts.product_name}}</h4>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Price :</label>
+                            <input class="mb-3 form-control" type="number" name="price" value="{{subprdts.price}}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Stock :</label>
+                            <input class="mb-3 form-control" type="number" name="stock" value="{{subprdts.stock}}">   
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">Update</button>
+                    </form>
+
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+{% endblock %}
+
+
+
+  

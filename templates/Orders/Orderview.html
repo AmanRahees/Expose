@@ -1,0 +1,86 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<section class="p-t-23 p-b-140 mt-5">
+  <div class="container mt-3">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-body">
+                    
+                    <h3 class="text-center">Delivery details</h3>
+                    <div class="row">
+                        <div class="col-md-11 mx-4" style="color: #000;">
+                            <h6 class="my-3">Name : &nbsp;<span style="color: #000;">{{orders.name}}</span></h6>
+                            <h6 class="my-3">Phone :&nbsp;<span style="color: #000;">{{orders.phone}}</h6>
+                            <h6 class="my-3">Email :&nbsp;<span style="color: #000;">{{orders.email}}</h6>
+                            <h6 class="my-3">Address :&nbsp;<span style="color: #000;">{{orders.address}}, {{orders.address_2}}, {{orders.city}}, {{orders.district}},
+                            {{orders.state}}
+                            </h6>
+                            <h6 class="my-3">Pincode :&nbsp;<span style="color: #000;">{{orders.pincode}}</h6>
+                            <h6 class="my-3">Tracking No :&nbsp;<span style="color: #000;">{{orders.tracking_no}}</h6>
+                            <h6 class="my-3">Mode of Payment :&nbsp;<span style="color: #000;">{{orders.payment_mode}}</h6>
+                            <h6 class="my-3">Ordered at :&nbsp;<span style="color: #000;">{{orders.created_at}}</h6>
+                            <h5 class="text-center mt-4">Status : {{orders.status}}</h5>
+                            
+                            <br><br>
+                        </div>
+                    </div>
+               
+          </div>
+      </div>
+</div>
+
+<div class="col-md-5">
+<div class="card shadow">
+    <div class="card-body">
+        <h4 class="text-center">Order Summary</h4>
+        <table class="table table stripeds table-bordereds">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prdts in orders.orderelate.all%}
+                <tr>
+                    <td>
+                        <a class="text-dark" href="{% url 'productDetail' prdts.product.product_name.category_name.slug prdts.product.product_name.slug %}">
+                        <img height="60px" src="{{prdts.product.product_name.image.url}}" alt="">
+                       {{prdts.product.product_name}}<br>
+                        </a>
+                    </td>
+                    <td>x{{prdts.quantity}}</td>
+                    <td>
+                        <h6 class="text-dark">₹{{prdts.product.offer_price}}</h6>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <h6 class="d-flex justify-content-between container"><span>
+            Total:</span><span>₹{{total_amount}}</span></h6>
+        <br>
+        <h6 class="d-flex justify-content-between container"><span>
+            Tax:</span><span>₹{{tax}}</span></h6>
+        {% if coupon_status == True %}
+        <h6 class="d-flex justify-content-between container mt-3">
+            Coupon discount({{coup_perc}}%):<span>-₹{{coup_red}}</span>
+        </h5>
+        {% endif %}
+        <h5 class="d-flex justify-content-between container mt-3"><span>
+            Grand Total:</span><span>₹{{orders.total_price}} </span></h5>
+    </div>
+</div> 
+</div>
+</div>
+
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,37 @@
+<div id="slaes-report-table">
+
+    <table class="table mt-3"  id="tbl_exporttable_to_xls">
+        <thead>
+            <tr class="table-dark text-center text-white">
+                <td>Sl No</td>
+                <td>Product Name</td>
+                <td>Item Sold</td>
+                <td>In stock</td>
+                <td>Amount</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr class="text-center align-middle text-white">
+                <td>{{forloop.counter}}</td>
+                <td>
+                    {{order.orderelate__product__product_name__product_name}}<br>
+                    <small style="font-size: 9px;">({{order.orderelate__product__ram__ram}},{{order.orderelate__product__color__color}})</small>
+                </td>
+                <td>
+                    {{order.dcount}}
+                </td>
+                <td>
+                    {{order.orderelate__product__stock}}
+                </td>
+    
+                <td>
+                    ₹{{order.total}}
+                </td>
+    
+    
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</div>

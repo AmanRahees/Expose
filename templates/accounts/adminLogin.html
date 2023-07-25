@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EXPOSE ECOMMERCE | Admin</title>
+    <link rel="stylesheet" href="{% static 'css/perm.css' %}" />
+    <style>
+        body {
+            background-image: url("{% static 'images/bbg.png' %}");
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="image-container">
+        <img src="{% static 'images/icons/expose-logo.png' %}" alt="Logo" />
+    </div>
+    <div class="Login-body">
+        <form method="post">
+        {% csrf_token %}
+        <h1>Login</h1>
+        {% for message in messages %}
+        <h6 class="err-msg">
+            {{message}}
+        </h6>
+        {% endfor %}
+        <div>
+            <label>Email</label>
+            <input type="text" name="email" />
+        </div>
+        <div class="pwd-wrapper">
+            <label>Password</label>
+            <input type="password" name="password" id="id_password" />
+            <i id="togglePassword" class="fa-solid fa-eye"></i>
+        </div>
+        <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script>
+        const togglePassword = document.querySelector("#togglePassword");
+        const password = document.querySelector("#id_password");
+
+        togglePassword.addEventListener("click", function () {
+            const type = password.getAttribute("type") === "password" ? "text" : "password";
+            password.setAttribute("type", type);
+
+            // Change the icon based on the password visibility
+            if (type === "text") {
+            togglePassword.classList.remove("fa-eye");
+            togglePassword.classList.add("fa-eye-slash");
+            } else {
+            togglePassword.classList.remove("fa-eye-slash");
+            togglePassword.classList.add("fa-eye");
+            }
+        });   
+    </script>
+</body>
+</html>

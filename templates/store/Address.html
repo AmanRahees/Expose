@@ -1,0 +1,70 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<section class="bg0 p-t-23 p-b-140 mt-5">
+	<div class="container mt-3">
+
+		<ul class="nav mb-3 cl3 flex justify-content-center" id="pills-tab" role="tablist">
+			<li class="mx-2">
+			  <a href="{% url 'settings' %}" class="btn btn-light active">
+				Profile
+			</a>
+			</li>
+			<li class="mx-2">
+				<a href="{% url 'change_password' %}" class="btn btn-light active">
+					Change Password
+				</a>
+			</li>
+			<li class="mx-2">
+				<a href="{% url 'myorders' %}" class="btn btn-light active">
+					Orders
+				</a>
+			</li>
+			<li class="mx-2">
+				<a href="{% url 'addresses' %}" class="btn btn-dark">
+					Addresses
+				</a>
+			</li>
+		  </ul>
+		  {% block dashcard %}
+			<div class="row mt-5">
+				<div class="col-md-12">
+					<div class="row">
+					{% for t in ads %}	
+					<div class="col-md-5 my-2 text-dark card mx-5"  style="box-shadow: 2px 2px 2px 4px #f3f3f3;;">
+						<div class="card-body"  style="border: 1px #000;">
+							<span>Address : {{forloop.counter}}</span> <br>
+							<div class="col-sm-12 col-md-12 col-xm-6">
+								<a href="{% url 'deleteaddress' t.id %}" class="btn btn-outline-danger mx-2  float-right"> <i class="fa-solid fa-trash"></i> </a>
+								<a href="{% url 'editaddress' t.id %}" class="btn btn-outline-dark float-right"> <i class="fa-solid fa-pen"></i> </a>
+							</div>
+							<span style="font-weight:bold ; font-size:16px ;"> {{t.name}} | {{t.mobile}} </span><br>
+							{{t.address}},
+							{{t.address_2}},<br>
+							{{t.city}}, 
+								{{t.district}},
+							{{t.state}},  
+							{{t.pincode}}
+						</div>
+					</div>
+					{% endfor %}
+					<div class="col-md-5 my-2 text-dark card mx-5"  style="border: dotted #999; box-shadow: 2px 2px 2px 3px #f3f3f3;;">
+					<a href="{% url 'addaddress' %}" class="col-md-12 my-2" style="color:#555;">
+						<div class="card-body border-5">
+							<h1 class="text-center mt-4">+ Add Address <i class="fa-sharp fa-solid fa-building-columns"></i></h1>
+						</div>
+					</a>
+					</div>
+					</div>
+				</div>
+			</div>
+			
+
+			{% endblock %}
+	</div>
+</section>
+
+{% endblock %}

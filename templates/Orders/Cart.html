@@ -1,0 +1,136 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<section class="bg0 p-t-23 p-b-140 mt-5">
+	<div class="container">
+
+          {% if not cart_items  %}
+        <div class="text-center mt-5">
+          <div class="text-center">
+            <img src="{% static 'images/empty-cart.png' %}" class="rounded w-50" alt="...">
+          </div>
+            <h2>Your Cart is Empty</h2>
+            <a href="{% url 'products' %}" class="btn btn-primary mt-3">Shop now</a>
+        </div> 
+         {% else %} 
+    
+        
+        <h4 class="mt-3 p-2">Cart ({{cart_items.count}}) <span class="float-right h5">Total : ₹{{total_amount}}</span></h4>
+        <section  class="cart_area mt-2 card">
+          <div class="container">
+              <div class="cart_inner">
+                  <div class="table-responsive">
+                      <table class="table">
+                          <thead class="text-center">
+                              <tr>
+                                  <th scope="col">Product</th>
+                                  <th scope="col">Price</th>
+                                  <th scope="col">Quantity</th>
+                                  <th scope="col">Total</th>
+                                  <th></th>
+                              </tr>
+                          </thead>
+                          <tbody> 
+                            {% for cart_item in cart_items %}
+                            <tr>
+                                <td class="d-flex justify-content-start">
+                                    <figure class="itemside align-items-center wrap">
+                                        <h1></h1>
+                                        <div class="aside"><img src="{{cart_item.cart_product.product_name.image.url}}" width="60px" class="img-sm"></div>
+                                    </figure>
+                                    <figcaption class="info pl-3">
+                                        <a href="{% url 'productDetail' cart_item.cart_product.product_name.category_name.slug cart_item.cart_product.product_name.slug %}" class="title text-dark">{{cart_item.cart_product.product_name}}
+                                          {% if cart_item.cart_product.product_name.product_offer > 0 and cart_item.cart_product.product_name.product_offer >= cart_item.cart_product.product_name.category_name.category_offer %}
+                                          <span class="mt-1 ml-1 text-success" style="font-size: 10px;">{{cart_item.cart_product.product_name.product_offer}}% off</span>
+                                          {% elif cart_item.cart_product.product_name.category_name.category_offer > 0 and cart_item.cart_product.product_name.product_offer <= cart_item.cart_product.product_name.category_name.category_offer %}
+                                          <span class="mt-1 ml-1 text-success" style="font-size: 10px;">{{cart_item.cart_product.product_name.category_name.category_offer}}% off</span>
+                                          {% endif %}
+                                        </a>
+                                        <a href="{% url 'productDetail' cart_item.cart_product.product_name.category_name.slug cart_item.cart_product.product_name.slug %}">
+                                        <p class="cl3 small"><span class="text-dark" style="font-weight: 600;">Color :</span> {{ cart_item.cart_product.color}}<br>
+                                          <span class="text-dark" style="font-weight: 600;">Memory :</span> {{cart_item.cart_product.ram}}</p></a>
+                                    </figcaption>
+                                </td>
+                                <td> 
+                                    <div class="price-wrap"> 
+                                      {% if  cart_item.cart_product.product_name.product_offer > 0 %}
+                                        <var class="price  text-success">₹{{cart_item.cart_product.offer_price}}</var><br>
+                                        <small class="price" style="text-decoration:line-through ;">₹{{cart_item.cart_product.price}}</small>
+                                      {% elif cart_item.cart_product.product_name.category_name.category_offer %}
+                                      <var class="price  text-success">₹{{cart_item.cart_product.offer_price}}</var><br>
+                                      <small class="price" style="text-decoration:line-through ;">₹{{cart_item.cart_product.price}}</small>
+                                      {% else %}
+                                      <var class="price">₹{{cart_item.cart_product.offer_price}}</var><br>
+                                      {% endif %}
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div class="wrap-num-product flex-w m-r-0">
+                                      <a hx-get="{% url 'remove_quantity' cart_item.cart_product.id %}" hx-target="#cartList" hx-trigger="click"  hx-swap="innerHTML">
+                                        <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" >
+                                            <i class="fs-16 zmdi zmdi-minus"></i>
+                                        </div>
+                                      </a>
+                                        <input class="mtext-104 cl3 text-center pl-3 num-product"
+                                        disabled value="{{cart_item.quantity}}">
+                                        <a hx-get="{% url 'add_quantity' cart_item.cart_product.id %}"  hx-target="#cartList" hx-trigger="click"  hx-swap="innerHTML">
+                                        <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" >
+                                              <i class="fs-16 zmdi zmdi-plus"></i>
+                                        </div>
+                                        </a> 
+                                    </div> 
+                                </td>
+                                
+                                <td>
+                                    <p>₹{{cart_item.sub_total}}</p>
+                                </td>
+                                <td>
+
+                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{cart_item.cart_product.id}}">
+                                         <i class="fa-solid fa-trash"></i>
+                                    </button>
+
+                                    <div class="modal fade" id="exampleModal{{cart_item.cart_product.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="exampleModalLabel">Remove Item</h5>
+                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                              </button>
+                                            </div>
+                                            <div class="modal-body">
+                                              Are you sure you want to remove this item from Cart?
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                              <a href="{% url 'delete_cartitem' cart_item.cart_product.id %}" data-item="{{cart_item.cart_product.id}}" class="btn btn-danger delete-item">
+                                                Yes
+                                              </a>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+        <a href="{% url 'checkout' %}" class="btn btn-primary float-right m-3">Checkout</a>
+      
+     {% endif %}
+       
+  </div>
+</section>
+
+<script src="https://unpkg.com/htmx.org@1.8.4" integrity="sha384-wg5Y/JwF7VxGk4zLsJEcAojRtlVp1FKKdGy1qN+OMtdq72WRvX/EdRdqg/LOhYeV" crossorigin="anonymous"></script>
+
+{% endblock %}

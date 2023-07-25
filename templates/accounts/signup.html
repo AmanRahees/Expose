@@ -1,0 +1,74 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+  	<title>Login</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	</head>
+	<body>
+        <a href="{% url 'home' %}" title="Back to Home" class="float-right mr-5 fa-lg"><i class="fa-solid fa-xmark"></i></a>
+	<section class="mt-5 mb-3">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-12 col-lg-10">
+					<div class="wrap d-md-flex">
+						<div class="img img-fluid" style="background-image: url('/static/images/loginImg.jpg');">
+						</div>
+						<div class="login-wrap p-4 p-md-5">
+			      	<div class="d-flex">
+			      		<div class="w-100">
+			      			<h3 class="mb-4 text-secondary text-center mr-2">Sign Up</h3>
+			      		</div>
+								
+			        	</div>
+							<form method="post" class="signin-form">
+								{% csrf_token %}
+
+								{% for message in messages %}
+                                <div class="alert-danger rounded mb-2 text-center" role="alert">
+                                     {{message}}
+                                 </div>
+                         		{% endfor %}
+								<div class="row">
+									<input type="text" class="form-control col-md-5  mb-3" name="first_name" placeholder="First Name" required>
+                                    <h class="col-md-1"></h>
+								    <input type="text" class="form-control col-md-5  mb-3" name="last_name" placeholder="Last Name" required>
+                                </div>
+                                <div class="row mb-3">
+									<input type="text" class="form-control col-md-11" name="email" placeholder="Email" required>
+                                </div>
+                                <div class="row mb-3">
+									<input type="tel" class="form-control col-md-11" name="phone_number" minlength="10" maxlength="14" placeholder="Phone Number" required>
+                                </div>
+                                <div class="row mb-3">
+									<input type="password" class="form-control col-md-11" name="password" minlength="8" placeholder="Password" required>
+                                </div>
+                                <div class="row mb-3">
+									<input type="password" class="form-control col-md-11" name="password2" minlength="8" placeholder="Confirm Password" required>
+                                </div>
+								<div class="row mb-1">
+								<button type="submit" class="form-control col-md-11 btn btn-primary rounded submit px-3">Sign Up</button>
+								</div>
+		          </form>
+		          <p class="text-center">Already a member?  <a href="{% url 'login' %}">Login</a></p>
+		        </div>
+		      </div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/popper.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/maina.js' %}"></script>
+
+	</body>
+</html>
+

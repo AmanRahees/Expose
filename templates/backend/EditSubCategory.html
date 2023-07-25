@@ -1,0 +1,59 @@
+{% extends 'Dashboard.html' %}
+
+{% block content %}
+
+<div class="main-panel">
+  <div class="content-wrapper">
+      <div class="row">
+        
+          <div class="col-12 grid-margin">
+            <div class="card">
+              <div class="card-body">
+
+                <h1 class="card-title text-center">Edit SubCategory<a href="{% url 'subcategory' %}" class="float-right btn btn-warning">Back</a></h1>
+                  <div class="table-responsive mx-5">
+
+                    {% for message in messages %}
+                        <div class="alert-danger rounded mb-2 text-center w-75" role="alert">
+                              {{message}}
+                          </div>
+                    {% endfor %}
+
+                        <form method="post" action="{% url 'updatesubcategory' subctgy.id %}" enctype="multipart/form-data">
+                            
+                            {% csrf_token %}
+    
+                            <div class="mb-3">
+                                <label>SubCategory Name :</label>
+                                <input id="subctgyId" class="mb-3 form-control w-75" type="text" name="subcategory_name" value="{{subctgy.subcategory_name}}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label>Sub :</label>
+                                <input id="slugId" class="mb-3 form-control w-75" type="text" name="slug" value="{{subctgy.slug}}">
+                            </div>
+                            
+                            
+                            <button type="submit">Update</button>
+                        </form>
+
+
+                    </div>
+
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+    document.getElementById("subctgyId").onkeyup = function(){
+      console.log()
+      var x = document.getElementById("subctgyId").value.toLowerCase().replaceAll(" ","-");
+      console.log(x);
+      document.getElementById("slugId").value = x ;
+    }
+    </script>
+
+{% endblock %}

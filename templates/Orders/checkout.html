@@ -1,0 +1,300 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<section class="bg0 p-t-23 p-b-140 mt-5">
+	<div class="container">
+
+        <div class="container mt-3 mb-3">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            {% if ads %}
+                            <h3 class="text-center"  style="font-family:Poppins-Regular ;">Your Addresses</h3>
+                            {% else %}
+                            <h3 class="text-center"  style="font-family:Poppins-Regular ;">No Saved Address</h3>
+                            {% endif %}
+                            {% for a in ads %}
+                            
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <a hx-get="{% url 'seladd' a.id %}" hx-trigger="click" hx-target="#addresschange" hx-swap="outerHTML">
+                                        <input name="test" type="radio">
+                                    </a>
+                                </div>
+                                <div class="col-md-11 mx-4" style="color: #444; font-family: Poppins-Medium;">
+                                    {{a.name}} <br>
+                                    {{a.mobile}} |
+                                    {{a.user_id.email}} <br>
+                                    {{a.address}}, 
+                                    {{a.address_2}},
+                                    {{a.city}},<br>
+                                    {{a.district}}
+                                    {{a.state}},
+                                    {{a.pincode}}
+                                    <br><br>
+                                </div>
+                            </div>
+                       {% endfor %}
+                  </div>
+              </div>
+          <div class="my-3">
+              <a href="{% url 'Orderaddress' %}" class="btn btn-success">Add new address<i class="fa-solid fa-plus"></i></a>
+          </div>
+
+          <form action="{% url 'placeorder' %}" method="POST">
+            {% csrf_token %}
+            <div class="card shadow my-4 checkout-form d-none">
+                <div class="card-body">
+                    {% include 'Orders/checkout2.html' %}
+                </div>
+            </div>
+        </div>
+
+    <div class="col-md-5">
+        <div class="card shadow mb-4">
+            <div>
+                <div class="card-body d-flex justify-content-center align-items-center " style="gap:10px ;">
+                    <p class="h6 mt-1" style="font-family:Poppins-Regular ;">Coupon:</p>
+                    {% include 'Orders/cpn.html' %}
+                    <button type="button" class="btn btn-danger" id="couponbutton">Check</button>
+                    <button type="button" class="text-secondary mt-2" data-bs-toggle="modal" data-bs-target="#couponm">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </button>
+                    <div class="modal fade" id="couponm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Available Coupons</h5>
+                              <button type="button" class="btn-close text-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            {% if cpns %}
+                              {% for i in cpns %}
+                              <i class="fa-solid fa-circle" style="color:#222; font-size: 6px;"></i>
+                              <b class="ml-1" style="color: #222;">{{i.code}}</b>
+                              <p class="ml-3" style="color: #333;">Get {{i.offer_value}}% by applying this Coupon.
+                                <a href="" hx-get="{% url 'selcpn' i.id %}" hx-trigger="click" hx-target="#Couponchange" hx-swap="outerHTML" class="text-success">apply</a>
+                              </p><br>
+                              {% endfor %}
+                              {% else %}
+                              <p class="text-center">No Coupons Available</p>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+                {% if coupon_status == True %}
+                <div class="container">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        Code <strong>{{coupon_codes}}</strong> is activated!!
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+
+                {% endif %}
+                <div class="container mb-2">
+                    <div id="msg" class="text-light text-center" style="font-family: Poppins-Regular;">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 style="color: #555; font-family: Poppins-Regular;" class="text-center py-2">Order Summary</h5>
+                <table class="table table stripeds table-bordereds">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prdts in mycart %}
+                        <tr class="">
+                            <td><img height="40px" src="{{prdts.cart_product.product_name.image.url}}" alt="">
+                               {{prdts.cart_product.product_name}}<br>
+                            </td>
+                            <td>x{{prdts.quantity}}</td>
+                            <td>
+                                <h6 class="text-dark">₹{{prdts.cart_product.offer_price}}</h6>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <hr>
+                <h6 class="d-flex justify-content-between container"><span>
+                    Total:</span><span>₹{{total_amount}}</span></h6>
+                <br>
+                <h6 class="d-flex justify-content-between container"><span>
+                    Tax:</span><span>₹{{tax}}</span></h6>
+                {% if coupon_status == True %}
+                <h6 class="d-flex justify-content-between container mt-3">
+                    Coupon discount({{coup_perc}}%):<span>-₹{{coup_red}}</span>
+                </h5>
+                    {% endif %}
+                <h5 class="d-flex justify-content-between container mt-3"><span>
+                    Grand Total:</span><span>₹{{grand_total}} </span></h5>
+                <input type="hidden" value="COD" name="payment_mode">
+                <div class="d-flex justify-content-center mt-3">
+                    <button style=" font-size: 16px; border-radius:4px ; margin-bottom: 14px; height: 45px " type="button" class="genric-btn btn-dark circle mt-1 container" data-toggle="modal" data-target="#codmod">
+                        Cash on delivery
+                    </button>
+
+                </div>
+
+                <div class="modal fade" style="z-index: 2005 ;" id="codmod" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Confirm order</h5>
+                                <button type="button" class="close text.-danger" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                               Are you sure you want to Confirm this Order?
+                            </div>
+                            <h6 class="mx-3"></h6>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+                                <button type="submit" class="btn btn-dark codbutton">Place Order</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button id="rzp-button1" style=" font-size: 16px; border-radius:4px ; margin-bottom: 14px; height: 45px" type="button" 
+                    class="btn btn-info w-100 mt-2 payWithRazorpay">
+                        Pay with Razorpay
+                    </button>
+                </div>
+                <div id="smart-button-container">
+                    <div style="text-align: center;">
+                      <div id="paypal-button-container">
+                       
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+    </form>
+      </div>
+  </div>
+
+  </div>
+</section>
+
+<script src="https://unpkg.com/htmx.org@1.8.0" integrity="sha384-cZuAZ+ZbwkNRnrKi05G/fjBX+azI9DNOkNYysZ0I/X5ZFgsmMiBXgDZof30F5ofc" crossorigin="anonymous"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AVTsxzuxoNSX-bJZsPO4BaLzX2NnXx9pPcO7cEWl6wnCSGaOjMvNa6ZpqEEUiQaqGjz5-pyeax5mkbdg&currency=USD"></script>
+
+
+<script>
+    // function initPayPalButton() {
+        paypal.Buttons({
+        onClick: function (data, action) {
+            var name = $("[name='name']").val();
+            var email = $("[name='email']").val();
+            var phone = $("[name='phone']").val();
+            var address = $("[name='address']").val();
+            var address_2 = $("[name='address_2']").val();
+            var state = $("[name='state']").val();
+            var district = $("[name='district']").val();
+            var city = $("[name='city']").val();
+            var pincode = $("[name='pincode']").val();
+            var token = $("[name='csrfmiddlewaretoken']").val();
+
+            // urltest = "{% url 'placeorder' %}"
+            
+            if(name=="" || email=="" ||  phone=="" || address=="" || address_2=="" || state=="" || district=="" || city=="" || pincode=="" )
+            {
+                swal("Alert!", "Select an Address before proceeding!", "error");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        },
+  
+        createOrder: function(data, actions) {
+        return actions.order.create({
+            purchase_units: [{
+            amount: {
+                value: '{{grand_total}}',
+            }
+            }]
+        });
+        },
+
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(orderData) {
+            var name = $("[name='name']").val();
+            var email = $("[name='email']").val();
+            var phone = $("[name='phone']").val();
+            var address = $("[name='address']").val();
+            var address_2 = $("[name='address_2']").val();
+            var state = $("[name='state']").val();
+            var district = $("[name='district']").val();
+            var city = $("[name='city']").val();
+            var pincode = $("[name='pincode']").val();
+            var token = $("[name='csrfmiddlewaretoken']").val();
+
+            data = {
+                    "name":name,
+                    "email":email,
+                    "phone":phone,
+                    "address":address,
+                    "address_2":address_2,
+                    "state":state,
+                    "district":district,
+                    "city":city,
+                    "pincode":pincode,
+                    "payment_mode":"Paid by PayPal",
+                    "payment_id":orderData.id,
+                    csrfmiddlewaretoken: token
+                }
+                $.ajax({
+                    method: "POST",
+                    url: "/placeorder",
+                    data: data,
+                    success: function(responsec) {
+                        console.log(responsec.status);
+                        redirect_url = "{% url 'ordersuccess' %}"
+                        window.location.href = redirect_url + '?order_number=' + responsec.tracking_no
+                    }
+                });
+            
+          });
+        },
+  
+        onError: function(err) {
+          console.log(err);
+        }
+      }).render('#paypal-button-container');
+    
+
+  </script>
+  
+{% endblock %}
+
+
+
+

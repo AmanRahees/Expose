@@ -1,0 +1,70 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+  	<title>Login</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+	</head>
+	<body>
+	<section class="mt-5">
+		<div class="container">
+
+			<div class="container py-5 h-100">
+				<div class="row d-flex justify-content-center align-items-center h-100">
+				  <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+					<div class="card shadow-2-strong" style="border-radius: 1rem;">
+					  <form  method="POST">
+						  {% csrf_token %}
+						  <div class="card-body p-5 text-center">
+			
+							  <h3 class="mb-5 text-secondary">OTP Login</h3>
+							  
+							  <div class="form-group">
+								  {% for message in messages %}
+								  <div class="rounded" role="alert">
+									  {{message}}
+								  </div>
+								  {% endfor %}
+							  </div>
+
+							  <label class="label float-left" for="phone_number">Phone</label>
+								<div class="mb-3  input-group form-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+									</div>
+									<input type="tel" class="form-control" name="phone_number" placeholder="Phone Number" minlength="10" maxlength="14" required>
+								</div>
+		  
+				  
+								<button type="submit" class="form-control btn btn-primary rounded submit px-3">Send OTP</button>
+								<a href="{% url 'login' %}"><p class="text-center mt-3">Login with Email</p></a>
+								<p class="text-center">Not a member? <a href="{% url 'signup' %}">Sign Up</a></p>
+							</div>
+					  </form>
+		  
+					</div>
+				  </div>
+				</div>
+			  </div>
+		</div>
+	</section>
+
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/popper.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/maina.js' %}"></script>
+
+	</body>
+</html>
+

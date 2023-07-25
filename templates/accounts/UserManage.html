@@ -1,0 +1,136 @@
+{% extends 'Dashboard.html' %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+         
+        <div class="row">
+                  <h4 class="card-title text-warning">Users ({{usercount}})</h4>
+ 
+                <form action="{% url 'Users' %}" method="get">
+                  <input type="text" class="form-control text-white" style="width:250px ; display: inline;" placeholder="Search"
+                    name="key">
+                  <button style="height:38px ;" class="btn btn-primary pl-3" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+
+                {% for message in messages %}
+                    <div class="alert-danger rounded mb-2 text-center" role="alert">
+                          {{message}}
+                      </div>
+                {% endfor %}
+
+                  <div class="table-responsive mt-3">
+                    <table class="table col-md-12" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                      <thead>
+                          <tr class="table-dark text-center">
+                              <td>Sl.No</td>
+                              <td>Customer</td>
+                              <td>Email</td>
+                              <td>Phone</td>
+                              <td>Status</td>
+                              <td>Action</td>
+                          </tr>
+                      </thead>
+                                <tbody>
+                                  {% for i in users %}
+                                  <tr class="text-center align-middle text-white">
+                                      <th> {{ forloop.counter }}</th>
+                                      
+                                      <th>{{i.first_name}} {{i.last_name}}</th>
+                                      <th>{{i.email}}</th>
+                                      <th>{{i.phone_number}}</th>
+                                      <th> 
+                                          {% if i.is_active == True %}
+                                          <a href="{% url 'user_status' id=i.id status='false' %}" class="btn btn-outline-success py-2">Active</a>                             
+                                          {% else %}
+                                          <a href="{% url 'user_status' id=i.id status='true' %}" class="btn btn-outline-danger py-2">Suspended</a>
+                                          {% endif %}
+                                      </th>
+                                      <th> 
+
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-outline-danger py-1 pr-1 pl-2 border border-none bg-none" data-toggle="modal" data-target="#exampleModal{{i.id}}">
+                                          <i class="fa-solid fa-trash"></i>
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                          <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                                                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                              </div>
+                                              <div class="modal-body">
+                                                Are you sure you want to delete Customer {{i.first_name}}?
+                                              </div>
+                                              <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'deleteUser' i.id %}" type="button" class="btn btn-danger">Delete</a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </th>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                    </table>
+                  </div>
+                </div>
+                  <div class="d-flex justify-content-center align-items-center">
+                    {% if users.has_other_pages %}
+                      <ul class="pagination">
+                      {% if users.has_previous %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{users.previous_page_number}}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                          <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                      {% else %}
+                        <li class="page-item">
+                          <a class="page-link disabled" href="#" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                          <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                      {% endif %}
+            
+                      {% for i in users.paginator.page_range %}
+                        {% if users.number == i %}
+                          <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+                        {% else %}
+                          <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                        {% endif %}
+                      {% endfor %}
+            
+                      {% if users.has_next %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{users.next_page_number}}" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                          <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                      {% else %}
+                      <li class="page-item">
+                        <a class="page-link disabled" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                        </a>
+                      </li>
+                      {% endif %}
+                    </ul>
+                    {% endif %}
+                  </div>
+                </div>
+              
+
+    </div>
+{% endblock %}

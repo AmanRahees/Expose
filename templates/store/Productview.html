@@ -1,0 +1,314 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block content %}
+<style>
+    * {box-sizing: border-box;}
+
+.img-magnifier-container {
+  position: relative;
+}
+
+.img-magnifier-glass {
+  position: absolute;
+  border: .1px solid #fff;
+  cursor: none;
+  /*Set the size of the magnifier glass:*/
+  width: 100px;
+  height: 100px;
+}
+</style>
+
+<section class="bg0 p-t-23 p-b-140 mt-5">
+<div class="container">
+    <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+
+        <div class="row">
+            <div class="col-md-6 col-lg-7 p-b-30">
+                <div class="p-l-25 p-r-30 p-lr-0-lg ml-5">
+                    <div class="wrap-slick3 flex-sb flex-w w-75">
+                        <div class="wrap-slick3-dots"></div>
+                        <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+                        <div class="slick3 gallery-lb">
+                            <div class="item-slick3" data-thumb="{{prdts.image.url}}">
+                                <div class="wrap-pic-w-m pos-relative">
+                                    <div class="img-magnifier-container">
+                                        <img id="myimage" src="{{prdts.image.url}}" width="600" height="400" alt="Girl">
+                                      </div>
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.image.url}}">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% if prdts.image_2 %}
+                            <div class="item-slick3" data-thumb="{{prdts.image_2.url}}">
+                                <div class="wrap-pic-w pos-relative">
+                                    <div class="img-magnifier-container">
+                                        <img id="myimage2" src="{{prdts.image_2.url}}" width="600" height="400" alt="Girl">
+                                      </div>
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.image_2.url}}">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>
+                           {% endif %}
+                            {% if prdts.image_3 %}
+                            <div class="item-slick3" data-thumb="{{prdts.image_3.url}}">
+                                <div class="wrap-pic-w pos-relative">
+                                    <div class="img-magnifier-container">
+                                        <img id="myimage3" src="{{prdts.image_3.url}}" width="600" height="400" alt="Girl">
+                                      </div>
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{prdts.image_3.url}}">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>
+                           {% endif %}
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-5 p-b-30">
+                <div class="p-r-50 p-t-5 p-lr-0-lg"> 
+                    
+
+                    <h4 class="mtext-105 cl2 js-name-detail p-b-14 text-capitalize">
+                        {{prdts.product_name}} 
+                    </h4>
+                    
+                    {% if prdts.product_offer > 0 %}
+                    <h3 class="text-success">
+                        <p class="p-off d-inline"></p>
+                        <span style="text-decoration:line-through ; font-size: 16px; color: #999;">
+                        <small class="product-price{{prdts.productrelate.id}} d-inline" ></small>
+                        </span><span class="ml-2 off-per d-inline" style="font-size: 14px;"></span>
+                    </h3>
+                    {% elif prdts.category_name.category_offer > 0 %}
+                    <h3 class="text-success">
+                        <p class="p-off d-inline"></p>
+                        <span style="text-decoration:line-through ; font-size: 16px; color: #999;">
+                        <small class="product-price{{prdts.productrelate.id}} d-inline" ></small>
+                        </span><span class="ml-2 off-per d-inline" style="font-size: 14px;"></span>
+                    </h3>
+                    {% else %}
+                    <h3 class="text-success">
+                        <span class="p-off d-inline" >{{prdts.productrelate.o}}</span>
+                    </h3>
+                    {% endif %}
+
+                    <p class="stext-102 cl3 p-t-23 mb-2">
+                       {{prdts.description}}
+                    </p>
+
+                    </div>
+                    {% if colors %}
+                    <span class="mt-2">Colors:</span>
+                    
+                    <div class="d-flex w-25 mb-3">
+                    
+                    {% for color in colors %}
+                    <button class="btn btn-outline-secondary m-1 p-3 rounded-circle choose-color" data-color="{{color.color__id}}" color="{{color.color__color}}"
+                     style="background-color: {{color.color__color_code}}">
+                    </button>
+                    {% endfor %}
+
+                    </div>
+                    {% else %}
+ 
+                    {% endif %}
+
+                    {% if prdts.product_offer >= prdts.category_name.category_offer %}
+                    {% if ram %}
+                    <p>Memory :</p>
+                    <div class="d-flex w-25 mt-2 text-dark">
+                        
+                    {% for memory in ram %}
+                    <button id="ram" class="btn btn-sm btn-outline-dark m-1 ram{{memory.id}} choose-memory color{{memory.color__id}}" data-ramid="{{memory.id}}" ram="{{memory.ram__ram}}" data-price="{{memory.price}}" data-off="{{prdts.product_offer}}"  data-stock="{{memory.stock}}">
+                        <small>{{memory.ram__ram  | upper }}</small>
+                    </button>
+                    {% endfor %} 
+                    {%else%}
+                        
+                    {% endif %}
+                    {% else %}
+
+                    {% if ram %}
+                    <p>Memory :</p>
+                    <div class="d-flex w-25 mt-2 text-dark">
+                        
+                    {% for memory in ram %}
+                    <button id="ram" class="btn btn-sm btn-outline-dark m-1 ram{{memory.id}} choose-memory color{{memory.color__id}}" data-ramid="{{memory.id}}" ram="{{memory.ram__ram}}" data-price="{{memory.price}}" data-off="{{prdts.category_name.category_offer}}" data-stock="{{memory.stock}}">
+                        <small>{{memory.ram__ram  | upper }}</small>
+                    </button>
+                    {% endfor %} 
+                    {%else%}
+                    
+                    {% endif %}
+                    
+                    {% endif %}
+
+                    </div>
+                    <p class="mt-2"><span class="p-stock d-inline"></span></p>
+                    
+                    <!-- Cart -->
+
+                    <div class="input-group my-3 w-50">
+                        <input type="number" min="1" value="1" class="form-control w-50 d-none" id="productQty">
+                        <div class="input-group-append d-flex">
+                        <input type="hidden" class="product-image" value="{{prdts.image.url}}">
+                        <input type="hidden" class="product-id" value="{{prdts.id}}">
+                        <input type="hidden" class="product-title" value="{{prdts.product_name}}">
+
+                        <button class="btn btn-primary btn-lg" type="button" id="addToCartBtn">
+                          Add to Cart <i class="zmdi zmdi-shopping-cart"></i>
+                        </button>
+
+                        {% if user.is_authenticated %}
+                        <button id="addtoWishlist" class="btn btn-secondary active btn-lg ml-2 text-light" title="Add to wishlist">
+                                Add to wishlist <i class="fa-solid fa-heart"></i>
+                        </button>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-secondary active btn-lg ml-2 text-light" title="You must Login to Add">
+                            Add to wishlist <i class="fa-solid fa-heart"></i>
+                        </a>
+                        {% endif %}
+
+                        </div>
+                    </div>
+
+                    <!-- Cart End -->
+                </div>
+            </div>
+        </div>
+        {% if relprdts %} 
+        <hr>
+        <!-- <div>
+            <h3><u>Reviews & Ratings</u>
+                {% if user.is_authenticated %}
+                  <button type="button" class="btn btn-dark btn-sm float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">Add a Review+</button>
+                  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" style="font-family: Poppins-Regular;" id="exampleModalLabel">Leave a Review</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form action="" method="post">
+                            {% csrf_token %}
+                        <div class="modal-body" style="font-family: Poppins-Regular;">
+                            <div class="form-group">
+                              <label for="recipient-name" class="col-form-label h6">Title:</label>
+                              <input type="text" name="subject" class="form-control" id="recipient-name">
+                            </div>
+                            <div class="form-group">
+                              <label for="message-text" class="col-form-label h6">Review:</label>
+                              <textarea class="form-control" rows="4" id="message-text" name="review"></textarea>
+                            </div>
+                            <div class="rate">
+                                <input type="radio" name="rating" id="rating10" value="5" required /><label for="rating10" title="5"></label>
+                                <input type="radio" name="rating" id="rating9" value="4.5" required /><label for="rating9" title="4.5" class="half"></label>
+                                <input type="radio" name="rating" id="rating8" value="4" required /><label for="rating8" title="4"></label>
+                                <input type="radio" name="rating" id="rating7" value="3.5" required /><label for="rating7" title="3.5" class="half"></label>
+                                <input type="radio" name="rating" id="rating6" value="3" required /><label for="rating6" title="3"></label>
+                                <input type="radio" name="rating" id="rating5" value="2.5" required /><label for="rating5" title="2.5" class="half"></label>
+                                <input type="radio" name="rating" id="rating4" value="2" required /><label for="rating4" title="2"></label>
+                                <input type="radio" name="rating" id="rating3" value="1.5" required /><label for="rating3" title="1.5" class="half"></label>
+                                <input type="radio" name="rating" id="rating2" value="1" required /><label for="rating2" title="1"></label>
+                                <input type="radio" name="rating" id="rating1" value="0.5" required /><label for="rating1" title="0.5" class="half"></label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-dark">Finish</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% else %}
+                  <button disabled title="You must Login to Add Review" class="btn btn-dark btn-sm float-right">Add Reveiw</button>
+                  {% endif %}
+            </h3>
+            <div class="row mt-3">
+                <div class="col-md-12 border mx-3 py-3 mb-2">
+                <h6 class="px-2"><i class="fa-solid fa-circle-user h5"></i> Aman Rahees <a href="#" class="float-right text-dark"><i class="fa-solid fa-ellipsis-vertical"></i></a></h6>
+                <p class="py-2 px-2">Nice phone for gaming and camera</p>
+                <div class="row mx-2 pb-2">
+                    <i class="fa-solid fa-star text-warning"></i> 
+                    <i class="fa-solid fa-star text-warning"></i>
+                    <i class="fa-solid fa-star text-warning"></i>
+                    <i class="fa-solid fa-star-half-stroke text-warning"></i>
+                    <i class="fa-regular fa-star text-warning"></i>
+                </div>
+                <small class="px-2">19 Jan,2021</small>
+                </div>
+
+                <div class="col-md-12 border mx-3 py-3">
+                    <h6 class="px-2"><i class="fa-solid fa-circle-user h5"></i> Aman Rahees <a href="#" class="float-right text-dark"><i class="fa-solid fa-ellipsis-vertical"></i></a></h6>
+                    <p class="py-2 px-2">Nice phone for gaming and camera</p>
+                    <div class="row mx-2 pb-2">
+                        <i class="fa-solid fa-star text-warning"></i> 
+                        <i class="fa-solid fa-star text-warning"></i>
+                        <i class="fa-solid fa-star text-warning"></i>
+                        <i class="fa-solid fa-star-half-stroke text-warning"></i>
+                        <i class="fa-regular fa-star text-warning"></i>
+                    </div>
+                    <small class="px-2">19 Jan,2021</small>
+                    </div>
+            </div> -->
+            <div class="container mt-5">
+                <h3 class="text-dark text-center" style="font-weight: 600;">RELATED PRODUCTS </h3>
+                
+                <div class="row isotope-grid mt-5">
+                    {% for i in relprdts %}
+                    
+                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women ">
+                    
+                    <div class="block2">
+                    <div class="block2-pic hov-img0">
+                    <a href="{{ i.get_url }}"><img src="{{i.image.url}}"  alt="IMG-PRODUCT"></a>
+                    </div>
+                    <div class="block2-txt flex-w flex-t p-t-14">
+                    <div class="block2-txt-child1 flex-col-l ">
+                    <a href="{{ i.get_url }}" class="stext-104 text-dark font-weight-bold trans-04 js-name-b2 p-b-6">
+                        {{i.product_name}}
+                    </a>
+                    <!-- <small class="font-small" style="text-decoration:line-through;">₹{{p.price}}</small> -->
+                    <p>
+                        <a href="{{ i.get_url }}" class=" text-success">₹{{i.productrelate.first.price}}</a>
+                    </p>
+                    </div>
+                    <div class="block2-txt-child2 flex-r p-t-3 mt-3">
+                    <a href="#" class="btn-addwish-b2 dis-block pos-relative">
+                    <img class=" dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
+                    </a>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <script src="{% static 'js/zoom.js' %}"></script>
+
+                <script>
+                    /* Execute the magnify function: */
+                    magnify("myimage", 2);
+                    magnify("myimage2", 2);
+                    magnify("myimage3", 2);
+                    /* Specify the id of the image, and the strength of the magnifier glass: */
+                </script>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
